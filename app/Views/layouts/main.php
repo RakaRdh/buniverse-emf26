@@ -15,6 +15,17 @@
   <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
   <!-- Tailwind Perintilan CSS -->
   <link rel="stylesheet" href="<?= base_url('assets/css/tailwind.css') ?>">
+
+  <?php if (!empty($themeProperties)): ?>
+    <!-- Live Dynamic Theme CSS Custom Properties from BackendCMS -->
+    <style id="live-theme-properties">
+      :root {
+        <?php foreach ($themeProperties as $tp): ?>
+          <?= esc($tp['property']) ?>: <?= $tp['value'] ?>;
+        <?php endforeach; ?>
+      }
+    </style>
+  <?php endif; ?>
 </head>
 <body>
 

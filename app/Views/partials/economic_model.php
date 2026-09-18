@@ -5,7 +5,8 @@
       <!-- Left Column: Editorial Logo & Intro -->
       <div class="editorial-left">
         <div class="editorial-logo">
-          <img src="<?= base_url('assets/img/logo_ids26.png') ?>" alt="Investor Daily Summit 2026" class="editorial-brand-logo">
+          <?php $aboutLogo = !empty($site['logo_a']) ? $site['logo_a'] : base_url('assets/img/logo_ids26.png'); ?>
+          <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title']) ?>" class="editorial-brand-logo">
         </div>
 
         <p class="editorial-intro">

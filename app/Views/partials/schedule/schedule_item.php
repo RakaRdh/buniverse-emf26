@@ -47,6 +47,11 @@ $isMultiRoom = !empty($item['is_multi_room']) && !empty($item['rooms']);
               <?php foreach ($roomData['sessions'] as $subSession): ?>
                 <div class="room-subsession">
                   <h4 class="subsession-title"><?= esc($subSession['title']) ?></h4>
+                  <?php if (!empty($subSession['subtitle'])): ?>
+                    <div class="subsession-subtitle" style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.82); margin-top: 3px; line-height: 1.4;">
+                      <?= esc($subSession['subtitle']) ?>
+                    </div>
+                  <?php endif; ?>
 
                   <!-- Moderator if any -->
                   <?php if (!empty($subSession['moderator'])): ?>
@@ -93,6 +98,11 @@ $isMultiRoom = !empty($item['is_multi_room']) && !empty($item['rooms']);
       <?php endif; ?>
 
       <h3 class="session-title"><?= esc($item['title']) ?></h3>
+      <?php if (!empty($item['subtitle'])): ?>
+        <div class="session-subtitle" style="font-size: 15px; font-weight: 500; color: rgba(255, 255, 255, 0.85); margin-top: 4px; margin-bottom: 8px; line-height: 1.4;">
+          <?= esc($item['subtitle']) ?>
+        </div>
+      <?php endif; ?>
 
       <!-- Optional Moderator -->
       <?php if (!empty($item['moderator'])): ?>

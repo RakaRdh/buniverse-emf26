@@ -47,28 +47,31 @@
   --primary-2-10: #19425c;
 
   /* Semantic Theme Variables Mapped to Palette */
-  --bg-page: var(--primary-1-9);       /* #062e3e */
-  --bg-section-alt: var(--primary-1-10); /* #052431 */
-  --bg-card: var(--primary-1-8);       /* #083a4d */
+  --bg-page: var(--primary-1-9);
+  /* #062e3e */
+  --bg-section-alt: var(--primary-1-10);
+  /* #052431 */
+  --bg-card: var(--primary-1-8);
+  /* #083a4d */
   --bg-card-gradient: linear-gradient(135deg, var(--primary-1-7) 0%, var(--primary-1-9) 100%);
   --bg-pill: var(--primary-1-8);
   --bg-pill-active: var(--neutral-1);
-  
+
   --text-primary: var(--neutral-1);
   --text-secondary: rgba(255, 255, 255, 0.82);
   --text-muted: var(--neutral-6);
   --text-dark: var(--primary-1-10);
-  
+
   --accent-cyan: var(--primary-1-6);
   --accent-light: var(--primary-2-3);
   --accent-blue: var(--primary-2-6);
   --accent-glow: rgba(91, 166, 214, 0.35);
   --border-divider: rgba(255, 255, 255, 0.12);
   --border-subtle: rgba(255, 255, 255, 0.20);
-  
+
   --font-sans: 'Montserrat', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-serif: 'Playfair Display', Georgia, Cambria, 'Times New Roman', Times, serif;
-  
+
   --container-max-width: 1440px;
   --container-padding: 80px;
   --radius-sm: 6px;
@@ -81,7 +84,9 @@
 /* --------------------------------------------------------------------------
    2. CSS Reset & Base Elements
    -------------------------------------------------------------------------- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -111,7 +116,8 @@ a {
   transition: var(--transition-normal);
 }
 
-img, svg {
+img,
+svg {
   display: block;
   max-width: 100%;
 }
@@ -209,9 +215,11 @@ button {
   white-space: nowrap;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
   opacity: 1;
-  color: #38BDF8; /* Cukup ganti warna aksen terang */
+  color: #38BDF8;
+  /* Cukup ganti warna aksen terang */
 }
 
 /* Get Tickets CTA */
@@ -219,8 +227,8 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--text-primary);
-  color: #052431;
+  background-color: var(--navbar-cta-bg, var(--text-primary));
+  color: var(--navbar-cta-text, #052431);
   font-size: 16px;
   font-weight: 700;
   padding: 10px 24px;
@@ -229,15 +237,15 @@ button {
   cursor: pointer;
   white-space: nowrap;
   letter-spacing: 0.2px;
-  /* Outerline hover logic dari repo reference: outline + outline-offset */
-  transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  /* Outerline hover logic: outline + outline-offset */
+  transition: background-color 0.25s ease, color 0.25s ease, outline 0.25s ease, box-shadow 0.25s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .btn-ticket:hover {
-  background-color: #ffffff;
-  color: #041a24;
-  outline: 3px solid #ffffff;
+  background-color: var(--navbar-cta-hover-bg, #ffffff);
+  color: var(--navbar-cta-hover-text, #041a24);
+  outline: 3px solid var(--navbar-cta-hover-outline, #ffffff);
   outline-offset: 4px;
   box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
 }
@@ -544,20 +552,23 @@ button {
   flex: 1;
   text-align: center;
   padding: 15px 24px;
-  border-radius: 0; /* TANPA border-radius sendiri */
+  border-radius: 0;
+  /* TANPA border-radius sendiri */
   border: none;
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: #ffffff;
-  background-color: #0a1f2e; /* Navy sangat gelap */
+  background-color: #0a1f2e;
+  /* Navy sangat gelap */
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .main-tab-btn.active {
-  background-color: #1e4a63; /* Biru gelap terang */
+  background-color: #1e4a63;
+  /* Biru gelap terang */
   color: #ffffff;
 }
 
@@ -780,7 +791,8 @@ button {
 }
 
 .multi-room-card {
-  background-color: #0b3d52; /* Deep slate teal outer card wrapping room session */
+  background-color: #0b3d52;
+  /* Deep slate teal outer card wrapping room session */
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   padding: 28px 32px;
@@ -829,6 +841,7 @@ button {
     opacity: 0;
     transform: translateY(24px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -843,7 +856,8 @@ button {
   width: 100%;
   min-width: 0;
   min-height: 124px;
-  background-color: var(--primary-2-5); /* Polos primary 2-5 (#5ba6d6) */
+  background-color: var(--primary-2-5);
+  /* Polos primary 2-5 (#5ba6d6) */
   border: none;
   border-radius: var(--radius-md);
   padding: 16px 20px;
@@ -878,26 +892,26 @@ button {
   opacity: 1;
 }
 
-.speaker-card:hover {
-  /* transform: translateY(-4px); */
+/* .speaker-card:hover {
+  transform: translateY(-4px);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
-}
+} */
 
-/* Speaker photo: enlarged prominently to 110px with gradient circle background */
+/* Speaker photo: clean fit without outer circle border */
 .speaker-photo-wrap {
   position: relative;
   z-index: 2;
-  width: 110px;
-  height: 110px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 2.5px solid rgba(56, 189, 248, 0.45);
+  border: none;
   background: linear-gradient(180deg, #0F6F97 0%, #052431 100%);
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  box-shadow: none;
 }
 
 .speaker-photo-wrap img {
@@ -962,7 +976,7 @@ button {
   z-index: 1;
   width: 100%;
   max-width: 680px;
-  background: linear-gradient(160deg, #0b3447 0%, #051c27 100%);
+  background: radial-gradient(circle at 50% 50%, #159DD2 0%, #0B516C 100%);
   border: 1px solid rgba(91, 166, 214, 0.35);
   border-radius: 20px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
@@ -985,7 +999,7 @@ button {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
+  background: radial-gradient(circle at 30% 20%, #159DD2 0%, #0B516C 100%);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #ffffff;
   display: flex;
@@ -994,6 +1008,7 @@ button {
   cursor: pointer;
   z-index: 10;
   transition: background-color 200ms ease, transform 200ms ease;
+  
 }
 
 .speaker-modal-close:hover {
@@ -1131,7 +1146,8 @@ button {
   border-radius: 24px;
   /* Luar 052431, dalam 0F6F97 spread kecil di tengah */
   background: radial-gradient(circle at 50% 50%, #0F6F97 0%, #0a3d54 38%, #052431 80%);
-  overflow: hidden; /* Fotonya di-mask ke dalam rectangle */
+  overflow: hidden;
+  /* Fotonya di-mask ke dalam rectangle */
   transition: border-color 300ms ease-out, box-shadow 300ms ease-out;
 }
 
@@ -1181,7 +1197,8 @@ button {
 .speaker-tile-role {
   font-size: 12px;
   font-weight: 600;
-  color: var(--primary-2-5); /* #5ba6d6 */
+  color: var(--primary-2-5);
+  /* #5ba6d6 */
   line-height: 1.6;
   max-width: 94%;
 }
@@ -1335,13 +1352,16 @@ button {
   overflow-y: hidden;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
   padding: 10px 4px 20px 4px;
 }
 
 .news-slider-container::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
+  display: none;
+  /* Chrome/Safari */
 }
 
 /* Flex track holding all news cards */
@@ -1588,8 +1608,8 @@ button {
 /* Footer bottom (Matching Image 2 Spec) */
 .site-footer {
   padding: 0 0 32px 0;
-  background-color: var(--bg-section-alt); /* Samakan dengan background section sponsor (#052431) */
-  border-top: none; /* Hilangkan garis full-width 1 layar */
+  background-color: var(--footer-bg, var(--bg-section-alt));
+  border-top: none;
   font-size: 12px;
 }
 
@@ -1598,7 +1618,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12); /* Garis berhenti di batas container (padding 80px kiri dan kanan) */
+  border-top: 1px solid var(--footer-border-color, rgba(255, 255, 255, 0.12));
   padding-top: 28px;
 }
 
@@ -1618,7 +1638,7 @@ button {
 .footer-copy {
   flex: 2;
   text-align: center;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--footer-text-color, rgba(255, 255, 255, 0.85));
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.2px;
@@ -1636,8 +1656,8 @@ button {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background-color: #064057; /* Circular teal container */
-  color: #ffffff;
+  background-color: var(--footer-social-bg, #064057);
+  color: var(--footer-social-color, #ffffff);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1689,12 +1709,12 @@ button {
     grid-template-columns: 1fr;
     gap: 36px;
   }
-  
+
   .speakers-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 30px 22px;
   }
-  
+
   .news-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1736,20 +1756,20 @@ button {
     gap: 16px;
     border-bottom: 1px solid var(--border-divider);
   }
-  
+
   .site-nav.open {
     display: flex;
   }
-  
+
   .nav-toggle {
     display: block;
   }
-  
+
   .schedule-row {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   .plenary-speaker-grid {
     grid-template-columns: 1fr;
   }
@@ -1770,12 +1790,12 @@ button {
   .speaker-tile-role {
     font-size: 12px;
   }
-  
+
   .speakers-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 24px 16px;
   }
-  
+
   .header-right-group {
     gap: 12px;
   }
@@ -1798,7 +1818,7 @@ button {
     flex: 5;
     min-width: 200px;
   }
-  
+
   .news-slider-track {
     gap: 18px;
   }
@@ -1842,7 +1862,8 @@ button {
     gap: 20px;
   }
 
-  .footer-brand, .footer-socials {
+  .footer-brand,
+  .footer-socials {
     justify-content: center;
   }
 }
@@ -1884,11 +1905,11 @@ button {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px 14px;
   }
-  
+
   .brand-lockup {
     gap: 8px;
   }
-  
+
   .brand-title {
     font-size: 12px;
   }
