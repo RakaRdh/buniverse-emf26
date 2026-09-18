@@ -1,0 +1,13 @@
+/* Tailwind Perintilan / Utility Extensions
+   Digunakan sebagai variasi dan utility perintilan sesuai preferensi user
+*/
+@layer utilities {
+  .clip-hero-diagonal {
+    clip-path: polygon(14% 0%, 100% 0%, 100% 86%, 86% 100%, 0% 100%, 0% 16%);
+  }
+}
+.tw-bg-ids-navy { background-color: #052D3D; }
+.tw-bg-ids-navy-alt { background-color: #052331; }
+.tw-text-ids-cyan { color: #38BDF8; }
+.tw-border-ids-cyan { border-color: rgba(56, 189, 248, 0.35); }
+.tw-shadow-glow { box-shadow: 0 0 25px rgba(56, 189, 248, 0.2); }
