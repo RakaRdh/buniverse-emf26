@@ -717,16 +717,16 @@ class MockData extends BaseConfig
                         ['name' => 'Sponsor 4', 'logo' => 'sponsor4.png'],
                     ]
                 ],
-                // Baris 6: 6 logo reguler
+                // Baris 6: Bronze Tier (sm)
                 [
-                    'tier'  => 'tier-regular',
+                    'tier'  => 'tier-sm',
                     'logos' => [
-                        ['name' => 'Sponsor 5', 'logo' => 'sponsor5.png'],
-                        ['name' => 'Sponsor 6', 'logo' => 'sponsor6.png'],
-                        ['name' => 'Sponsor 7', 'logo' => 'sponsor7.png'],
-                        ['name' => 'Sponsor 1', 'logo' => 'sponsor1.png'],
-                        ['name' => 'Sponsor 2', 'logo' => 'sponsor2.png'],
-                        ['name' => 'Sponsor 3', 'logo' => 'sponsor3.png'],
+                        ['name' => 'Bronze Sponsor 1', 'logo' => 'sponsor1.png'],
+                        ['name' => 'Bronze Sponsor 2', 'logo' => 'sponsor2.png'],
+                        ['name' => 'Bronze Sponsor 3', 'logo' => 'sponsor3.png'],
+                        ['name' => 'Bronze Sponsor 4', 'logo' => 'sponsor4.png'],
+                        ['name' => 'Bronze Sponsor 5', 'logo' => 'sponsor5.png'],
+                        ['name' => 'Bronze Sponsor 6', 'logo' => 'sponsor6.png'],
                     ]
                 ],
             ]

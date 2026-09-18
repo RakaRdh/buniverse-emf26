@@ -1,43 +1,83 @@
 <section class="sponsors-section" id="sponsor">
   <div class="container">
     
-    <!-- Group 1: SPONSORED BY (6 baris: 2 logo paling besar, 2 logo lebih kecil, lalu 6 logo reguler per baris) -->
-    <div class="sponsor-group">
-      <div class="sponsor-badge">
-        <?= esc($sponsors['sponsored_by']['badge']) ?>
-      </div>
+    <!-- Group 1: SPONSORED BY -->
+    <?php if (!empty($sponsors['sponsored_by'])): ?>
+      <div class="sponsor-group">
+        <div class="sponsor-badge">
+          <?= esc($sponsors['sponsored_by']['badge'] ?? 'SPONSORED BY:') ?>
+        </div>
 
-      <?php foreach ($sponsors['sponsored_by']['rows'] as $row): ?>
-        <div class="sponsor-row <?= esc($row['tier']) ?>">
-          <?php foreach ($row['logos'] as $item): ?>
-            <div class="sponsor-logo-item" title="<?= esc($item['name']) ?>">
-              <img src="<?= base_url('assets/img/' . esc($item['logo'])) ?>" 
-                   alt="<?= esc($item['name']) ?>" 
-                   loading="lazy">
+        <?php if (!empty($sponsors['sponsored_by']['rows'])): ?>
+          <?php /* MockData format */ ?>
+          <?php foreach ($sponsors['sponsored_by']['rows'] as $row): ?>
+            <div class="sponsor-row <?= esc($row['tier']) ?>">
+              <?php foreach ($row['logos'] as $item): ?>
+                <div class="sponsor-logo-item" title="<?= esc($item['name']) ?>">
+                  <img src="<?= base_url('assets/img/' . esc($item['logo'])) ?>" 
+                       alt="<?= esc($item['name']) ?>" 
+                       loading="lazy">
+                </div>
+              <?php endforeach; ?>
             </div>
           <?php endforeach; ?>
-        </div>
-      <?php endforeach; ?>
-    </div>
-
-    <!-- Group 2: PARTNERSHIP (4 logo dengan ukuran lebih kecil lagi) -->
-    <div class="sponsor-group">
-      <div class="sponsor-badge">
-        <?= esc($sponsors['partnerships']['badge']) ?>
+        <?php else: ?>
+          <?php /* CMS API dynamic tiers format */ ?>
+          <?php foreach ($sponsors['sponsored_by'] as $tier): ?>
+            <?php if (!empty($tier['items'])): ?>
+              <div class="sponsor-row tier-<?= esc($tier['logo_size'] ?? 'md') ?>">
+                <?php foreach ($tier['items'] as $item): ?>
+                  <div class="sponsor-logo-item" title="<?= esc($item['name']) ?>">
+                    <img src="<?= esc($item['logo']) ?>" 
+                         alt="<?= esc($item['name']) ?>" 
+                         loading="lazy">
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        <?php endif; ?>
       </div>
+    <?php endif; ?>
 
-      <?php foreach ($sponsors['partnerships']['rows'] as $row): ?>
-        <div class="sponsor-row <?= esc($row['tier']) ?>">
-          <?php foreach ($row['logos'] as $item): ?>
-            <div class="sponsor-logo-item" title="<?= esc($item['name']) ?>">
-              <img src="<?= base_url('assets/img/' . esc($item['logo'])) ?>" 
-                   alt="<?= esc($item['name']) ?>" 
-                   loading="lazy">
+    <!-- Group 2: PARTNERSHIP -->
+    <?php if (!empty($sponsors['partnerships'])): ?>
+      <div class="sponsor-group">
+        <div class="sponsor-badge">
+          <?= esc($sponsors['partnerships']['badge'] ?? 'PARTNERSHIP:') ?>
+        </div>
+
+        <?php if (!empty($sponsors['partnerships']['rows'])): ?>
+          <?php /* MockData format */ ?>
+          <?php foreach ($sponsors['partnerships']['rows'] as $row): ?>
+            <div class="sponsor-row <?= esc($row['tier']) ?>">
+              <?php foreach ($row['logos'] as $item): ?>
+                <div class="sponsor-logo-item" title="<?= esc($item['name']) ?>">
+                  <img src="<?= base_url('assets/img/' . esc($item['logo'])) ?>" 
+                       alt="<?= esc($item['name']) ?>" 
+                       loading="lazy">
+                </div>
+              <?php endforeach; ?>
             </div>
           <?php endforeach; ?>
-        </div>
-      <?php endforeach; ?>
-    </div>
+        <?php else: ?>
+          <?php /* CMS API dynamic tiers format */ ?>
+          <?php foreach ($sponsors['partnerships'] as $tier): ?>
+            <?php if (!empty($tier['items'])): ?>
+              <div class="sponsor-row tier-<?= esc($tier['logo_size'] ?? 'sm') ?>">
+                <?php foreach ($tier['items'] as $item): ?>
+                  <div class="sponsor-logo-item" title="<?= esc($item['name']) ?>">
+                    <img src="<?= esc($item['logo']) ?>" 
+                         alt="<?= esc($item['name']) ?>" 
+                         loading="lazy">
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
+    <?php endif; ?>
 
   </div>
 </section>

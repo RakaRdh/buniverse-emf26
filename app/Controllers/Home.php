@@ -69,6 +69,11 @@ class Home extends BaseController
                         }
                         $speakers = $syncedSpeakers;
                     }
+
+                    // Sync sponsors from live API if available
+                    if (!empty($live['sponsors'])) {
+                        $sponsors = $live['sponsors'];
+                    }
                 }
             }
         } catch (\Throwable $e) {
