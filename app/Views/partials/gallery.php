@@ -1,5 +1,6 @@
 <section class="gallery-section" id="gallery">
   <?= view('partials/section_decorations', ['sectionKey' => 'gallery', 'decorations' => $sectionDecorations ?? []]) ?>
+  <?= view('partials/custom_placements', ['sectionKey' => 'gallery', 'customPlacements' => $customPlacements ?? []]) ?>
   <div class="container">
     
     <!-- Section Header Centered -->

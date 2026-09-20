@@ -21,9 +21,9 @@ class MockData extends BaseConfig
     ];
 
     /**
-     * Editorial Copy for "Indonesia's Economic Model"
+     * Editorial Copy for Overview ("Indonesia's Economic Model")
      */
-    public array $economicModel = [
+    public array $overview = [
         'badge'      => "INDONESIA'S ECONOMIC MODEL",
         'logo'       => 'logo_ids26.png',
         'intro'      => "Investor Daily Summit 2026, Indonesia’s largest investment forum is monumental gathering of power and potential. Against global uncertainty, the event became a masterclass in resilience",
@@ -33,6 +33,7 @@ class MockData extends BaseConfig
             "To ensure inclusive and sustainable growth, policymakers must navigate significant structural risks, including Danantara's internal governance conflicts, the limited labor absorption of capital-intensive downstream industries, and workforce disruptions from automation and artificial intelligence."
         ]
     ];
+    public array $economicModel = []; // alias for backward compatibility
 
     /**
      * Distinct Speakers Roster

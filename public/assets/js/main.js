@@ -354,7 +354,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sectionHeight <= 0) return;
 
       const count = Math.max(1, parseInt(group.getAttribute('data-count'), 10) || 1);
-      let gap = Math.max(20, parseInt(group.getAttribute('data-gap'), 10) || 100);
+      const gapRaw = parseFloat(group.getAttribute('data-gap')) || 100;
+      const gapUnit = group.getAttribute('data-gap-unit') || 'px';
+      const startSide = group.getAttribute('data-start-side') || 'left';
+      const edgeOffset = group.getAttribute('data-edge-offset') || '50%';
       const width = parseInt(group.getAttribute('data-width'), 10) || 200;
       const opacity = group.getAttribute('data-opacity') || '1.0';
       const imgSrc = group.getAttribute('data-img') || '';
@@ -362,15 +365,31 @@ document.addEventListener('DOMContentLoaded', () => {
       const rotDir = group.getAttribute('data-rot-dir') || 'clockwise';
       const rotClass = isRotated ? `is-rotating rot-${rotDir}` : '';
 
+      // Convert gap to px based on unit
+      let gap = gapRaw;
+      if (gapUnit === 'vh') {
+        gap = (gapRaw / 100) * window.innerHeight;
+      } else if (gapUnit === 'rem') {
+        const rootFs = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+        gap = gapRaw * rootFs;
+      } else if (gapUnit === 'percent') {
+        gap = (gapRaw / 100) * sectionHeight;
+      }
+      gap = Math.max(20, gap);
+
       // Clear previous generated items
       group.innerHTML = '';
 
+      const startLeft = (startSide === 'left');
+
       if (count === 1) {
         const item = document.createElement('div');
-        item.className = `decoration-auto-item edge-left ${rotClass}`;
+        const edge = startLeft ? 'edge-left' : 'edge-right';
+        item.className = `decoration-auto-item ${edge} ${rotClass}`;
         item.style.top = '50%';
         item.style.setProperty('--dec-width', `${width}px`);
         item.style.setProperty('--dec-opacity', opacity);
+        item.style.setProperty('--dec-edge-offset', edgeOffset);
         item.innerHTML = `<img src="${imgSrc}" alt="" loading="lazy">`;
         group.appendChild(item);
         return;
@@ -389,13 +408,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       for (let i = 0; i < count; i++) {
         const topPx = startY + i * gap;
-        const edge = (i % 2 === 0) ? 'edge-left' : 'edge-right';
+        const edge = ((i % 2 === 0) === startLeft) ? 'edge-left' : 'edge-right';
 
         const item = document.createElement('div');
         item.className = `decoration-auto-item ${edge} ${rotClass}`;
         item.style.top = `${Math.round(topPx)}px`;
         item.style.setProperty('--dec-width', `${width}px`);
         item.style.setProperty('--dec-opacity', opacity);
+        item.style.setProperty('--dec-edge-offset', edgeOffset);
         item.innerHTML = `<img src="${imgSrc}" alt="" loading="lazy">`;
         group.appendChild(item);
       }

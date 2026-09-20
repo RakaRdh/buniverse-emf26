@@ -11,7 +11,8 @@ class Home extends BaseController
         $mock = config(MockData::class);
 
         $site          = $mock->site;
-        $economicModel = $mock->economicModel;
+        $overview      = $mock->overview ?? $mock->economicModel ?? [];
+        $economicModel = $overview; // backward compatibility
         $speakers      = $mock->speakers;
         $schedule      = $mock->schedule;
         $gallery       = $mock->gallery;
@@ -23,6 +24,7 @@ class Home extends BaseController
         $galleryImages      = [];
         $sponsorPartnership = null;
         $sectionDecorations = [];
+        $customPlacements   = [];
 
         // Attempt live synchronization with BackendCMS REST API
         $apiUrls = [
@@ -71,18 +73,22 @@ class Home extends BaseController
                             $galleryImages = $live['gallery'];
                         }
 
-                        // Sync economic model
-                        if (!empty($live['economicModel'])) {
-                            if (!empty($live['economicModel']['badge'])) {
-                                $economicModel['badge'] = $live['economicModel']['badge'];
+                        // Sync overview (f.k.a economic model)
+                        $liveOverview = $live['overview'] ?? $live['economicModel'] ?? null;
+                        if (!empty($liveOverview)) {
+                            if (!empty($liveOverview['badge'])) {
+                                $overview['badge'] = $liveOverview['badge'];
                             }
-                            if (!empty($live['economicModel']['content'])) {
-                                $economicModel['intro'] = $live['economicModel']['title'] ?? $economicModel['intro'];
-                                $paras = array_filter(explode("\n\n", str_replace("\r\n", "\n", $live['economicModel']['content'])));
+                            if (!empty($liveOverview['intro'])) {
+                                $overview['intro'] = $liveOverview['intro'];
+                            }
+                            if (!empty($liveOverview['content'])) {
+                                $paras = array_filter(explode("\n\n", str_replace("\r\n", "\n", $liveOverview['content'])));
                                 if (!empty($paras)) {
-                                    $economicModel['paragraphs'] = array_values($paras);
+                                    $overview['paragraphs'] = array_values($paras);
                                 }
                             }
+                            $economicModel = $overview;
                         }
 
                         // Sync speakers if database has them
@@ -111,6 +117,11 @@ class Home extends BaseController
                         // Sync floating section decorations from live API
                         if (!empty($live['section_decorations'])) {
                             $sectionDecorations = $live['section_decorations'];
+                        }
+
+                        // Sync custom placements from live API
+                        if (!empty($live['custom_placements'])) {
+                            $customPlacements = $live['custom_placements'];
                         }
 
                         /* === LEGACY TIER-BASED SPONSORS SYNC (COMMENTED OUT) ===
@@ -150,6 +161,7 @@ class Home extends BaseController
             'site'               => $site,
             'themeProperties'    => $themeProperties,
             'heroCarousel'       => $heroCarousel,
+            'overview'           => $overview,
             'economicModel'      => $economicModel,
             'speakers'           => $speakers,
             'schedule'           => $schedule,
@@ -159,6 +171,7 @@ class Home extends BaseController
             'sponsors'           => $sponsors,
             'sponsorPartnership' => $sponsorPartnership,
             'sectionDecorations' => $sectionDecorations,
+            'customPlacements'   => $customPlacements,
         ];
 
         return view('home', $data);

@@ -37,8 +37,8 @@
     <!-- 2. Hero Section -->
     <?= $this->include('partials/hero') ?>
 
-    <!-- 3. Indonesia's Economic Model Editorial -->
-    <?= $this->include('partials/economic_model') ?>
+    <!-- 3. Overview (Indonesia's Economic Model Editorial) -->
+    <?= $this->include('partials/overview') ?>
 
     <!-- 4. Schedule & Speakers Section -->
     <?= $this->include('partials/schedule/index') ?>

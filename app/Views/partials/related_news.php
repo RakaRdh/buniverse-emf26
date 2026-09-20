@@ -1,5 +1,6 @@
 <section class="news-section" id="news">
   <?= view('partials/section_decorations', ['sectionKey' => 'news', 'decorations' => $sectionDecorations ?? []]) ?>
+  <?= view('partials/custom_placements', ['sectionKey' => 'news', 'customPlacements' => $customPlacements ?? []]) ?>
   <div class="container">
     
     <!-- Section Header Centered -->

@@ -22,16 +22,24 @@ if (empty($items)) {
         $layout    = $item['layout_mode'] ?? 'manual';
         ?>
 
+        <?php
+        $edgeMode   = $item['edge_offset_mode'] ?? 'fixed';
+        $edgeOffset = ($edgeMode === 'custom') ? ((int)($item['edge_offset_percent'] ?? 50) . '%') : '50%';
+        ?>
+
         <?php if ($layout === 'manual'): ?>
             <?php $posClass = 'pos-' . esc($item['position'] ?? 'middle-left'); ?>
             <div class="decoration-item <?= $posClass ?> <?= $rotClass ?> <?= $mobClass ?>"
-                 style="--dec-width: <?= (int)($item['size_px'] ?? 200) ?>px; --dec-opacity: <?= esc($item['opacity'] ?? 1.0) ?>;">
+                 style="--dec-width: <?= (int)($item['size_px'] ?? 200) ?>px; --dec-opacity: <?= esc($item['opacity'] ?? 1.0) ?>; --dec-edge-offset: <?= $edgeOffset ?>;">
                 <img src="<?= esc($item['image_url']) ?>" alt="" loading="lazy">
             </div>
         <?php else: ?>
             <div class="decoration-auto-group <?= $rotClass ?> <?= $mobClass ?>"
                  data-count="<?= (int)($item['auto_count'] ?? 1) ?>"
                  data-gap="<?= (int)($item['auto_gap_px'] ?? 100) ?>"
+                 data-gap-unit="<?= esc($item['auto_gap_unit'] ?? 'px') ?>"
+                 data-start-side="<?= esc($item['auto_start_side'] ?? 'left') ?>"
+                 data-edge-offset="<?= $edgeOffset ?>"
                  data-width="<?= (int)($item['size_px'] ?? 200) ?>"
                  data-opacity="<?= esc($item['opacity'] ?? 1.0) ?>"
                  data-img="<?= esc($item['image_url']) ?>"

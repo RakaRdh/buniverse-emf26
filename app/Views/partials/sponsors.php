@@ -1,5 +1,6 @@
 <section class="sponsors-section" id="sponsor">
   <?= view('partials/section_decorations', ['sectionKey' => 'sponsor', 'decorations' => $sectionDecorations ?? []]) ?>
+  <?= view('partials/custom_placements', ['sectionKey' => 'sponsor', 'customPlacements' => $customPlacements ?? []]) ?>
 
   <div class="container">
     <?php if (!empty($sponsorPartnership) && !empty($sponsorPartnership['logo_url'])): ?>

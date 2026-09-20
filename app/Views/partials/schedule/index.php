@@ -1,5 +1,6 @@
 <section class="schedule-section" id="schedule">
   <?= view('partials/section_decorations', ['sectionKey' => 'schedule', 'decorations' => $sectionDecorations ?? []]) ?>
+  <?= view('partials/custom_placements', ['sectionKey' => 'schedule', 'customPlacements' => $customPlacements ?? []]) ?>
   <div class="container">
     
     <!-- 1. Main Tabs Header: SCHEDULE vs SPEAKERS -->

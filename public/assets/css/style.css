@@ -1965,36 +1965,36 @@ button {
   display: block;
 }
 
-/* Manual 6-position anchors (tucked half-way into edge per spec) */
+/* Manual 6-position anchors (tucked into edge with configurable offset) */
 .decoration-item.pos-top-left {
   top: 0;
   left: 0;
-  transform: translate(-50%, -50%);
+  transform: translate(calc(-1 * var(--dec-edge-offset, 50%)), -50%);
 }
 .decoration-item.pos-top-right {
   top: 0;
   right: 0;
-  transform: translate(50%, -50%);
+  transform: translate(var(--dec-edge-offset, 50%), -50%);
 }
 .decoration-item.pos-middle-left {
   top: 50%;
   left: 0;
-  transform: translate(-50%, -50%);
+  transform: translate(calc(-1 * var(--dec-edge-offset, 50%)), -50%);
 }
 .decoration-item.pos-middle-right {
   top: 50%;
   right: 0;
-  transform: translate(50%, -50%);
+  transform: translate(var(--dec-edge-offset, 50%), -50%);
 }
 .decoration-item.pos-bottom-left {
   bottom: 0;
   left: 0;
-  transform: translate(-50%, 50%);
+  transform: translate(calc(-1 * var(--dec-edge-offset, 50%)), 50%);
 }
 .decoration-item.pos-bottom-right {
   bottom: 0;
   right: 0;
-  transform: translate(50%, 50%);
+  transform: translate(var(--dec-edge-offset, 50%), 50%);
 }
 
 /* Continuous rotation animations */
@@ -2049,11 +2049,11 @@ button {
 }
 .decoration-auto-item.edge-left {
   left: 0;
-  transform: translate(-50%, -50%);
+  transform: translate(calc(-1 * var(--dec-edge-offset, 50%)), -50%);
 }
 .decoration-auto-item.edge-right {
   right: 0;
-  transform: translate(50%, -50%);
+  transform: translate(var(--dec-edge-offset, 50%), -50%);
 }
 
 /* Hide on Mobile */
@@ -2083,3 +2083,45 @@ button {
 /* .sponsor-banner-img:hover {
   transform: scale(1.01);
 } */
+
+/* ==========================================================================
+   Custom Placement Layer (Freeform Coordinates)
+   ========================================================================== */
+.custom-placement-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.custom-placement-item {
+  position: absolute;
+  width: var(--cp-width, 200px);
+  height: auto;
+  opacity: var(--cp-opacity, 1);
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.3s ease;
+}
+.custom-placement-item img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+.custom-placement-item.is-rotating.rot-clockwise img {
+  animation: spin-cw 35s linear infinite;
+}
+.custom-placement-item.is-rotating.rot-counter-clockwise img {
+  animation: spin-ccw 35s linear infinite;
+}
+
+@media (max-width: 768px) {
+  .custom-placement-item.hide-on-mobile {
+    display: none !important;
+  }
+}

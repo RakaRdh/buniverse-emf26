@@ -1,5 +1,6 @@
 <section class="hero-section" id="home">
   <?= view('partials/section_decorations', ['sectionKey' => 'home', 'decorations' => $sectionDecorations ?? []]) ?>
+  <?= view('partials/custom_placements', ['sectionKey' => 'home', 'customPlacements' => $customPlacements ?? []]) ?>
   
   <!-- 1. Right Layer: Stage Image Carousel with smooth fade (z-index: 1) -->
   <div class="hero-bg-media">

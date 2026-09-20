@@ -1,5 +1,10 @@
+<?php
+$overviewData = $overview ?? $economicModel ?? [];
+$paragraphs = $overviewData['paragraphs'] ?? [];
+?>
 <section class="editorial-section" id="about-us">
   <?= view('partials/section_decorations', ['sectionKey' => 'about-us', 'decorations' => $sectionDecorations ?? []]) ?>
+  <?= view('partials/custom_placements', ['sectionKey' => 'about-us', 'customPlacements' => $customPlacements ?? []]) ?>
   <div class="container">
     <div class="editorial-grid">
       
@@ -11,18 +16,18 @@
         </div>
 
         <p class="editorial-intro">
-          <?= esc($economicModel['intro']) ?>
+          <?= esc($overviewData['intro'] ?? '') ?>
         </p>
       </div>
 
-      <!-- Right Column: Topic Badge & 3 Editorial Paragraphs -->
+      <!-- Right Column: Topic Badge & Editorial Paragraphs -->
       <div class="editorial-right">
         <div class="topic-badge">
-          <?= esc($economicModel['badge']) ?>
+          <?= esc($overviewData['badge'] ?? "INDONESIA'S ECONOMIC MODEL") ?>
         </div>
 
         <div class="editorial-paragraphs">
-          <?php foreach ($economicModel['paragraphs'] as $p): ?>
+          <?php foreach ($paragraphs as $p): ?>
             <p><?= esc($p) ?></p>
           <?php endforeach; ?>
         </div>
