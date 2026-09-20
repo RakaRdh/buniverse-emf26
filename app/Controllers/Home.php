@@ -18,9 +18,11 @@ class Home extends BaseController
         $relatedNews   = $mock->relatedNews;
         $sponsors      = $mock->sponsors;
 
-        $themeProperties = [];
-        $heroCarousel    = [];
-        $galleryImages   = [];
+        $themeProperties    = [];
+        $heroCarousel       = [];
+        $galleryImages      = [];
+        $sponsorPartnership = null;
+        $sectionDecorations = [];
 
         // Attempt live synchronization with BackendCMS REST API
         $apiUrls = [
@@ -101,10 +103,21 @@ class Home extends BaseController
                             $speakers = $syncedSpeakers;
                         }
 
-                        // Sync sponsors from live API if available
+                        // Sync single-image sponsor & partnership banner from live API
+                        if (!empty($live['sponsor_partnership'])) {
+                            $sponsorPartnership = $live['sponsor_partnership'];
+                        }
+
+                        // Sync floating section decorations from live API
+                        if (!empty($live['section_decorations'])) {
+                            $sectionDecorations = $live['section_decorations'];
+                        }
+
+                        /* === LEGACY TIER-BASED SPONSORS SYNC (COMMENTED OUT) ===
                         if (!empty($live['sponsors'])) {
                             $sponsors = $live['sponsors'];
                         }
+                        === END LEGACY SPONSORS SYNC === */
 
                         // Sync live schedule if available
                         if (!empty($live['schedule']['days'])) {
@@ -134,16 +147,18 @@ class Home extends BaseController
         }
 
         $data = [
-            'site'            => $site,
-            'themeProperties' => $themeProperties,
-            'heroCarousel'    => $heroCarousel,
-            'economicModel'   => $economicModel,
-            'speakers'        => $speakers,
-            'schedule'        => $schedule,
-            'gallery'         => $gallery,
-            'galleryImages'   => $galleryImages,
-            'relatedNews'     => $relatedNews,
-            'sponsors'        => $sponsors,
+            'site'               => $site,
+            'themeProperties'    => $themeProperties,
+            'heroCarousel'       => $heroCarousel,
+            'economicModel'      => $economicModel,
+            'speakers'           => $speakers,
+            'schedule'           => $schedule,
+            'gallery'            => $gallery,
+            'galleryImages'      => $galleryImages,
+            'relatedNews'        => $relatedNews,
+            'sponsors'           => $sponsors,
+            'sponsorPartnership' => $sponsorPartnership,
+            'sectionDecorations' => $sectionDecorations,
         ];
 
         return view('home', $data);

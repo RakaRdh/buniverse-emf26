@@ -339,6 +339,86 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  // =========================================================================
+  // 6. Automatic Section Decorations Zigzag Layout Engine
+  // =========================================================================
+  const autoDecorationGroups = document.querySelectorAll('.decoration-auto-group');
+
+  if (autoDecorationGroups.length > 0) {
+    const layoutAutoGroup = (group) => {
+      const section = group.closest('section');
+      if (!section) return;
+
+      const sectionHeight = section.offsetHeight;
+      if (sectionHeight <= 0) return;
+
+      const count = Math.max(1, parseInt(group.getAttribute('data-count'), 10) || 1);
+      let gap = Math.max(20, parseInt(group.getAttribute('data-gap'), 10) || 100);
+      const width = parseInt(group.getAttribute('data-width'), 10) || 200;
+      const opacity = group.getAttribute('data-opacity') || '1.0';
+      const imgSrc = group.getAttribute('data-img') || '';
+      const isRotated = group.getAttribute('data-rotated') === '1';
+      const rotDir = group.getAttribute('data-rot-dir') || 'clockwise';
+      const rotClass = isRotated ? `is-rotating rot-${rotDir}` : '';
+
+      // Clear previous generated items
+      group.innerHTML = '';
+
+      if (count === 1) {
+        const item = document.createElement('div');
+        item.className = `decoration-auto-item edge-left ${rotClass}`;
+        item.style.top = '50%';
+        item.style.setProperty('--dec-width', `${width}px`);
+        item.style.setProperty('--dec-opacity', opacity);
+        item.innerHTML = `<img src="${imgSrc}" alt="" loading="lazy">`;
+        group.appendChild(item);
+        return;
+      }
+
+      // If count > 1, adjust gap if total height exceeds section
+      let totalSpan = (count - 1) * gap;
+      const maxAvailableSpan = Math.max(80, sectionHeight - width);
+
+      if (totalSpan > maxAvailableSpan) {
+        gap = maxAvailableSpan / (count - 1);
+        totalSpan = maxAvailableSpan;
+      }
+
+      const startY = Math.max(width / 2, (sectionHeight - totalSpan) / 2);
+
+      for (let i = 0; i < count; i++) {
+        const topPx = startY + i * gap;
+        const edge = (i % 2 === 0) ? 'edge-left' : 'edge-right';
+
+        const item = document.createElement('div');
+        item.className = `decoration-auto-item ${edge} ${rotClass}`;
+        item.style.top = `${Math.round(topPx)}px`;
+        item.style.setProperty('--dec-width', `${width}px`);
+        item.style.setProperty('--dec-opacity', opacity);
+        item.innerHTML = `<img src="${imgSrc}" alt="" loading="lazy">`;
+        group.appendChild(item);
+      }
+    };
+
+    autoDecorationGroups.forEach(group => {
+      layoutAutoGroup(group);
+
+      const section = group.closest('section');
+      if (section && window.ResizeObserver) {
+        const observer = new ResizeObserver(() => {
+          layoutAutoGroup(group);
+        });
+        observer.observe(section);
+      }
+    });
+
+    // Also recompute on window resize
+    window.addEventListener('resize', () => {
+      autoDecorationGroups.forEach(layoutAutoGroup);
+    });
+  }
 });
+
 
 

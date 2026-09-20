@@ -1,6 +1,25 @@
 <section class="sponsors-section" id="sponsor">
+  <?= view('partials/section_decorations', ['sectionKey' => 'sponsor', 'decorations' => $sectionDecorations ?? []]) ?>
+
   <div class="container">
-    
+    <?php if (!empty($sponsorPartnership) && !empty($sponsorPartnership['logo_url'])): ?>
+      <!-- Single Consolidated Sponsors & Partnerships Banner -->
+      <div class="sponsor-single-wrapper">
+        <img src="<?= esc($sponsorPartnership['logo_url']) ?>" 
+             alt="<?= esc($sponsorPartnership['name'] ?: 'Sponsors & Partnerships') ?>" 
+             class="sponsor-banner-img" 
+             loading="lazy">
+      </div>
+    <?php else: ?>
+      <!-- Fallback or empty state if no single banner is uploaded yet -->
+      <div class="sponsor-single-wrapper sponsor-placeholder-wrapper" style="text-align: center; padding: 30px 20px;">
+        <span style="font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-light, #d4af37); font-weight: 600; opacity: 0.85;">
+          SPONSORS & PARTNERSHIPS
+        </span>
+      </div>
+    <?php endif; ?>
+
+    <?php /* === LEGACY TIER-BASED SPONSORS (COMMENTED OUT) ===
     <!-- Group 1: SPONSORED BY -->
     <?php if (!empty($sponsors['sponsored_by'])): ?>
       <div class="sponsor-group">
@@ -9,7 +28,6 @@
         </div>
 
         <?php if (!empty($sponsors['sponsored_by']['rows'])): ?>
-          <?php /* MockData format */ ?>
           <?php foreach ($sponsors['sponsored_by']['rows'] as $row): ?>
             <div class="sponsor-row <?= esc($row['tier']) ?>">
               <?php foreach ($row['logos'] as $item): ?>
@@ -22,7 +40,6 @@
             </div>
           <?php endforeach; ?>
         <?php else: ?>
-          <?php /* CMS API dynamic tiers format */ ?>
           <?php foreach ($sponsors['sponsored_by'] as $tier): ?>
             <?php if (!empty($tier['items'])): ?>
               <div class="sponsor-row tier-<?= esc($tier['logo_size'] ?? 'md') ?>">
@@ -48,7 +65,6 @@
         </div>
 
         <?php if (!empty($sponsors['partnerships']['rows'])): ?>
-          <?php /* MockData format */ ?>
           <?php foreach ($sponsors['partnerships']['rows'] as $row): ?>
             <div class="sponsor-row <?= esc($row['tier']) ?>">
               <?php foreach ($row['logos'] as $item): ?>
@@ -61,7 +77,6 @@
             </div>
           <?php endforeach; ?>
         <?php else: ?>
-          <?php /* CMS API dynamic tiers format */ ?>
           <?php foreach ($sponsors['partnerships'] as $tier): ?>
             <?php if (!empty($tier['items'])): ?>
               <div class="sponsor-row tier-<?= esc($tier['logo_size'] ?? 'sm') ?>">
@@ -78,6 +93,7 @@
         <?php endif; ?>
       </div>
     <?php endif; ?>
+    === END LEGACY TIER-BASED SPONSORS === */ ?>
 
   </div>
 </section>

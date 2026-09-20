@@ -1,4 +1,5 @@
 <section class="editorial-section" id="about-us">
+  <?= view('partials/section_decorations', ['sectionKey' => 'about-us', 'decorations' => $sectionDecorations ?? []]) ?>
   <div class="container">
     <div class="editorial-grid">
       
