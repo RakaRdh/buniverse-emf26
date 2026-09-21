@@ -248,6 +248,10 @@ button {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
+.btn-ticket-mobile {
+  display: none;
+}
+
 .btn-ticket:hover {
   background-color: var(--navbar-cta-hover-bg, #ffffff);
   color: var(--navbar-cta-hover-text, #041a24);
@@ -1981,8 +1985,17 @@ button {
     display: none !important;
   }
 
-  .header-right-group .btn-ticket {
+  .header-right-group .btn-ticket-desktop {
     display: none !important;
+  }
+
+  .site-nav .btn-ticket-mobile {
+    display: inline-flex !important;
+    margin-top: 12px;
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 20px;
   }
 
   .header-inner {

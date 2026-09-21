@@ -34,9 +34,12 @@
               <?= esc($item['label']) ?>
             </a>
           <?php endforeach; ?>
+          <a href="<?= esc($site['ticket_url']) ?>" class="btn-ticket btn-ticket-mobile" data-track-ticket="true">
+            <?= esc($site['cta_ticket_label'] ?? 'Get Tickets') ?>
+          </a>
         </nav>
 
-        <a href="<?= esc($site['ticket_url']) ?>" class="btn-ticket">
+        <a href="<?= esc($site['ticket_url']) ?>" class="btn-ticket btn-ticket-desktop" data-track-ticket="true">
           <?= esc($site['cta_ticket_label'] ?? 'Get Tickets') ?>
         </a>
         

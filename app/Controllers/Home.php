@@ -363,5 +363,46 @@ class Home extends BaseController
 
         return null;
     }
+
+    /**
+     * Telemetry Proxy for Ticket Clicks
+     * Forwards click event from Frontend to BackendCMS REST API
+     */
+    public function trackTicket()
+    {
+        $cmsUrls = [
+            'http://localhost:8081/api/v1/tickets/click',
+            'http://127.0.0.1:8081/api/v1/tickets/click',
+            'http://[::1]:8081/api/v1/tickets/click',
+        ];
+
+        $client = \Config\Services::curlrequest(['timeout' => 2.0]);
+        $success = false;
+
+        foreach ($cmsUrls as $cmsUrl) {
+            try {
+                $response = $client->post($cmsUrl, [
+                    'headers' => [
+                        'User-Agent' => (string) $this->request->getUserAgent(),
+                        'X-Forwarded-For' => $this->request->getIPAddress(),
+                        'Referer'    => (string) $this->request->getServer('HTTP_REFERER') ?: base_url(),
+                    ],
+                    'http_errors' => false,
+                ]);
+
+                if ($response->getStatusCode() === 200) {
+                    $success = true;
+                    break;
+                }
+            } catch (\Throwable $e) {
+                // Try next endpoint
+            }
+        }
+
+        return $this->response->setJSON([
+            'status'  => $success ? 'success' : 'forwarded',
+            'message' => 'Ticket click telemetry logged',
+        ]);
+    }
 }
 

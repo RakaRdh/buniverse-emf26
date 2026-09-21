@@ -626,6 +626,29 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   initHighlightsSection();
+
+  // 10. Ticket Click Telemetry Tracking
+  const trackTicketClick = () => {
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/track-ticket');
+      } else {
+        fetch('/api/track-ticket', {
+          method: 'POST',
+          keepalive: true,
+          headers: { 'Content-Type': 'application/json' }
+        }).catch(() => {});
+      }
+    } catch (err) {
+      console.warn('Telemetry error:', err);
+    }
+  };
+
+  document.querySelectorAll('.btn-ticket, [data-track-ticket]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      trackTicketClick();
+    });
+  });
 });
 
 
