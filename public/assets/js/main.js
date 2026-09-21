@@ -129,6 +129,107 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // 4.1 Navbar Hide-on-Scroll-Down, Show-on-Scroll-Up
+  const siteHeader = document.getElementById('header') || document.querySelector('.site-header');
+  if (siteHeader) {
+    let lastScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    let headerTicking = false;
+
+    const onScroll = () => {
+      const currentScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+      
+      // Don't hide if mobile menu is open
+      const isMobileMenuOpen = siteNav && siteNav.classList.contains('open');
+
+      if (!isMobileMenuOpen) {
+        const delta = currentScrollY - lastScrollY;
+        if (delta > 8 && currentScrollY > 70) {
+          // Scrolling down past header height -> hide navbar
+          siteHeader.classList.add('header-hidden');
+        } else if (delta < -5 || currentScrollY <= 20) {
+          // Scrolling up or near top -> show navbar immediately
+          siteHeader.classList.remove('header-hidden');
+        }
+      }
+
+      lastScrollY = Math.max(0, currentScrollY);
+      headerTicking = false;
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!headerTicking) {
+        window.requestAnimationFrame(onScroll);
+        headerTicking = true;
+      }
+    }, { passive: true });
+  }
+
+  // 4.2 Floating Back to Top Button & Floating Bottom Bar Appearance
+  const backToTopBtn = document.getElementById('backToTopBtn');
+  const floatingBottomBar = document.getElementById('floatingBottomBar');
+  const overviewSection = document.getElementById('about-us') || document.querySelector('.editorial-section');
+  const sponsorSection = document.getElementById('sponsor') || document.querySelector('.sponsors-section');
+  const footerEl = document.querySelector('.site-footer');
+
+  const handleFloatingElements = () => {
+    const scrollPos = window.pageYOffset || document.documentElement.scrollTop || 0;
+    const windowHeight = window.innerHeight;
+
+    // Cek apakah viewport sudah melewati akhir section sponsor / menyentuh footer
+    let isPastSponsor = false;
+    if (footerEl) {
+      const footerRect = footerEl.getBoundingClientRect();
+      if (footerRect.top <= windowHeight - 20) {
+        isPastSponsor = true;
+      }
+    } else if (sponsorSection) {
+      const sponsorRect = sponsorSection.getBoundingClientRect();
+      if (sponsorRect.bottom <= 60) {
+        isPastSponsor = true;
+      }
+    }
+
+    // Back to top appears after scrolling down 350px, but disappears once reaching footer
+    if (backToTopBtn) {
+      if (scrollPos > 350 && !isPastSponsor) {
+        backToTopBtn.classList.add('is-visible');
+      } else {
+        backToTopBtn.classList.remove('is-visible');
+      }
+    }
+
+    // Floating bottom bar appears when reaching overview section (#about-us) and continues downwards,
+    // but hides at the end of sponsor section so footer stays clean at the bottom
+    if (floatingBottomBar) {
+      if (isPastSponsor) {
+        floatingBottomBar.classList.remove('is-visible');
+      } else if (overviewSection) {
+        const overviewTop = overviewSection.getBoundingClientRect().top + scrollPos;
+        if (scrollPos >= overviewTop - 300) {
+          floatingBottomBar.classList.add('is-visible');
+        } else {
+          floatingBottomBar.classList.remove('is-visible');
+        }
+      } else if (scrollPos > 450) {
+        floatingBottomBar.classList.add('is-visible');
+      } else {
+        floatingBottomBar.classList.remove('is-visible');
+      }
+    }
+  };
+
+  window.addEventListener('scroll', handleFloatingElements, { passive: true });
+  handleFloatingElements();
+
+  if (backToTopBtn) {
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+
   // 5. Hero Stage Carousel (Smooth Fade Looping)
   const heroSlides = document.querySelectorAll('.hero-carousel-slide');
   if (heroSlides.length > 1) {
@@ -251,12 +352,16 @@ document.addEventListener('DOMContentLoaded', () => {
     observedSpeakerCards.forEach(card => card.classList.add('visible'));
   }
 
-  // 9. Related News Slider with Arrows and Gesture Support
-  const newsSliderContainer = document.getElementById('newsSliderContainer');
-  const newsPrevBtn = document.getElementById('newsPrevBtn');
-  const newsNextBtn = document.getElementById('newsNextBtn');
+  // 9. Related News Multi-Instance Slider with Arrows and Gesture Support
+  const newsSliderWrappers = document.querySelectorAll('.news-slider-wrapper');
 
-  if (newsSliderContainer && newsPrevBtn && newsNextBtn) {
+  newsSliderWrappers.forEach(wrapper => {
+    const newsSliderContainer = wrapper.querySelector('.news-slider-container');
+    const newsPrevBtn = wrapper.querySelector('.news-arrow-prev');
+    const newsNextBtn = wrapper.querySelector('.news-arrow-next');
+
+    if (!newsSliderContainer || !newsPrevBtn || !newsNextBtn) return;
+
     // Update arrow visibility based on scroll position
     const updateNewsArrowState = () => {
       const scrollLeft = newsSliderContainer.scrollLeft;
@@ -315,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         isTicking = true;
       }
-    });
+    }, { passive: true });
 
     // Window resize adjustment
     window.addEventListener('resize', updateNewsArrowState);
@@ -366,7 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     });
-  }
+  });
 
   // =========================================================================
   // 6. Automatic Section Decorations Zigzag Layout Engine
@@ -625,7 +730,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  initHighlightsSection();
+  // Highlights section commented out per user request; disabled init call
+  // initHighlightsSection();
 
   // 10. Ticket Click Telemetry Tracking
   const trackTicketClick = () => {
@@ -649,6 +755,138 @@ document.addEventListener('DOMContentLoaded', () => {
       trackTicketClick();
     });
   });
+
+  // 11. Typewriter Looping Effect for Floating Bottom Bar
+  const typingEl = document.getElementById('floatingTypingText');
+  if (typingEl) {
+    const textToType = 'Get Your Seat Now!';
+    let charIndex = 0;
+    let isDeleting = false;
+    const typingSpeed = 110;
+    const deletingSpeed = 65;
+    const pauseBeforeDelete = 2000;
+    const pauseBeforeRestart = 600;
+
+    const typeLoop = () => {
+      if (!isDeleting) {
+        // Typing forward
+        charIndex++;
+        typingEl.textContent = textToType.slice(0, charIndex);
+
+        if (charIndex === textToType.length) {
+          // Finished typing string, pause before deleting
+          isDeleting = true;
+          setTimeout(typeLoop, pauseBeforeDelete);
+          return;
+        }
+        setTimeout(typeLoop, typingSpeed);
+      } else {
+        // Deleting characters
+        charIndex--;
+        typingEl.textContent = textToType.slice(0, charIndex);
+
+        if (charIndex === 0) {
+          // Finished deleting, pause before typing again
+          isDeleting = false;
+          setTimeout(typeLoop, pauseBeforeRestart);
+          return;
+        }
+        setTimeout(typeLoop, deletingSpeed);
+      }
+    };
+
+    typeLoop();
+  }
+
+  // 12. TUNING PANEL - hapus setelah final (Hero Revision Brief §D)
+  if (window.location.search.includes('tune=1')) {
+    const heroSection = document.querySelector('.hero-section');
+    if (heroSection) {
+      const panel = document.createElement('div');
+      panel.id = 'heroTuningPanel';
+      panel.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        right: 20px;
+        background: rgba(1, 10, 45, 0.95);
+        color: #ffffff;
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        z-index: 10000;
+        font-family: monospace;
+        font-size: 12px;
+        width: 280px;
+        max-height: 80vh;
+        overflow-y: auto;
+      `;
+
+      const controls = [
+        { id: 'glow-angle', label: 'Glow Angle (deg)', var: '--glow-angle', min: 140, max: 200, step: 1, unit: 'deg', def: 160 },
+        { id: 'glow-len', label: 'Glow Len (vh)', var: '--glow-len', min: 25, max: 60, step: 1, unit: 'vh', def: 38 },
+        { id: 'deco-size', label: 'Disc Size (vh)', var: '--deco-size', min: 100, max: 220, step: 2, unit: 'vh', def: 150 },
+        { id: 'deco-cx', label: 'Disc Center X (%)', var: '--deco-cx', min: 50, max: 80, step: 1, unit: '%', def: 68 },
+        { id: 'deco-cy', label: 'Disc Center Y (%)', var: '--deco-cy', min: 35, max: 65, step: 1, unit: '%', def: 50 },
+        { id: 'tilt-z', label: 'Tilt Z (deg)', var: '--tilt-z', min: -10, max: 30, step: 1, unit: 'deg', def: 10 },
+        { id: 'tilt-x', label: 'Tilt X (deg)', var: '--tilt-x', min: 0, max: 25, step: 1, unit: 'deg', def: 10 },
+        { id: 'tilt-y', label: 'Tilt Y (deg)', var: '--tilt-y', min: -60, max: -30, step: 1, unit: 'deg', def: -48 },
+        { id: 'persp', label: 'Perspective (vh)', var: '--persp', min: 70, max: 180, step: 5, unit: 'vh', def: 110 },
+        { id: 'mask-rw', label: 'Mask Radial W (vw)', var: '--mask-rw', min: 15, max: 40, step: 1, unit: 'vw', def: 25 },
+        { id: 'mask-rh', label: 'Mask Radial H (vh)', var: '--mask-rh', min: 25, max: 55, step: 1, unit: 'vh', def: 40 },
+      ];
+
+      panel.innerHTML = `<div style="font-weight:bold;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+        <span>HERO TUNING (?tune=1)</span>
+        <button id="tuneCloseBtn" style="background:#ef4444;color:#fff;border:none;border-radius:4px;padding:2px 6px;cursor:pointer;">X</button>
+      </div>`;
+
+      controls.forEach(ctrl => {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'margin-bottom:8px;';
+        wrap.innerHTML = `
+          <div style="display:flex;justify-content:space-between;">
+            <label>${ctrl.label}</label>
+            <span id="val_${ctrl.id}">${ctrl.def}${ctrl.unit}</span>
+          </div>
+          <input type="range" id="input_${ctrl.id}" min="${ctrl.min}" max="${ctrl.max}" step="${ctrl.step}" value="${ctrl.def}" style="width:100%;cursor:pointer;">
+        `;
+        panel.appendChild(wrap);
+      });
+
+      const copyBtn = document.createElement('button');
+      copyBtn.innerText = 'Copy CSS Variables';
+      copyBtn.style.cssText = 'width:100%;background:#38bdf8;color:#010a2d;font-weight:bold;border:none;border-radius:6px;padding:8px;margin-top:10px;cursor:pointer;';
+      panel.appendChild(copyBtn);
+
+      document.body.appendChild(panel);
+
+      controls.forEach(ctrl => {
+        const input = document.getElementById(`input_${ctrl.id}`);
+        const valSpan = document.getElementById(`val_${ctrl.id}`);
+        input.addEventListener('input', (e) => {
+          const val = `${e.target.value}${ctrl.unit}`;
+          valSpan.textContent = val;
+          heroSection.style.setProperty(ctrl.var, val);
+        });
+      });
+
+      copyBtn.addEventListener('click', () => {
+        const lines = controls.map(ctrl => {
+          const val = document.getElementById(`val_${ctrl.id}`).textContent;
+          return `  ${ctrl.var}: ${val};`;
+        }).join('\n');
+        navigator.clipboard.writeText(lines).then(() => {
+          copyBtn.innerText = 'Copied to Clipboard!';
+          setTimeout(() => { copyBtn.innerText = 'Copy CSS Variables'; }, 2000);
+        });
+      });
+
+      document.getElementById('tuneCloseBtn').addEventListener('click', () => {
+        panel.remove();
+      });
+    }
+  }
 });
 
 

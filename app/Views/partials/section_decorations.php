@@ -25,13 +25,22 @@ if (empty($items)) {
         <?php
         $edgeMode   = $item['edge_offset_mode'] ?? 'fixed';
         $edgeOffset = ($edgeMode === 'custom') ? ((int)($item['edge_offset_percent'] ?? 50) . '%') : '50%';
+        
+        $hasPerspective = !empty($item['perspective_enabled']);
+        $perspVal = (int)($item['perspective_value'] ?? 800);
+        $rotX     = (float)($item['rotate_x'] ?? 0);
+        $rotY     = (float)($item['rotate_y'] ?? 0);
+        $perspStyle = $hasPerspective ? "--dec-persp: {$perspVal}px; --dec-rot-x: {$rotX}deg; --dec-rot-y: {$rotY}deg;" : '';
+        $perspClass = $hasPerspective ? 'has-perspective' : '';
         ?>
 
         <?php if ($layout === 'manual'): ?>
             <?php $posClass = 'pos-' . esc($item['position'] ?? 'middle-left'); ?>
-            <div class="decoration-item <?= $posClass ?> <?= $rotClass ?> <?= $mobClass ?>"
-                 style="--dec-width: <?= (int)($item['size_px'] ?? 200) ?>px; --dec-opacity: <?= esc($item['opacity'] ?? 1.0) ?>; --dec-edge-offset: <?= $edgeOffset ?>;">
-                <img src="<?= esc($item['image_url']) ?>" alt="" loading="lazy">
+            <div class="decoration-item <?= $posClass ?> <?= $rotClass ?> <?= $mobClass ?> <?= $perspClass ?>"
+                 style="--dec-width: <?= (int)($item['size_px'] ?? 200) ?>px; --dec-opacity: <?= esc($item['opacity'] ?? 1.0) ?>; --dec-edge-offset: <?= $edgeOffset ?>; <?= $perspStyle ?>">
+                <div class="decoration-inner-transform">
+                    <img src="<?= esc($item['image_url']) ?>" alt="" loading="lazy">
+                </div>
             </div>
         <?php else: ?>
             <div class="decoration-auto-group <?= $rotClass ?> <?= $mobClass ?>"

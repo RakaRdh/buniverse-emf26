@@ -15,13 +15,18 @@
   <meta property="og:image" content="<?= esc($ogImage) ?>">
   <meta property="og:type" content="website">
   
-  <!-- Google Fonts: Montserrat & Playfair Display -->
+  <!-- Google Fonts: Manrope & Playfair Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
   
+  <!-- Core Vanilla CSS -->
+  <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
+  <!-- Tailwind Perintilan CSS -->
+  <link rel="stylesheet" href="<?= base_url('assets/css/tailwind.css') ?>">
+
   <?php if (!empty($themeProperties)): ?>
-    <!-- Live Dynamic Theme CSS Custom Properties from BackendCMS -->
+    <!-- Live Dynamic Theme CSS Custom Properties from BackendCMS (Placed after style.css to override defaults) -->
     <style id="live-theme-properties">
       :root {
         <?php foreach ($themeProperties as $tp): ?>
@@ -30,11 +35,6 @@
       }
     </style>
   <?php endif; ?>
-
-  <!-- Core Vanilla CSS -->
-  <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
-  <!-- Tailwind Perintilan CSS -->
-  <link rel="stylesheet" href="<?= base_url('assets/css/tailwind.css') ?>">
 </head>
 <body>
 
@@ -58,8 +58,11 @@
     <!-- 6. Related News Section -->
     <?= $this->include('partials/related_news') ?>
 
-    <!-- 6.1 Highlights (YouTube) Section -->
-    <?= $this->include('partials/highlights') ?>
+    <!-- 6.1 Highlights (YouTube) Section (Commented Out per Request) -->
+    <?php /* <?= $this->include('partials/highlights') ?> */ ?>
+
+    <!-- 6.2 Live Streaming (YouTube Embed) Section -->
+    <?= $this->include('partials/livestream') ?>
 
     <!-- 7. Sponsor & Partners Section -->
     <?= $this->include('partials/sponsors') ?>
@@ -70,6 +73,17 @@
 
   <!-- 9. Speaker Detail Modal -->
   <?= $this->include('partials/speaker_modal') ?>
+
+  <!-- 9.1 Persistent Floating Bottom Action Bar -->
+  <?= $this->include('partials/floating_bottom') ?>
+
+  <!-- 10. Floating Back to Top Button -->
+  <button type="button" class="back-to-top-btn" id="backToTopBtn" aria-label="Kembali ke atas">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5"></line>
+      <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+  </button>
 
   <!-- Interactive JavaScript -->
   <script src="<?= base_url('assets/js/main.js') ?>"></script>

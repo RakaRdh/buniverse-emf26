@@ -17,6 +17,8 @@ class Home extends BaseController
         $schedule      = $mock->schedule;
         $gallery       = $mock->gallery;
         $relatedNews   = $this->fetchRelatedNewsFromApi() ?: [];
+        $relatedNewsBeritaSatu  = $relatedNews;
+        $relatedNewsJakartaGlobe = $relatedNews;
         $sponsors      = $mock->sponsors;
 
         $themeProperties    = [];
@@ -29,9 +31,9 @@ class Home extends BaseController
 
         // Attempt live synchronization with BackendCMS REST API
         $apiUrls = [
-            'http://localhost:8081/api/v1/event/active',
-            'http://127.0.0.1:8081/api/v1/event/active',
             'http://[::1]:8081/api/v1/event/active',
+            'http://127.0.0.1:8081/api/v1/event/active',
+            'http://localhost:8081/api/v1/event/active',
         ];
 
         foreach ($apiUrls as $apiUrl) {
@@ -268,8 +270,10 @@ class Home extends BaseController
             'schedule'           => $schedule,
             'gallery'            => $gallery,
             'galleryImages'      => $galleryImages,
-            'relatedNews'        => $relatedNews,
-            'sponsors'           => $sponsors,
+            'relatedNews'             => $relatedNews,
+            'relatedNewsBeritaSatu'   => $relatedNewsBeritaSatu,
+            'relatedNewsJakartaGlobe' => $relatedNewsJakartaGlobe,
+            'sponsors'                => $sponsors,
             'sponsorPartnership' => $sponsorPartnership,
             'sectionDecorations' => $sectionDecorations,
             'customPlacements'   => $customPlacements,
@@ -287,8 +291,9 @@ class Home extends BaseController
     private function fetchRelatedNewsFromApi(): ?array
     {
         $cacheKey = 'ids_related_news_api_v1';
-        if ($cached = cache($cacheKey)) {
-            return $cached;
+        $cached = cache($cacheKey);
+        if ($cached !== null) {
+            return !empty($cached) ? $cached : null;
         }
 
         $oldTimeout = ini_get('default_socket_timeout');
@@ -309,13 +314,14 @@ class Home extends BaseController
         ini_set('default_socket_timeout', $oldTimeout);
 
         if (!$response) {
-            cache()->save($cacheKey, [], 60);
+            // Cache failure for 3 minutes so page loads instantly without repeating 2s timeout
+            cache()->save($cacheKey, [], 180);
             return null;
         }
 
         $res = json_decode($response, true);
         if (empty($res)) {
-            cache()->save($cacheKey, [], 60);
+            cache()->save($cacheKey, [], 180);
             return null;
         }
 
