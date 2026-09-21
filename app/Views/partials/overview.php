@@ -11,7 +11,7 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
       <!-- Left Column: Editorial Logo & Intro -->
       <div class="editorial-left">
         <div class="editorial-logo">
-          <?php $aboutLogo = !empty($site['logo_a']) ? $site['logo_a'] : base_url('assets/img/logo_ids26.png'); ?>
+          <?php $aboutLogo = !empty($site['logo_a']) ? $site['logo_a'] : base_url('assets/img/logo_ids26.webp'); ?>
           <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title']) ?>" class="editorial-brand-logo">
         </div>
 

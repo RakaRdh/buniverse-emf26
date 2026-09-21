@@ -15,9 +15,9 @@ class MockData extends BaseConfig
         'dates'       => 'October 7th - 8th, 2026',
         'venue'       => 'Raffles Hotel, Jakarta',
         'ticket_url'  => '#tickets',
-        'logo_ids'    => 'logo_ids26.png',
+        'logo_ids'    => 'logo_ids26.webp',
         'logo_id'     => 'logo_id.png',
-        'hero_image'  => 'image1.png',
+        'hero_image'  => 'hero.jpeg',
     ];
 
     /**

@@ -38,7 +38,7 @@
                role="button"
                aria-label="Gallery photo <?= $i ?>">
             <div class="gallery-panel-inner">
-              <img src="<?= base_url("assets/img/gallery{$i}.svg") ?>" 
+              <img src="<?= base_url("assets/img/gallery{$i}.webp") ?>" 
                    alt="Investor Daily Summit Highlight <?= $i ?>" 
                    loading="lazy">
             </div>
