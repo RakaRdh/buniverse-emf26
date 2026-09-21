@@ -16,7 +16,7 @@ class Home extends BaseController
         $speakers      = $mock->speakers;
         $schedule      = $mock->schedule;
         $gallery       = $mock->gallery;
-        $relatedNews   = $mock->relatedNews;
+        $relatedNews   = $this->fetchRelatedNewsFromApi() ?: [];
         $sponsors      = $mock->sponsors;
 
         $themeProperties    = [];
@@ -25,12 +25,13 @@ class Home extends BaseController
         $sponsorPartnership = null;
         $sectionDecorations = [];
         $customPlacements   = [];
+        $seo                = [];
 
         // Attempt live synchronization with BackendCMS REST API
         $apiUrls = [
+            'http://localhost:8081/api/v1/event/active',
             'http://127.0.0.1:8081/api/v1/event/active',
             'http://[::1]:8081/api/v1/event/active',
-            'http://localhost:8081/api/v1/event/active',
         ];
 
         foreach ($apiUrls as $apiUrl) {
@@ -41,6 +42,11 @@ class Home extends BaseController
                     $json = json_decode($response->getBody(), true);
                     if (!empty($json['data'])) {
                         $live = $json['data'];
+
+                        // Sync SEO metadata
+                        if (!empty($live['seo'])) {
+                            $seo = $live['seo'];
+                        }
 
                         // Sync site metadata & branding
                         if (!empty($live['site'])) {
@@ -95,13 +101,13 @@ class Home extends BaseController
                         if (!empty($live['speakers']) && count($live['speakers']) > 0) {
                             $syncedSpeakers = [];
                             foreach ($live['speakers'] as $idx => $sp) {
-                                $slug = url_title($sp['name'], '-', true);
+                                $slug = !empty($sp['slug']) ? $sp['slug'] : url_title($sp['name'], '-', true);
                                 $syncedSpeakers[$slug] = [
                                     'id'       => $sp['id'],
                                     'slug'     => $slug,
                                     'name'     => $sp['name'],
                                     'role'     => $sp['role'],
-                                    'photo'    => $sp['photo'] ?: 'wowo.png',
+                                    'photo'    => $sp['photo'] ?: 'placeholder.png',
                                     'bio'      => $sp['bio'] ?? '',
                                     'featured' => ($idx < 4),
                                 ];
@@ -131,24 +137,119 @@ class Home extends BaseController
                         === END LEGACY SPONSORS SYNC === */
 
                         // Sync live schedule if available
-                        if (!empty($live['schedule']['days'])) {
-                            // Map days into day_1 and day_2 if needed
-                            $daysData = $live['schedule']['days'];
-                            if (isset($daysData[0])) {
-                                $schedule['day_1']['label'] = $daysData[0]['label'] ?? $schedule['day_1']['label'];
-                                if (!empty($daysData[0]['sessions'])) {
-                                    $schedule['day_1']['items'] = $daysData[0]['sessions'];
+                        if (!empty($live['schedule'])) {
+                            if (!empty($live['schedule']['day_1'])) {
+                                $schedule['day_1']['label'] = $live['schedule']['day_1']['label'] ?? ($schedule['day_1']['label'] ?? 'Day 1');
+                                if (!empty($live['schedule']['day_1']['sessions'])) {
+                                    $schedule['day_1']['items'] = $live['schedule']['day_1']['sessions'];
                                 }
                             }
-                            if (isset($daysData[1])) {
-                                $schedule['day_2']['label'] = $daysData[1]['label'] ?? $schedule['day_2']['label'];
-                                if (!empty($daysData[1]['sessions'])) {
-                                    $schedule['day_2']['items'] = $daysData[1]['sessions'];
+                            if (!empty($live['schedule']['day_2'])) {
+                                $schedule['day_2']['label'] = $live['schedule']['day_2']['label'] ?? ($schedule['day_2']['label'] ?? 'Day 2');
+                                if (!empty($live['schedule']['day_2']['sessions'])) {
+                                    $schedule['day_2']['items'] = $live['schedule']['day_2']['sessions'];
+                                }
+                            }
+                            if (!empty($live['schedule']['days'])) {
+                                $daysData = $live['schedule']['days'];
+                                if (isset($daysData[0])) {
+                                    $schedule['day_1']['label'] = $daysData[0]['label'] ?? $schedule['day_1']['label'];
+                                    if (!empty($daysData[0]['sessions'])) {
+                                        $schedule['day_1']['items'] = $daysData[0]['sessions'];
+                                    }
+                                }
+                                if (isset($daysData[1])) {
+                                    $schedule['day_2']['label'] = $daysData[1]['label'] ?? $schedule['day_2']['label'];
+                                    if (!empty($daysData[1]['sessions'])) {
+                                        $schedule['day_2']['items'] = $daysData[1]['sessions'];
+                                    }
                                 }
                             }
                         }
 
-                        // Successfully synced, break loop
+                        // Successfully synced
+                        // Normalize any assets/uploads URLs returned from BackendCMS (port 8081)
+                        // so they load directly from Frontend domain/tunnel without mixed content or localhost blocking
+                        $fixUrl = function ($url) {
+                            if (empty($url) || !is_string($url)) return $url;
+                            if (preg_match('#^https?://[^/]+/(assets/.*|uploads/.*)$#', $url, $m)) {
+                                return base_url($m[1]);
+                            }
+                            return $url;
+                        };
+
+                        if (!empty($seo['og_image'])) $seo['og_image'] = $fixUrl($seo['og_image']);
+                        if (!empty($seo['og_image_url'])) $seo['og_image_url'] = $fixUrl($seo['og_image_url']);
+                        if (!empty($site['logo_a'])) $site['logo_a'] = $fixUrl($site['logo_a']);
+                        if (!empty($site['logo_b'])) $site['logo_b'] = $fixUrl($site['logo_b']);
+                        if (!empty($site['logo_footer'])) $site['logo_footer'] = $fixUrl($site['logo_footer']);
+
+                        foreach ($heroCarousel as &$slide) {
+                            if (!empty($slide['image_url'])) $slide['image_url'] = $fixUrl($slide['image_url']);
+                        }
+                        unset($slide);
+
+                        foreach ($galleryImages as &$gal) {
+                            if (!empty($gal['image_url'])) $gal['image_url'] = $fixUrl($gal['image_url']);
+                        }
+                        unset($gal);
+
+                        if (!empty($sponsorPartnership['logo_url'])) {
+                            $sponsorPartnership['logo_url'] = $fixUrl($sponsorPartnership['logo_url']);
+                        }
+
+                        foreach ($speakers as &$spk) {
+                            if (!empty($spk['photo'])) $spk['photo'] = $fixUrl($spk['photo']);
+                        }
+                        unset($spk);
+
+                        foreach ($sectionDecorations as &$dec) {
+                            if (!empty($dec['image_url'])) $dec['image_url'] = $fixUrl($dec['image_url']);
+                        }
+                        unset($dec);
+
+                        foreach ($customPlacements as &$cp) {
+                            if (!empty($cp['image_url'])) $cp['image_url'] = $fixUrl($cp['image_url']);
+                        }
+                        unset($cp);
+
+                        if (!empty($schedule)) {
+                            foreach ($schedule as &$day) {
+                                if (empty($day['items'])) continue;
+                                foreach ($day['items'] as &$item) {
+                                    if (!empty($item['moderator']['photo'])) {
+                                        $item['moderator']['photo'] = $fixUrl($item['moderator']['photo']);
+                                    }
+                                    if (!empty($item['speakers'])) {
+                                        foreach ($item['speakers'] as &$spk) {
+                                            if (!empty($spk['photo'])) $spk['photo'] = $fixUrl($spk['photo']);
+                                        }
+                                        unset($spk);
+                                    }
+                                    if (!empty($item['rooms'])) {
+                                        foreach ($item['rooms'] as &$room) {
+                                            if (empty($room['sessions'])) continue;
+                                            foreach ($room['sessions'] as &$sub) {
+                                                if (!empty($sub['moderator']['photo'])) {
+                                                    $sub['moderator']['photo'] = $fixUrl($sub['moderator']['photo']);
+                                                }
+                                                if (!empty($sub['speakers'])) {
+                                                    foreach ($sub['speakers'] as &$spk) {
+                                                        if (!empty($spk['photo'])) $spk['photo'] = $fixUrl($spk['photo']);
+                                                    }
+                                                    unset($spk);
+                                                }
+                                            }
+                                            unset($sub);
+                                        }
+                                        unset($room);
+                                    }
+                                }
+                                unset($item);
+                            }
+                            unset($day);
+                        }
+
                         break;
                     }
                 }
@@ -172,8 +273,95 @@ class Home extends BaseController
             'sponsorPartnership' => $sponsorPartnership,
             'sectionDecorations' => $sectionDecorations,
             'customPlacements'   => $customPlacements,
+            'seo'                => $seo,
         ];
 
         return view('home', $data);
     }
+
+    /**
+     * Fetch related news from external B-Universe article API
+     * http://10.0.4.233/article/type=latest&num=20&tag=investor-daily-summit-2025&page=1
+     * Includes 3-second timeout, 5-minute cache, and normalized output format.
+     */
+    private function fetchRelatedNewsFromApi(): ?array
+    {
+        $cacheKey = 'ids_related_news_api_v1';
+        if ($cached = cache($cacheKey)) {
+            return $cached;
+        }
+
+        $oldTimeout = ini_get('default_socket_timeout');
+        ini_set('default_socket_timeout', 2);
+
+        $context = stream_context_create([
+            'http' => [
+                'timeout' => 2,
+            ]
+        ]);
+
+        $response = @file_get_contents(
+            'http://10.0.4.233/article/type=latest&num=20&tag=investor-daily-summit-2026&page=1',
+            false,
+            $context
+        );
+
+        ini_set('default_socket_timeout', $oldTimeout);
+
+        if (!$response) {
+            cache()->save($cacheKey, [], 60);
+            return null;
+        }
+
+        $res = json_decode($response, true);
+        if (empty($res)) {
+            cache()->save($cacheKey, [], 60);
+            return null;
+        }
+
+        // Support array of articles or wrapped object (e.g. data / articles / items)
+        $articles = [];
+        if (isset($res['data']) && is_array($res['data'])) {
+            $articles = $res['data'];
+        } elseif (isset($res['articles']) && is_array($res['articles'])) {
+            $articles = $res['articles'];
+        } elseif (isset($res['items']) && is_array($res['items'])) {
+            $articles = $res['items'];
+        } elseif (is_array($res)) {
+            $articles = $res;
+        }
+
+        if (empty($articles)) {
+            return null;
+        }
+
+        $normalized = [];
+        foreach ($articles as $idx => $item) {
+            $item = (array) $item;
+            $title = $item['title'] ?? $item['article_title'] ?? $item['post_title'] ?? '';
+            if (empty($title)) {
+                continue;
+            }
+
+            $url = $item['url'] ?? $item['link'] ?? $item['article_url'] ?? '#news-' . ($idx + 1);
+            $image = $item['image'] ?? $item['thumbnail'] ?? $item['image_url'] ?? $item['cover'] ?? $item['picture'] ?? 'image1.png';
+            $id = $item['id'] ?? $item['article_id'] ?? ($idx + 1);
+
+            $normalized[] = [
+                'id'    => $id,
+                'title' => $title,
+                'image' => $image,
+                'url'   => $url,
+            ];
+        }
+
+        if (!empty($normalized)) {
+            // Cache successful response for 5 minutes (300s) to keep page load instant
+            cache()->save($cacheKey, $normalized, 300);
+            return $normalized;
+        }
+
+        return null;
+    }
 }
+

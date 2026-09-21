@@ -33,10 +33,20 @@
       <!-- Day 1 Schedule -->
       <div class="day-schedule-content" data-day="day_1" style="display: block;">
         <div class="schedule-list">
-          <?php foreach ($schedule['day_1']['items'] as $item): ?>
+          <?php 
+          $hasOpenedSpeakerCard = false;
+          foreach ($schedule['day_1']['items'] as $item): 
+            $hasSpeakers = !empty($item['speaker_ids']) || (!empty($item['rooms']) && array_filter($item['rooms'], fn($r) => !empty($r['sessions'])));
+            $isDefaultOpen = false;
+            if ($hasSpeakers && !$hasOpenedSpeakerCard) {
+              $isDefaultOpen = true;
+              $hasOpenedSpeakerCard = true;
+            }
+          ?>
             <?= view('partials/schedule/schedule_item', [
-              'item'        => $item,
-              'allSpeakers' => $speakers
+              'item'          => $item,
+              'allSpeakers'   => $speakers,
+              'isDefaultOpen' => $isDefaultOpen,
             ]) ?>
           <?php endforeach; ?>
         </div>
@@ -45,10 +55,20 @@
       <!-- Day 2 Schedule -->
       <div class="day-schedule-content" data-day="day_2" style="display: none;">
         <div class="schedule-list">
-          <?php foreach ($schedule['day_2']['items'] as $item): ?>
+          <?php 
+          $hasOpenedSpeakerCard2 = false;
+          foreach ($schedule['day_2']['items'] as $item): 
+            $hasSpeakers2 = !empty($item['speaker_ids']) || (!empty($item['rooms']) && array_filter($item['rooms'], fn($r) => !empty($r['sessions'])));
+            $isDefaultOpen2 = false;
+            if ($hasSpeakers2 && !$hasOpenedSpeakerCard2) {
+              $isDefaultOpen2 = true;
+              $hasOpenedSpeakerCard2 = true;
+            }
+          ?>
             <?= view('partials/schedule/schedule_item', [
-              'item'        => $item,
-              'allSpeakers' => $speakers
+              'item'          => $item,
+              'allSpeakers'   => $speakers,
+              'isDefaultOpen' => $isDefaultOpen2,
             ]) ?>
           <?php endforeach; ?>
         </div>

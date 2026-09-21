@@ -2,7 +2,10 @@
 /**
  * Inline SpeakerCard component for Schedule rows
  */
-$photoUrl = $speaker['photo'] ?? 'wowo.png';
+$photoUrl = $speaker['photo'] ?? 'placeholder.png';
+if (empty($photoUrl)) {
+    $photoUrl = 'placeholder.png';
+}
 if (!str_starts_with($photoUrl, 'http')) {
     $photoUrl = base_url('assets/img/' . ltrim($photoUrl, '/'));
 }

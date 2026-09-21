@@ -5,8 +5,9 @@
  * $allSpeakers: dictionary of speakers keyed by slug
  */
 $isMultiRoom = !empty($item['is_multi_room']) && !empty($item['rooms']);
+$activeClass = !empty($isDefaultOpen) ? 'active' : '';
 ?>
-<div class="schedule-row <?= !empty($item['is_break']) ? 'is-break' : '' ?> <?= $isMultiRoom ? 'is-multi-room-row' : '' ?>">
+<div class="schedule-row <?= !empty($item['is_break']) ? 'is-break' : '' ?> <?= $isMultiRoom ? 'is-multi-room-row' : '' ?> <?= $activeClass ?>">
   
   <!-- Left Column: Time with clock icon -->
   <div class="schedule-meta-col">
@@ -54,10 +55,18 @@ $isMultiRoom = !empty($item['is_multi_room']) && !empty($item['rooms']);
                   <?php endif; ?>
 
                   <!-- Moderator if any -->
-                  <?php if (!empty($subSession['moderator'])): ?>
+                  <?php if (!empty($subSession['moderator'])): 
+                    $subModPhoto = $subSession['moderator']['photo'] ?? 'placeholder.png';
+                    if (empty($subModPhoto)) {
+                        $subModPhoto = 'placeholder.png';
+                    }
+                    if (!str_starts_with($subModPhoto, 'http')) {
+                        $subModPhoto = base_url('assets/img/' . ltrim($subModPhoto, '/'));
+                    }
+                  ?>
                     <div class="moderator-row">
                       <div class="moderator-photo">
-                        <img src="<?= base_url('assets/img/' . esc($subSession['moderator']['photo'])) ?>" alt="<?= esc($subSession['moderator']['name']) ?>" loading="lazy">
+                        <img src="<?= esc($subModPhoto) ?>" alt="<?= esc($subSession['moderator']['name']) ?>" loading="lazy">
                       </div>
                       <div class="moderator-text">
                         <div class="moderator-label"><?= esc($subSession['moderator']['label']) ?></div>
@@ -105,10 +114,18 @@ $isMultiRoom = !empty($item['is_multi_room']) && !empty($item['rooms']);
       <?php endif; ?>
 
       <!-- Optional Moderator -->
-      <?php if (!empty($item['moderator'])): ?>
+      <?php if (!empty($item['moderator'])): 
+        $singleModPhoto = $item['moderator']['photo'] ?? 'placeholder.png';
+        if (empty($singleModPhoto)) {
+            $singleModPhoto = 'placeholder.png';
+        }
+        if (!str_starts_with($singleModPhoto, 'http')) {
+            $singleModPhoto = base_url('assets/img/' . ltrim($singleModPhoto, '/'));
+        }
+      ?>
         <div class="moderator-row">
           <div class="moderator-photo">
-            <img src="<?= base_url('assets/img/' . esc($item['moderator']['photo'])) ?>" alt="<?= esc($item['moderator']['name']) ?>" loading="lazy">
+            <img src="<?= esc($singleModPhoto) ?>" alt="<?= esc($item['moderator']['name']) ?>" loading="lazy">
           </div>
           <div class="moderator-text">
             <div class="moderator-label"><?= esc($item['moderator']['label']) ?></div>

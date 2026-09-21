@@ -60,12 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Accordion Gallery Interaction (§User Request & Screenshot)
-  // - Desktop: Hover expands card and shows color, others stay B&W.
-  // - When hover leaves the section, the last hovered card remains expanded and colored!
-  // - Mobile: tap/click triggers expansion
+  // 3. Accordion Gallery Interaction
+  // - Desktop (>768px): Hover expands card and shows color, others stay B&W.
+  // - Mobile/Tablet (<=768px): Accordion layout with smooth auto-open sequence and tap-to-expand.
   const galleryPanels = document.querySelectorAll('.gallery-panel');
+
   if (galleryPanels.length > 0) {
+    const isMobile = () => window.innerWidth <= 768;
+
     const activatePanel = (panel) => {
       galleryPanels.forEach(p => p.classList.remove('active'));
       panel.classList.add('active');
@@ -74,21 +76,47 @@ document.addEventListener('DOMContentLoaded', () => {
     galleryPanels.forEach(panel => {
       // Desktop: mouseenter activates panel
       panel.addEventListener('mouseenter', () => {
-        activatePanel(panel);
+        if (!isMobile()) {
+          activatePanel(panel);
+        }
       });
 
-      // Mobile & accessibility: click/tap activates panel
+      // Click / tap (works on both mobile and desktop)
       panel.addEventListener('click', () => {
         activatePanel(panel);
+        resetAutoTimer();
       });
 
       panel.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           activatePanel(panel);
+          resetAutoTimer();
         }
       });
     });
+
+    // Auto-open sequence: every 4 seconds, expand next accordion panel automatically
+    let currentAutoIndex = 0;
+    let autoInterval = null;
+
+    const startAutoSequence = () => {
+      if (autoInterval) clearInterval(autoInterval);
+      autoInterval = setInterval(() => {
+        currentAutoIndex = (currentAutoIndex + 1) % galleryPanels.length;
+        activatePanel(galleryPanels[currentAutoIndex]);
+      }, 4000);
+    };
+
+    const resetAutoTimer = () => {
+      if (autoInterval) {
+        clearInterval(autoInterval);
+        startAutoSequence();
+      }
+    };
+
+    // Initialize auto sequence if section is present
+    startAutoSequence();
   }
 
   // 4. Mobile Nav Toggle
@@ -438,7 +466,168 @@ document.addEventListener('DOMContentLoaded', () => {
       autoDecorationGroups.forEach(layoutAutoGroup);
     });
   }
+
+  // 12. Schedule Row Accordion (Gambar 5: Maksimal 1 Card Aktif)
+  const scheduleRows = document.querySelectorAll('.schedule-row');
+  scheduleRows.forEach(row => {
+    // Make sure rows with speakers can be toggled
+    const speakerGrid = row.querySelector('.plenary-speaker-grid');
+    if (!speakerGrid) return;
+
+    row.addEventListener('click', (e) => {
+      // Don't toggle if clicking directly on a speaker card to open modal
+      if (e.target.closest('.speaker-card')) return;
+
+      const isMobile = window.innerWidth <= 768;
+      if (!isMobile) return;
+
+      const isActive = row.classList.contains('active');
+
+      // Close ALL open schedule rows first (Ensures max 1 card is open)
+      scheduleRows.forEach(r => r.classList.remove('active'));
+
+      // If it wasn't active before, open this one
+      if (!isActive) {
+        row.classList.add('active');
+      }
+    });
+  });
+
+  // 13. Highlights Section: Fetch 3 Fixed YouTube Videos via YouTube Data API v3
+  const initHighlightsSection = async () => {
+    const highlightsGrid = document.getElementById('highlightsGrid');
+    if (!highlightsGrid) return;
+
+    const API_KEY = 'AIzaSyAZjlB9xf0R-SjsRrOqnLHjuRJ0sbU3sds';
+    const HASHTAG = '#investordailysummit';
+    const CACHE_KEY = 'ids_highlights_yt_videos_v1';
+    const CACHE_TTL_MS = 60 * 60 * 1000; // 1 Jam Cache
+
+    // Fallback static videos in case API quota is reached or network is offline
+    const fallbackVideos = [
+      {
+        videoId: 'BCq3ycyxkf4',
+        title: 'Jakarta Tawarkan 37 proyek senilai US$7 M di U20 Mayors Summit 2026',
+        thumbnail: 'https://i.ytimg.com/vi/BCq3ycyxkf4/hqdefault.jpg',
+        videoUrl: 'https://www.youtube.com/watch?v=BCq3ycyxkf4'
+      },
+      {
+        videoId: 'svEJI3ph_VI',
+        title: 'Kiprah Indonesia Dalam Peta Ekonomi Dunia | Investor Daily Summit',
+        thumbnail: 'https://i.ytimg.com/vi/svEJI3ph_VI/hqdefault.jpg',
+        videoUrl: 'https://www.youtube.com/watch?v=svEJI3ph_VI'
+      },
+      {
+        videoId: 'dtIBlTHtotk',
+        title: 'Special Remarks & Solek Negeri Pikat Investasi | Investor Daily Summit',
+        thumbnail: 'https://i.ytimg.com/vi/dtIBlTHtotk/hqdefault.jpg',
+        videoUrl: 'https://www.youtube.com/watch?v=dtIBlTHtotk'
+      }
+    ];
+
+    const renderVideos = (videos) => {
+      // Ensure exactly 3 videos are displayed
+      const itemsToRender = (videos && videos.length >= 3) ? videos.slice(0, 3) : fallbackVideos.slice(0, 3);
+      highlightsGrid.innerHTML = '';
+
+      itemsToRender.forEach(v => {
+        const card = document.createElement('article');
+        card.className = 'highlights-card';
+        card.innerHTML = `
+          <a href="${v.videoUrl}" target="_blank" rel="noopener noreferrer" class="highlights-card-inner" title="${escapeHtml(v.title)}">
+            <div class="highlights-thumb-wrap">
+              <div class="highlights-thumb-bg" style="background-image: url('${v.thumbnail}');"></div>
+              <div class="highlights-play-badge" aria-hidden="true">
+                <svg viewBox="0 0 68 48" width="52" height="36" class="yt-play-svg">
+                  <path class="yt-play-bg" d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"></path>
+                  <path d="M 45,24 27,14 27,34" fill="#FFFFFF"></path>
+                </svg>
+              </div>
+              <div class="highlights-title-embedded">
+                <span class="highlights-title-text">${escapeHtml(v.title)}</span>
+              </div>
+            </div>
+          </a>
+        `;
+        highlightsGrid.appendChild(card);
+      });
+    };
+
+    const escapeHtml = (str) => {
+      if (!str) return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    };
+
+    // Check localStorage cache
+    try {
+      const cachedDataStr = localStorage.getItem(CACHE_KEY);
+      if (cachedDataStr) {
+        const cachedObj = JSON.parse(cachedDataStr);
+        if (cachedObj && cachedObj.timestamp && (Date.now() - cachedObj.timestamp < CACHE_TTL_MS)) {
+          if (Array.isArray(cachedObj.videos) && cachedObj.videos.length >= 3) {
+            renderVideos(cachedObj.videos);
+            return;
+          }
+        }
+      }
+    } catch (e) {
+      // LocalStorage access restricted or invalid, proceed to fetch
+    }
+
+    // Fetch from YouTube Data API v3
+    try {
+      const encodedQuery = encodeURIComponent(HASHTAG);
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodedQuery}&type=video&maxResults=6&key=${API_KEY}`;
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`YouTube API returned status ${response.status}`);
+      }
+      const data = await response.json();
+
+      if (data && Array.isArray(data.items) && data.items.length > 0) {
+        const videos = data.items
+          .filter(item => item.id && item.id.videoId)
+          .map(item => ({
+            videoId: item.id.videoId,
+            title: item.snippet.title,
+            channelTitle: item.snippet.channelTitle,
+            publishedAt: item.snippet.publishedAt,
+            thumbnail: (item.snippet.thumbnails.high && item.snippet.thumbnails.high.url) || 
+                       (item.snippet.thumbnails.medium && item.snippet.thumbnails.medium.url) || 
+                       (item.snippet.thumbnails.default && item.snippet.thumbnails.default.url),
+            videoUrl: `https://www.youtube.com/watch?v=${item.id.videoId}`
+          }));
+
+        if (videos.length >= 3) {
+          try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify({
+              timestamp: Date.now(),
+              videos: videos
+            }));
+          } catch (e) {}
+
+          renderVideos(videos);
+          return;
+        }
+      }
+
+      // If items count < 3, use fallback
+      renderVideos(fallbackVideos);
+    } catch (error) {
+      console.warn('YouTube Highlights API fetch error, rendering fallback videos:', error);
+      renderVideos(fallbackVideos);
+    }
+  };
+
+  initHighlightsSection();
 });
+
 
 
 

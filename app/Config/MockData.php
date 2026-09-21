@@ -45,7 +45,7 @@ class MockData extends BaseConfig
             'slug'     => 'enggartiasto-lukita',
             'name'     => 'Enggartiasto Lukita',
             'role'     => 'Executive Chairman B-Universe',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'rosan-roeslani' => [
@@ -53,7 +53,7 @@ class MockData extends BaseConfig
             'slug'     => 'rosan-roeslani',
             'name'     => 'Rosan Roeslani',
             'role'     => 'Minister of Investment and Downstream Industry/Head of Investment Coordinating Board',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => true
         ],
         'prabowo-subianto' => [
@@ -61,7 +61,7 @@ class MockData extends BaseConfig
             'slug'     => 'prabowo-subianto',
             'name'     => 'Prabowo Subianto',
             'role'     => 'President of The Republic of Indonesia',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => true
         ],
         'hashim-djojohadikusumo' => [
@@ -69,7 +69,7 @@ class MockData extends BaseConfig
             'slug'     => 'hashim-djojohadikusumo',
             'name'     => 'Hashim Djojohadikusumo',
             'role'     => 'Special Envoy of the President of The Republic of Indonesia for Climate and Energy',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => true
         ],
         'bahlil-lahadalia' => [
@@ -77,7 +77,7 @@ class MockData extends BaseConfig
             'slug'     => 'bahlil-lahadalia',
             'name'     => 'Bahlil Lahadalia',
             'role'     => 'Minister of Energy and Mineral Resources of the Republic of Indonesia',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => true
         ],
         'simon-aloysius-mantiri' => [
@@ -85,7 +85,7 @@ class MockData extends BaseConfig
             'slug'     => 'simon-aloysius-mantiri',
             'name'     => 'Simon Aloysius Mantiri',
             'role'     => 'President Director PT Pertamina (Persero)',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'darmawan-prasodjo' => [
@@ -93,7 +93,7 @@ class MockData extends BaseConfig
             'slug'     => 'darmawan-prasodjo',
             'name'     => 'Darmawan Prasodjo',
             'role'     => 'President Director PT PLN (Persero)',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'bernardus-imanto' => [
@@ -101,7 +101,7 @@ class MockData extends BaseConfig
             'slug'     => 'bernardus-imanto',
             'name'     => 'Bernardus Imanto',
             'role'     => 'President Director PT Vale Indonesia Tbk',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'tony-wenas' => [
@@ -109,7 +109,7 @@ class MockData extends BaseConfig
             'slug'     => 'tony-wenas',
             'name'     => 'Tony Wenas',
             'role'     => 'President Director PT Freeport Indonesia',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'rachmat-makkasau' => [
@@ -117,7 +117,7 @@ class MockData extends BaseConfig
             'slug'     => 'rachmat-makkasau',
             'name'     => 'Rachmat Makkasau',
             'role'     => 'President Director PT Amman Mineral Nusa Tenggara',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'iwan-dewono-budiyuwono' => [
@@ -125,7 +125,7 @@ class MockData extends BaseConfig
             'slug'     => 'iwan-dewono-budiyuwono',
             'name'     => 'Iwan Dewono Budiyuwono',
             'role'     => 'President Director PT Alamtri Resources Indonesia Tbk',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'pramono-anung' => [
@@ -133,7 +133,7 @@ class MockData extends BaseConfig
             'slug'     => 'pramono-anung',
             'name'     => 'Pramono Anung',
             'role'     => 'Governor of Jakarta',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => true
         ],
         'airlangga-hartarto' => [
@@ -141,7 +141,7 @@ class MockData extends BaseConfig
             'slug'     => 'airlangga-hartarto',
             'name'     => 'Airlangga Hartarto',
             'role'     => 'Coordinating Minister for Economic Affairs',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => true
         ],
         'purbaya-yudhi-sadewa' => [
@@ -149,7 +149,7 @@ class MockData extends BaseConfig
             'slug'     => 'purbaya-yudhi-sadewa',
             'name'     => 'Purbaya Yudhi Sadewa',
             'role'     => 'Chairman of the Board of Commissioners LPS',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'rizki-nauli-siregar' => [
@@ -157,7 +157,7 @@ class MockData extends BaseConfig
             'slug'     => 'rizki-nauli-siregar',
             'name'     => 'Dr. Rizki Nauli Siregar',
             'role'     => 'Economist, Institute for Economic and Social Research (LPEM FEB UI)',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'kiki-verico' => [
@@ -165,7 +165,7 @@ class MockData extends BaseConfig
             'slug'     => 'kiki-verico',
             'name'     => 'Kiki Verico ,S.E., MRI., Ph.D',
             'role'     => 'Associate Professor of International Economics & Vice Dean FEB UI',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'talitha-chairunissa' => [
@@ -173,7 +173,7 @@ class MockData extends BaseConfig
             'slug'     => 'talitha-chairunissa',
             'name'     => 'Talitha Chairunissa',
             'role'     => 'Economist and Public Policy Expert',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'sri-mulyani' => [
@@ -181,7 +181,7 @@ class MockData extends BaseConfig
             'slug'     => 'sri-mulyani',
             'name'     => 'Sri Mulyani Indrawati',
             'role'     => 'Minister of Finance of The Republic of Indonesia',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => true
         ],
         'erick-thohir' => [
@@ -189,7 +189,7 @@ class MockData extends BaseConfig
             'slug'     => 'erick-thohir',
             'name'     => 'Erick Thohir',
             'role'     => 'Minister of State-Owned Enterprises',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => true
         ],
         'luhut-binsar' => [
@@ -197,7 +197,7 @@ class MockData extends BaseConfig
             'slug'     => 'luhut-binsar',
             'name'     => 'Luhut Binsar Pandjaitan',
             'role'     => 'Chairman of the National Economic Council',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => true
         ],
         'agus-harimurti' => [
@@ -205,7 +205,7 @@ class MockData extends BaseConfig
             'slug'     => 'agus-harimurti',
             'name'     => 'Agus Harimurti Yudhoyono',
             'role'     => 'Coordinating Minister for Infrastructure & Regional Development',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'zulkifli-hasan' => [
@@ -213,7 +213,7 @@ class MockData extends BaseConfig
             'slug'     => 'zulkifli-hasan',
             'name'     => 'Zulkifli Hasan',
             'role'     => 'Coordinating Minister for Food Affairs',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'suahasil-nazara' => [
@@ -221,7 +221,7 @@ class MockData extends BaseConfig
             'slug'     => 'suahasil-nazara',
             'name'     => 'Suahasil Nazara',
             'role'     => 'Vice Minister of Finance of Indonesia',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'thomas-djiwandono' => [
@@ -229,7 +229,7 @@ class MockData extends BaseConfig
             'slug'     => 'thomas-djiwandono',
             'name'     => 'Thomas Djiwandono',
             'role'     => 'Vice Minister of Finance of Indonesia',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'perry-warjiyo' => [
@@ -237,7 +237,7 @@ class MockData extends BaseConfig
             'slug'     => 'perry-warjiyo',
             'name'     => 'Perry Warjiyo',
             'role'     => 'Governor of Bank Indonesia',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => true
         ],
         'mahendra-siregar' => [
@@ -245,7 +245,7 @@ class MockData extends BaseConfig
             'slug'     => 'mahendra-siregar',
             'name'     => 'Mahendra Siregar',
             'role'     => 'Chairman of Board of Commissioners Otoritas Jasa Keuangan (OJK)',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'iman-rachman' => [
@@ -253,7 +253,7 @@ class MockData extends BaseConfig
             'slug'     => 'iman-rachman',
             'name'     => 'Iman Rachman',
             'role'     => 'President Director Indonesia Stock Exchange (IDX)',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'anindya-bakrie' => [
@@ -261,7 +261,7 @@ class MockData extends BaseConfig
             'slug'     => 'anindya-bakrie',
             'name'     => 'Anindya Bakrie',
             'role'     => 'Chairman of the Indonesian Chamber of Commerce and Industry (KADIN)',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'arsjad-rasjid' => [
@@ -269,7 +269,7 @@ class MockData extends BaseConfig
             'slug'     => 'arsjad-rasjid',
             'name'     => 'Arsjad Rasjid',
             'role'     => 'President Director PT Indika Energy Tbk',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'shinta-kamdani' => [
@@ -277,7 +277,7 @@ class MockData extends BaseConfig
             'slug'     => 'shinta-kamdani',
             'name'     => 'Shinta Widjaja Kamdani',
             'role'     => 'Chairwoman of the Indonesian Employers Association (APINDO)',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'pandu-sjahrir' => [
@@ -285,7 +285,7 @@ class MockData extends BaseConfig
             'slug'     => 'pandu-sjahrir',
             'name'     => 'Pandu Patria Sjahrir',
             'role'     => 'Founding Partner AC Ventures & Chairman AFTECH',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'garibaldi-thohir' => [
@@ -293,7 +293,7 @@ class MockData extends BaseConfig
             'slug'     => 'garibaldi-thohir',
             'name'     => 'Garibaldi Thohir',
             'role'     => 'President Director PT Adaro Energy Indonesia Tbk',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'anggito-abimanyu' => [
@@ -301,7 +301,7 @@ class MockData extends BaseConfig
             'slug'     => 'anggito-abimanyu',
             'name'     => 'Anggito Abimanyu',
             'role'     => 'Chairman of the Board of Commissioners Indonesia Deposit Insurance Corporation',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'ngurah-wirawan' => [
@@ -309,7 +309,7 @@ class MockData extends BaseConfig
             'slug'     => 'ngurah-wirawan',
             'name'     => 'Ngurah Wirawan',
             'role'     => 'President Director Danantara Industrial Estate',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'suryo-pratomo' => [
@@ -317,7 +317,7 @@ class MockData extends BaseConfig
             'slug'     => 'suryo-pratomo',
             'name'     => 'Suryo Pratomo',
             'role'     => 'President Director PT Gajah Tunggal Tbk',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'setyono-djuandi-darmono' => [
@@ -325,7 +325,7 @@ class MockData extends BaseConfig
             'slug'     => 'setyono-djuandi-darmono',
             'name'     => 'Setyono Djuandi Darmono',
             'role'     => 'President Director PT Kawasan Industri Jababeka Tbk (KIJA)',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'edi-rivai' => [
@@ -333,7 +333,7 @@ class MockData extends BaseConfig
             'slug'     => 'edi-rivai',
             'name'     => "Edi Riva'i",
             'role'     => 'Director of Legal, External Affairs & Circular Economy PT Chandra Asri Pacific Tbk',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
         'indrieffouny-indra' => [
@@ -341,7 +341,7 @@ class MockData extends BaseConfig
             'slug'     => 'indrieffouny-indra',
             'name'     => 'Indrieffouny Indra',
             'role'     => 'President Director PT Semen Indonesia (Persero) Tbk',
-            'photo'    => 'wowo.png',
+            'photo'    => 'speakers.png',
             'featured' => false
         ],
     ];
@@ -443,7 +443,7 @@ class MockData extends BaseConfig
                         'label' => 'MOD:',
                         'name'  => 'Djaka Susila',
                         'role'  => 'Editor In Chief - Integrated Investor',
-                        'photo' => 'wowo.png'
+                        'photo'    => 'speakers.png'
                     ],
                     'speaker_ids' => [
                         'simon-aloysius-mantiri',
@@ -490,7 +490,7 @@ class MockData extends BaseConfig
                                         'label' => 'MOD:',
                                         'name'  => 'Nasori Ahmad',
                                         'role'  => 'Managing Editor Investor Daily',
-                                        'photo' => 'wowo.png'
+                                        'photo'    => 'speakers.png'
                                     ],
                                     'speaker_ids' => [
                                         'ngurah-wirawan',
@@ -535,7 +535,7 @@ class MockData extends BaseConfig
                         'label' => 'MOD:',
                         'name'  => 'Djaka Susila',
                         'role'  => 'Editor In Chief - Integrated Investor',
-                        'photo' => 'wowo.png'
+                        'photo'    => 'speakers.png'
                     ],
                     'speaker_ids' => [
                         'enggartiasto-lukita',

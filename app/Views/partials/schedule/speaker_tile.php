@@ -3,7 +3,10 @@
  * Standalone SpeakerTile for SPEAKERS tab grid (§9A Option A)
  * Displays portrait edge-to-edge + Name and Role beneath
  */
-$photoUrl = $speaker['photo'] ?? 'wowo.png';
+$photoUrl = $speaker['photo'] ?? 'placeholder.png';
+if (empty($photoUrl)) {
+    $photoUrl = 'placeholder.png';
+}
 if (!str_starts_with($photoUrl, 'http')) {
     $photoUrl = base_url('assets/img/' . ltrim($photoUrl, '/'));
 }
