@@ -182,6 +182,17 @@ button {
   flex-shrink: 0;
 }
 
+.brand-logo-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.brand-logo-link:hover {
+  opacity: 0.85;
+}
+
 .brand-logo-ids {
   height: 38px;
   width: auto;
@@ -457,7 +468,7 @@ button {
   width: 620px;
   height: 440px;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0; /* Behind the editorial-grid text on desktop */
 
   /* Gap antar strip dicomment out agar menyatu tanpa celah */
   /* --strip-gap: 14px; */
@@ -475,8 +486,8 @@ button {
   width: 423px;
   height: 421px;
   clip-path: polygon(306px 0, 423px 0, 117px 100%, 0 100%);
-  -webkit-mask-image: linear-gradient(36deg, #000000 34px, transparent 456px);
-  mask-image: linear-gradient(36deg, #000000 34px, transparent 456px);
+  -webkit-mask-image: linear-gradient(to top, #000000 15%, rgba(0, 0, 0, 0.75) 45%, rgba(0, 0, 0, 0.35) 70%, transparent 100%);
+  mask-image: linear-gradient(to top, #000000 15%, rgba(0, 0, 0, 0.75) 45%, rgba(0, 0, 0, 0.35) 70%, transparent 100%);
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   overflow: hidden;
@@ -497,16 +508,14 @@ button {
 
 @media (max-width: 1024px) {
   .editorial-wave-mask-wrap {
-    opacity: 0.4;
-    transform: scale(0.8);
+    opacity: 0.6;
+    transform: scale(0.85);
     transform-origin: bottom left;
   }
 }
 
 @media (max-width: 768px) {
-  .editorial-wave-mask-wrap {
-    display: none !important;
-  }
+  /* Mobile styling handled in Responsive section below */
 }
 
 .editorial-right {
@@ -530,6 +539,8 @@ button {
   gap: 20px;
   max-width: 573px;
   width: 100%;
+  position: relative;
+  z-index: 3;
 }
 
 .editorial-paragraphs p {
@@ -2117,6 +2128,41 @@ button {
   }
 }
 
+/* Intermediate Tablet Landscape / Small Desktop (e.g. 1072px x 1274px) */
+@media (max-width: 1199px) {
+  .plenary-speaker-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .multi-room-card {
+    padding: 24px 20px;
+  }
+
+  .speaker-card {
+    padding: 12px 14px;
+    gap: 12px;
+    min-height: 100px;
+  }
+
+  .speaker-photo-wrap {
+    width: 62px;
+    height: 62px;
+  }
+
+  .speaker-name {
+    font-size: 14.5px;
+    line-height: 1.3;
+    word-break: normal;
+    overflow-wrap: break-word;
+  }
+
+  .speaker-role {
+    font-size: 11px;
+    line-height: 1.35;
+  }
+}
+
 @media (max-width: 768px) {
   :root {
     --container-padding: 16px !important;
@@ -2163,30 +2209,57 @@ button {
     border: none;
     cursor: pointer;
     padding: 6px;
+    transition: transform 0.25s ease;
+  }
+
+  .nav-toggle:active {
+    transform: scale(0.92);
   }
 
   .nav-toggle-icon {
     width: 26px;
     height: 18px;
     display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .nav-toggle.open .nav-toggle-icon {
+    transform: rotate(90deg);
   }
 
   .site-nav {
-    display: none;
+    display: flex;
     position: absolute;
     top: 100%;
     left: 0;
     width: 100%;
-    background-color: var(--bg-section-alt);
+    background-color: rgba(1, 10, 45, 0.98);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     flex-direction: column;
-    padding: 24px 20px;
+    padding: 0 20px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    visibility: hidden;
     gap: 16px;
-    border-bottom: 1px solid var(--border-divider);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
+    border-bottom: 1px solid transparent;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+    transform: translateY(-8px);
+    transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                opacity 0.28s ease, 
+                transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), 
+                padding 0.35s ease, 
+                visibility 0.35s;
   }
 
   .site-nav.open {
-    display: flex;
+    max-height: 520px;
+    opacity: 1;
+    visibility: visible;
+    padding: 24px 20px 28px 20px;
+    transform: translateY(0);
+    border-bottom-color: var(--border-divider);
   }
 
   /* --------------------------------------------------------------------------
@@ -2323,15 +2396,15 @@ button {
   }
 
   .editorial-right .topic-badge {
-    width: auto;
-    min-width: 0;
-    max-width: 100%;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
     font-size: 13.5px;
     font-weight: 800;
     letter-spacing: 0.6px;
-    padding: 10px 20px;
+    padding: 12px 16px;
     margin-bottom: 22px;
-    align-self: flex-start;
     box-sizing: border-box;
     text-align: center;
   }
@@ -2339,6 +2412,8 @@ button {
   .editorial-paragraphs {
     max-width: 100%;
     gap: 16px;
+    position: relative;
+    z-index: 3;
   }
 
   .editorial-paragraphs p {
@@ -2346,10 +2421,38 @@ button {
     line-height: 1.65;
     color: rgba(255, 255, 255, 0.88);
     text-align: left;
+    position: relative;
+    z-index: 3;
   }
 
+  .editorial-section {
+    position: relative;
+    padding: 45px 0 250px 0; /* Extra bottom padding so text doesn't overlap the bottom-anchored collage */
+    overflow: hidden;
+  }
+
+  .editorial-section > .container {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+  }
+
+  /* Mobile: Anchored directly to the very bottom of the section, aligned center */
   .editorial-wave-mask-wrap {
-    display: none !important;
+    display: block !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    margin: 0 !important;
+    transform: translateX(-50%) scale(0.68) !important;
+    transform-origin: bottom center !important;
+    width: 620px !important;
+    height: 420px !important;
+    opacity: 0.95;
+    z-index: 1 !important;
+    pointer-events: none;
   }
 
   /* --------------------------------------------------------------------------
@@ -2357,7 +2460,10 @@ button {
      -------------------------------------------------------------------------- */
   .tabs-container {
     margin-bottom: 28px;
-    width: 100%;
+    margin-left: calc(-1 * var(--container-padding, 16px));
+    margin-right: calc(-1 * var(--container-padding, 16px));
+    width: calc(100% + (2 * var(--container-padding, 16px)));
+    max-width: none;
   }
 
   .main-tabs {
@@ -2689,7 +2795,8 @@ button {
 .decoration-item {
   position: absolute;
   width: var(--dec-width, 200px);
-  height: auto;
+  height: var(--dec-width, 200px);
+  aspect-ratio: 1 / 1;
   opacity: var(--dec-opacity, 1);
   display: flex;
   align-items: center;
@@ -2699,9 +2806,17 @@ button {
   transition: opacity 0.3s ease;
 }
 
+.decoration-inner-transform {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .decoration-item img {
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: contain;
   display: block;
 }
@@ -2757,12 +2872,33 @@ button {
 }
 
 .decoration-item.is-rotating.rot-clockwise img,
-.decoration-auto-item.is-rotating.rot-clockwise img {
+.decoration-item.is-rotating.rot-clockwise .decoration-tint-mask,
+.decoration-auto-item.is-rotating.rot-clockwise img,
+.decoration-auto-item.is-rotating.rot-clockwise .decoration-tint-mask {
   animation: spin-cw 35s linear infinite;
 }
 .decoration-item.is-rotating.rot-counter-clockwise img,
-.decoration-auto-item.is-rotating.rot-counter-clockwise img {
+.decoration-item.is-rotating.rot-counter-clockwise .decoration-tint-mask,
+.decoration-auto-item.is-rotating.rot-counter-clockwise img,
+.decoration-auto-item.is-rotating.rot-counter-clockwise .decoration-tint-mask {
   animation: spin-ccw 35s linear infinite;
+}
+
+/* Mask-image Color Tinting Engine */
+.decoration-tint-mask {
+  display: block;
+  background-color: var(--tint-color, #c5a880);
+  -webkit-mask-image: var(--mask-url);
+  mask-image: var(--mask-url);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 /* Auto Layout Group & Items */
@@ -2811,15 +2947,16 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px 16px;
+  padding: 40px 24px;
   width: 100%;
+  box-sizing: border-box;
 }
 .sponsor-banner-img {
-  max-width: 100%;
-  width: auto;
+  max-width: min(100%, 1020px);
+  width: 100%;
   height: auto;
   object-fit: contain;
-  /* filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.25)); */
+  margin: 0 auto;
   transition: transform 0.3s ease;
 }
 
@@ -2833,13 +2970,14 @@ button {
     padding: 50px 0 40px 0;
   }
   .sponsor-single-wrapper {
-    padding: 24px 8px;
+    padding: 24px 18px;
   }
   .sponsor-banner-img {
     width: 100%;
-    max-width: 520px;
-    min-height: 120px;
-    transform: scale(1.08);
+    max-width: 480px;
+    height: auto;
+    object-fit: contain;
+    transform: none;
   }
 }
 
@@ -2872,10 +3010,12 @@ button {
   object-fit: contain;
   display: block;
 }
-.custom-placement-item.is-rotating.rot-clockwise img {
+.custom-placement-item.is-rotating.rot-clockwise img,
+.custom-placement-item.is-rotating.rot-clockwise .decoration-tint-mask {
   animation: spin-cw 35s linear infinite;
 }
-.custom-placement-item.is-rotating.rot-counter-clockwise img {
+.custom-placement-item.is-rotating.rot-counter-clockwise img,
+.custom-placement-item.is-rotating.rot-counter-clockwise .decoration-tint-mask {
   animation: spin-ccw 35s linear infinite;
 }
 
@@ -2983,20 +3123,44 @@ button {
 }
 
 @media (max-width: 768px) {
+  /* Restore top-left disc for mobile */
   .hero-deco-topleft {
-    width: 320px;
-    height: 320px;
+    display: block !important;
+    top: 0;
+    left: 0;
+    transform: translate(-45%, -45%) rotate(-12deg);
+    width: min(240px, 55vw) !important;
+    height: min(240px, 55vw) !important;
     opacity: 0.75;
   }
+
+  /* Gear biru tepat di sudut kanan bawah, terpotong sebagian di pinggir layar */
   .hero-deco-main-perspective {
-    left: 80%;
-    top: 50%;
-    width: 120vh;
-    height: 120vh;
+    left: auto !important;
+    right: -10% !important;
+    top: auto !important;
+    bottom: -8% !important;
+    transform: none !important;
+    width: min(100vw, 420px) !important;
+    height: min(100vw, 420px) !important;
+    perspective: 900px !important;
   }
+
+  .hero-deco-tilt {
+    transform: rotateZ(10deg) rotateX(12deg) rotateY(-36deg) !important;
+  }
+
+  /* Keep desktop-like radial & linear text cutout mask so text area fades out cleanly */
   .hero-deco-main-mask {
-    -webkit-mask-image: linear-gradient(100deg, transparent 20%, rgba(0, 0, 0, 0.3) 35%, #000000 65%);
-    mask-image: linear-gradient(100deg, transparent 20%, rgba(0, 0, 0, 0.3) 35%, #000000 65%);
+    -webkit-mask-image: 
+      linear-gradient(100deg, transparent 15%, rgba(0, 0, 0, 0.25) 35%, #000000 65%),
+      radial-gradient(ellipse 50vw 40vh at 50% 45%, transparent 0, transparent 60%, #000000 100%) !important;
+    mask-image: 
+      linear-gradient(100deg, transparent 15%, rgba(0, 0, 0, 0.25) 35%, #000000 65%),
+      radial-gradient(ellipse 50vw 40vh at 50% 45%, transparent 0, transparent 60%, #000000 100%) !important;
+    -webkit-mask-composite: source-in !important;
+    mask-composite: intersect !important;
+    opacity: 0.95;
   }
 }
 
@@ -3156,11 +3320,11 @@ button {
 }
 
 /* ==========================================================================
-   Floating Back to Top Button (Aligned horizontally with floating bar, distinct z-index)
+   Floating Back to Top Button (Aligned horizontally/sejajar with floating bar on desktop, stacked on mobile)
    ========================================================================== */
 .back-to-top-btn {
   position: fixed;
-  bottom: 40px;
+  bottom: 40px; /* Aligns vertically with the center of floating-bottom-bar (bottom: 24px + height: 80px / 2 = 64px center) */
   right: 28px;
   width: 48px;
   height: 48px;
@@ -3203,8 +3367,9 @@ button {
 }
 
 @media (max-width: 768px) {
+  /* On mobile: Stacked above floating bottom bar */
   .back-to-top-btn {
-    bottom: 24px;
+    bottom: 92px;
     right: 16px;
     width: 42px;
     height: 42px;

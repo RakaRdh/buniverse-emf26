@@ -96,27 +96,51 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Auto-open sequence: every 4 seconds, expand next accordion panel automatically
+    // If on mobile on page load, override default open panel to the first one (index 0)
+    if (isMobile()) {
+      activatePanel(galleryPanels[0]);
+    }
+
+    // Auto-open sequence: ONLY for mobile (<=768px), every 4 seconds, expand next accordion panel automatically
+    // On desktop (>768px), behavior remains strictly hover-based per user request!
     let currentAutoIndex = 0;
     let autoInterval = null;
 
     const startAutoSequence = () => {
+      if (!isMobile()) return; // strictly only for mobile
       if (autoInterval) clearInterval(autoInterval);
       autoInterval = setInterval(() => {
+        if (!isMobile()) {
+          clearInterval(autoInterval);
+          return;
+        }
         currentAutoIndex = (currentAutoIndex + 1) % galleryPanels.length;
         activatePanel(galleryPanels[currentAutoIndex]);
       }, 4000);
     };
 
     const resetAutoTimer = () => {
-      if (autoInterval) {
-        clearInterval(autoInterval);
+      if (isMobile()) {
+        if (autoInterval) clearInterval(autoInterval);
         startAutoSequence();
       }
     };
 
-    // Initialize auto sequence if section is present
-    startAutoSequence();
+    // Initialize auto sequence only if on mobile
+    if (isMobile()) {
+      startAutoSequence();
+    }
+
+    window.addEventListener('resize', () => {
+      if (isMobile()) {
+        if (!autoInterval) startAutoSequence();
+      } else {
+        if (autoInterval) {
+          clearInterval(autoInterval);
+          autoInterval = null;
+        }
+      }
+    });
   }
 
   // 4. Mobile Nav Toggle
@@ -126,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (navToggle && siteNav) {
     navToggle.addEventListener('click', () => {
       siteNav.classList.toggle('open');
+      navToggle.classList.toggle('open');
     });
   }
 
@@ -887,6 +912,69 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
+
+  // --------------------------------------------------------------------------
+  // Auto Layout Section Decorations Generator
+  // --------------------------------------------------------------------------
+  const autoGroups = document.querySelectorAll('.decoration-auto-group');
+  autoGroups.forEach(group => {
+    const count = parseInt(group.getAttribute('data-count') || '1', 10);
+    const gap = parseFloat(group.getAttribute('data-gap') || '100');
+    const gapUnit = group.getAttribute('data-gap-unit') || 'px';
+    const startSide = group.getAttribute('data-start-side') || 'left';
+    const edgeOffset = group.getAttribute('data-edge-offset') || '50%';
+    const width = parseInt(group.getAttribute('data-width') || '200', 10);
+    const opacity = group.getAttribute('data-opacity') || '1';
+    const imgUrl = group.getAttribute('data-img') || '';
+    const tintColor = group.getAttribute('data-tint') || '';
+    const isRotated = group.getAttribute('data-rotated') === '1';
+    const rotDir = group.getAttribute('data-rot-dir') || 'clockwise';
+    const rotClass = isRotated ? ('is-rotating rot-' + rotDir) : '';
+
+    const parent = group.parentElement;
+    const parentHeight = parent ? parent.offsetHeight : 600;
+
+    for (let i = 0; i < count; i++) {
+      const item = document.createElement('div');
+      // Alternate sides starting from startSide
+      const side = (i % 2 === 0) ? startSide : (startSide === 'left' ? 'right' : 'left');
+      item.className = `decoration-auto-item edge-${side} ${rotClass}`;
+      item.style.setProperty('--dec-width', width + 'px');
+      item.style.setProperty('--dec-opacity', opacity);
+      item.style.setProperty('--dec-edge-offset', edgeOffset);
+
+      // Vertical position calculation
+      if (count === 1) {
+        item.style.top = '50%';
+      } else if (gapUnit === '%') {
+        const topPercent = Math.min(95, Math.max(5, (gap * i) % 100));
+        item.style.top = topPercent + '%';
+      } else {
+        // px gap
+        const step = (gap && gap > 0) ? gap : (parentHeight / (count + 1));
+        const topPx = (step * (i + 1));
+        item.style.top = topPx + 'px';
+      }
+
+      if (tintColor) {
+        const maskDiv = document.createElement('div');
+        maskDiv.className = 'decoration-tint-mask';
+        maskDiv.style.setProperty('--tint-color', tintColor);
+        maskDiv.style.setProperty('--mask-url', `url('${imgUrl}')`);
+        maskDiv.style.width = '100%';
+        maskDiv.style.height = '100%';
+        item.appendChild(maskDiv);
+      } else if (imgUrl) {
+        const img = document.createElement('img');
+        img.src = imgUrl;
+        img.alt = '';
+        img.loading = 'lazy';
+        item.appendChild(img);
+      }
+
+      group.appendChild(item);
+    }
+  });
 });
 
 

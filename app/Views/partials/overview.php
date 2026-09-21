@@ -37,18 +37,25 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
   </div>
 
   <!-- 4-Strip Slanted Photo Collage (Anchored directly to bottom left of section) -->
+  <?php
+    $collageImgs = $overviewData['collage_images'] ?? [];
+    $img1 = !empty($collageImgs['img_1']) ? $collageImgs['img_1'] : base_url('assets/img/gallery1.webp');
+    $img2 = !empty($collageImgs['img_2']) ? $collageImgs['img_2'] : base_url('assets/img/gallery2.webp');
+    $img3 = !empty($collageImgs['img_3']) ? $collageImgs['img_3'] : base_url('assets/img/gallery3.webp');
+    $img4 = !empty($collageImgs['img_4']) ? $collageImgs['img_4'] : base_url('assets/img/gallery4.webp');
+  ?>
   <div class="editorial-wave-mask-wrap" aria-hidden="true">
     <div class="editorial-strip editorial-strip-1">
-      <img src="<?= base_url('assets/img/gallery1.webp') ?>" alt="" loading="lazy">
+      <img src="<?= esc($img1) ?>" alt="Overview collage 1" loading="lazy">
     </div>
     <div class="editorial-strip editorial-strip-2">
-      <img src="<?= base_url('assets/img/gallery2.webp') ?>" alt="" loading="lazy">
+      <img src="<?= esc($img2) ?>" alt="Overview collage 2" loading="lazy">
     </div>
     <div class="editorial-strip editorial-strip-3">
-      <img src="<?= base_url('assets/img/gallery3.webp') ?>" alt="" loading="lazy">
+      <img src="<?= esc($img3) ?>" alt="Overview collage 3" loading="lazy">
     </div>
     <div class="editorial-strip editorial-strip-4">
-      <img src="<?= base_url('assets/img/gallery4.webp') ?>" alt="" loading="lazy">
+      <img src="<?= esc($img4) ?>" alt="Overview collage 4" loading="lazy">
     </div>
   </div>
 </section>

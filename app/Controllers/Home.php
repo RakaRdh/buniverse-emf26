@@ -52,18 +52,26 @@ class Home extends BaseController
 
                         // Sync site metadata & branding
                         if (!empty($live['site'])) {
-                            $site['title']            = $live['site']['name'] ?? $site['title'];
-                            $site['theme']            = $live['site']['theme'] ?? $site['theme'];
-                            $site['dates']            = $live['site']['dates'] ?? $site['dates'];
-                            $site['venue']            = $live['site']['venue'] ?? $site['venue'];
-                            $site['ticket_url']       = $live['site']['cta_ticket_url'] ?? $site['ticket_url'];
-                            $site['cta_ticket_label'] = $live['site']['cta_ticket_label'] ?? 'Get Tickets';
-                            $site['copyright']        = $live['site']['copyright'] ?? 'Investor Daily Summit.';
-                            $site['logo_a']           = $live['site']['logo_a'] ?? '';
-                            $site['logo_b']           = $live['site']['logo_b'] ?? '';
-                            $site['logo_footer']      = $live['site']['logo_footer'] ?? '';
-                            $site['nav_items']        = $live['site']['nav_items'] ?? [];
-                            $site['socials']          = $live['site']['socials'] ?? [];
+                            $site['title']             = $live['site']['name'] ?? $site['title'];
+                            $site['theme']             = $live['site']['theme'] ?? $site['theme'];
+                            $site['dates']             = $live['site']['dates'] ?? $site['dates'];
+                            $site['venue']             = $live['site']['venue'] ?? $site['venue'];
+                            $site['ticket_url']        = $live['site']['cta_ticket_url'] ?? $site['ticket_url'];
+                            $site['cta_ticket_label']  = $live['site']['cta_ticket_label'] ?? 'Get Tickets';
+                            $site['copyright']         = $live['site']['copyright'] ?? 'Investor Daily Summit.';
+                            $site['logo_a']            = $live['site']['logo_a'] ?? '';
+                            $site['logo_b']            = $live['site']['logo_b'] ?? '';
+                            $site['logo_a_color']      = $live['site']['logo_a_color'] ?? ($live['site']['logo_a'] ?? '');
+                            $site['logo_a_white']      = $live['site']['logo_a_white'] ?? '';
+                            $site['logo_a_target_url'] = $live['site']['logo_a_target_url'] ?? '#home';
+                            $site['logo_b_color']      = $live['site']['logo_b_color'] ?? ($live['site']['logo_b'] ?? '');
+                            $site['logo_b_white']      = $live['site']['logo_b_white'] ?? '';
+                            $site['logo_b_target_url'] = $live['site']['logo_b_target_url'] ?? 'https://investor.id';
+                            $site['logo_footer']       = $live['site']['logo_footer'] ?? '';
+                            $site['contact_phone']     = $live['site']['contact']['phone'] ?? '+62 855-1235-000';
+                            $site['contact_label']     = $live['site']['contact']['label'] ?? 'Phone';
+                            $site['nav_items']         = $live['site']['nav_items'] ?? [];
+                            $site['socials']           = $live['site']['socials'] ?? [];
                         }
 
                         // Sync theme CSS properties
@@ -88,7 +96,10 @@ class Home extends BaseController
                                 $overview['badge'] = $liveOverview['badge'];
                             }
                             if (!empty($liveOverview['intro'])) {
-                                $overview['intro'] = $liveOverview['intro'];
+                                 $overview['intro'] = $liveOverview['intro'];
+                            }
+                            if (!empty($liveOverview['collage_images'])) {
+                                $overview['collage_images'] = $liveOverview['collage_images'];
                             }
                             if (!empty($liveOverview['content'])) {
                                 $paras = array_filter(explode("\n\n", str_replace("\r\n", "\n", $liveOverview['content'])));
@@ -98,6 +109,20 @@ class Home extends BaseController
                             }
                             $economicModel = $overview;
                         }
+
+                        // Sync livestream settings from live API
+                        $livestream = $live['livestream'] ?? [
+                            'title'       => 'Investor Daily Summit Live Broadcast',
+                            'youtube_url' => 'https://www.youtube.com/watch?v=rFZHOHl-L8A',
+                            'is_active'   => true,
+                        ];
+
+                        // Sync news portals from live API
+                        $newsPortals = $live['news_portals'] ?? [
+                            'investor-daily' => ['name' => 'investor.id', 'url' => 'https://investor.id', 'is_active' => true],
+                            'beritasatu'     => ['name' => 'beritasatu.com', 'url' => 'https://www.beritasatu.com', 'is_active' => true],
+                            'jakartaglobe'   => ['name' => 'jakartaglobe.id', 'url' => 'https://jakartaglobe.id', 'is_active' => true],
+                        ];
 
                         // Sync speakers if database has them
                         if (!empty($live['speakers']) && count($live['speakers']) > 0) {
@@ -180,6 +205,13 @@ class Home extends BaseController
                             return $url;
                         };
 
+                        if (!empty($overview['collage_images'])) {
+                            foreach ($overview['collage_images'] as &$cImg) {
+                                if (!empty($cImg)) $cImg = $fixUrl($cImg);
+                            }
+                            unset($cImg);
+                        }
+
                         if (!empty($seo['og_image'])) $seo['og_image'] = $fixUrl($seo['og_image']);
                         if (!empty($seo['og_image_url'])) $seo['og_image_url'] = $fixUrl($seo['og_image_url']);
                         if (!empty($site['logo_a'])) $site['logo_a'] = $fixUrl($site['logo_a']);
@@ -261,23 +293,33 @@ class Home extends BaseController
         }
 
         $data = [
-            'site'               => $site,
-            'themeProperties'    => $themeProperties,
-            'heroCarousel'       => $heroCarousel,
-            'overview'           => $overview,
-            'economicModel'      => $economicModel,
-            'speakers'           => $speakers,
-            'schedule'           => $schedule,
-            'gallery'            => $gallery,
-            'galleryImages'      => $galleryImages,
+            'site'                    => $site,
+            'themeProperties'         => $themeProperties,
+            'heroCarousel'            => $heroCarousel,
+            'overview'                => $overview,
+            'economicModel'           => $economicModel,
+            'livestream'              => $livestream ?? [
+                'title'       => 'Investor Daily Summit Live Broadcast',
+                'youtube_url' => 'https://www.youtube.com/watch?v=rFZHOHl-L8A',
+                'is_active'   => true,
+            ],
+            'newsPortals'             => $newsPortals ?? [
+                'investor-daily' => ['name' => 'investor.id', 'url' => 'https://investor.id', 'is_active' => true],
+                'beritasatu'     => ['name' => 'beritasatu.com', 'url' => 'https://www.beritasatu.com', 'is_active' => true],
+                'jakartaglobe'   => ['name' => 'jakartaglobe.id', 'url' => 'https://jakartaglobe.id', 'is_active' => true],
+            ],
+            'speakers'                => $speakers,
+            'schedule'                => $schedule,
+            'gallery'                 => $gallery,
+            'galleryImages'           => $galleryImages,
             'relatedNews'             => $relatedNews,
             'relatedNewsBeritaSatu'   => $relatedNewsBeritaSatu,
             'relatedNewsJakartaGlobe' => $relatedNewsJakartaGlobe,
             'sponsors'                => $sponsors,
-            'sponsorPartnership' => $sponsorPartnership,
-            'sectionDecorations' => $sectionDecorations,
-            'customPlacements'   => $customPlacements,
-            'seo'                => $seo,
+            'sponsorPartnership'      => $sponsorPartnership,
+            'sectionDecorations'      => $sectionDecorations,
+            'customPlacements'        => $customPlacements,
+            'seo'                     => $seo,
         ];
 
         return view('home', $data);

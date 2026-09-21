@@ -24,10 +24,17 @@ if (empty($items)) {
         $sizePx    = (int)($item['size_px'] ?? 200);
         $opacity   = (float)($item['opacity'] ?? 1.0);
         $zIndex    = (int)($item['z_index'] ?? 1);
+        $tintColor = !empty($item['tint_color']) ? trim($item['tint_color']) : null;
+        $whiteMaskUrl = base_url('assets/img/decoration_white.png');
         ?>
         <div class="custom-placement-item <?= $rotClass ?> <?= $mobClass ?>"
              style="left: <?= $posX ?>%; top: <?= $posY ?>%; --cp-width: <?= $sizePx ?>px; --cp-opacity: <?= $opacity ?>; z-index: <?= $zIndex ?>;">
-            <img src="<?= esc($item['image_url']) ?>" alt="" loading="lazy">
+            <?php if ($tintColor): ?>
+                <div class="decoration-tint-mask" 
+                     style="--tint-color: <?= esc($tintColor) ?>; --mask-url: url('<?= esc($whiteMaskUrl) ?>'); width: 100%; height: 100%;"></div>
+            <?php else: ?>
+                <img src="<?= esc($item['image_url']) ?>" alt="" loading="lazy">
+            <?php endif; ?>
         </div>
     <?php endforeach; ?>
 </div>

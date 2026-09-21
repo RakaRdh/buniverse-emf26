@@ -34,12 +34,22 @@ if (empty($items)) {
         $perspClass = $hasPerspective ? 'has-perspective' : '';
         ?>
 
+        <?php
+        $tintColor = !empty($item['tint_color']) ? trim($item['tint_color']) : null;
+        $whiteMaskUrl = !empty($item['image_url']) ? $item['image_url'] : base_url('assets/img/decoration_white.png');
+        ?>
+
         <?php if ($layout === 'manual'): ?>
             <?php $posClass = 'pos-' . esc($item['position'] ?? 'middle-left'); ?>
             <div class="decoration-item <?= $posClass ?> <?= $rotClass ?> <?= $mobClass ?> <?= $perspClass ?>"
                  style="--dec-width: <?= (int)($item['size_px'] ?? 200) ?>px; --dec-opacity: <?= esc($item['opacity'] ?? 1.0) ?>; --dec-edge-offset: <?= $edgeOffset ?>; <?= $perspStyle ?>">
                 <div class="decoration-inner-transform">
-                    <img src="<?= esc($item['image_url']) ?>" alt="" loading="lazy">
+                    <?php if ($tintColor): ?>
+                        <div class="decoration-tint-mask" 
+                             style="--tint-color: <?= esc($tintColor) ?>; --mask-url: url('<?= esc($whiteMaskUrl) ?>'); width: 100%; height: 100%;"></div>
+                    <?php else: ?>
+                        <img src="<?= esc($item['image_url']) ?>" alt="" loading="lazy">
+                    <?php endif; ?>
                 </div>
             </div>
         <?php else: ?>
@@ -52,6 +62,7 @@ if (empty($items)) {
                  data-width="<?= (int)($item['size_px'] ?? 200) ?>"
                  data-opacity="<?= esc($item['opacity'] ?? 1.0) ?>"
                  data-img="<?= esc($item['image_url']) ?>"
+                 data-tint="<?= esc($tintColor ?? '') ?>"
                  data-rotated="<?= $isRotated ? '1' : '0' ?>"
                  data-rot-dir="<?= esc($rotDir) ?>">
             </div>

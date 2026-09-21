@@ -29,13 +29,13 @@
     ?>
 
     <?php foreach ($newsRows as $row): 
-      $portalUrl = '#';
-      if ($row['id'] === 'investor-daily') {
-        $portalUrl = 'https://investor.id';
-      } elseif ($row['id'] === 'beritasatu') {
-        $portalUrl = 'https://www.beritasatu.com';
-      } elseif ($row['id'] === 'jakartaglobe') {
-        $portalUrl = 'https://jakartaglobe.id';
+      $portalKey = $row['id'];
+      $portalConfig = $newsPortals[$portalKey] ?? null;
+      $portalUrl = $portalConfig['url'] ?? '#';
+      if ($portalUrl === '#' || empty($portalUrl)) {
+        if ($portalKey === 'investor-daily') $portalUrl = 'https://investor.id';
+        elseif ($portalKey === 'beritasatu') $portalUrl = 'https://www.beritasatu.com';
+        elseif ($portalKey === 'jakartaglobe') $portalUrl = 'https://jakartaglobe.id';
       }
     ?>
       <div class="news-source-block">

@@ -3,22 +3,17 @@
   <?= view('partials/custom_placements', ['sectionKey' => 'sponsor', 'customPlacements' => $customPlacements ?? []]) ?>
 
   <div class="container">
-    <?php if (!empty($sponsorPartnership) && !empty($sponsorPartnership['logo_url'])): ?>
-      <!-- Single Consolidated Sponsors & Partnerships Banner -->
-      <div class="sponsor-single-wrapper">
-        <img src="<?= esc($sponsorPartnership['logo_url']) ?>" 
-             alt="<?= esc($sponsorPartnership['name'] ?: 'Sponsors & Partnerships') ?>" 
-             class="sponsor-banner-img" 
-             loading="lazy">
-      </div>
-    <?php else: ?>
-      <!-- Fallback or empty state if no single banner is uploaded yet -->
-      <div class="sponsor-single-wrapper sponsor-placeholder-wrapper" style="text-align: center; padding: 30px 20px;">
-        <span style="font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-light, #d4af37); font-weight: 600; opacity: 0.85;">
-          SPONSORS & PARTNERSHIPS
-        </span>
-      </div>
-    <?php endif; ?>
+    <?php 
+      $bannerUrl = !empty($sponsorPartnership['logo_url']) ? $sponsorPartnership['logo_url'] : base_url('assets/img/sponsors.webp');
+      $bannerName = !empty($sponsorPartnership['name']) ? $sponsorPartnership['name'] : 'Sponsors & Partnerships';
+    ?>
+    <!-- Single Consolidated Sponsors & Partnerships Banner -->
+    <div class="sponsor-single-wrapper">
+      <img src="<?= esc($bannerUrl) ?>" 
+           alt="<?= esc($bannerName) ?>" 
+           class="sponsor-banner-img" 
+           loading="lazy">
+    </div>
 
     <?php /* === LEGACY TIER-BASED SPONSORS (COMMENTED OUT) ===
     <!-- Group 1: SPONSORED BY -->
