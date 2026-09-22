@@ -58,6 +58,13 @@ class Home extends BaseController
                             $site['venue']             = $live['site']['venue'] ?? $site['venue'];
                             $site['ticket_url']        = $live['site']['cta_ticket_url'] ?? $site['ticket_url'];
                             $site['cta_ticket_label']  = $live['site']['cta_ticket_label'] ?? 'Get Tickets';
+                            $site['cta_ticket_active'] = isset($live['site']['cta_ticket_active']) ? $live['site']['cta_ticket_active'] : true;
+                            $site['floating_bar']      = $live['site']['floating_bar'] ?? [
+                                'enabled'   => true,
+                                'text'      => 'Get Your Seat Now!',
+                                'btn_label' => 'Get Tickets',
+                                'btn_url'   => null,
+                            ];
                             $site['copyright']         = $live['site']['copyright'] ?? 'Investor Daily Summit.';
                             $site['logo_a']            = $live['site']['logo_a'] ?? '';
                             $site['logo_b']            = $live['site']['logo_b'] ?? '';
@@ -67,9 +74,16 @@ class Home extends BaseController
                             $site['logo_b_color']      = $live['site']['logo_b_color'] ?? ($live['site']['logo_b'] ?? '');
                             $site['logo_b_white']      = $live['site']['logo_b_white'] ?? '';
                             $site['logo_b_target_url'] = $live['site']['logo_b_target_url'] ?? 'https://investor.id';
+                            $site['logo_overview']     = $live['site']['logo_overview'] ?? '';
+                            $site['logo_overview_target_url'] = $live['site']['logo_overview_target_url'] ?? '#home';
+                            $site['logo_floating']     = $live['site']['logo_floating'] ?? '';
                             $site['logo_footer']       = $live['site']['logo_footer'] ?? '';
-                            $site['contact_phone']     = $live['site']['contact']['phone'] ?? '+62 855-1235-000';
+                            $site['logo_footer_white'] = $live['site']['logo_footer_white'] ?? '';
+                            $site['logo_footer_target_url'] = $live['site']['logo_footer_target_url'] ?? 'https://investor.id';
+                            $site['logo_placements']   = $live['site']['logo_placements'] ?? [];
+                            $site['contact_phone']     = $live['site']['contact']['phone'] ?? '+62 812-1267-8789';
                             $site['contact_label']     = $live['site']['contact']['label'] ?? 'Phone';
+                            $site['contact_url']       = $live['site']['contact']['url'] ?? null;
                             $site['nav_items']         = $live['site']['nav_items'] ?? [];
                             $site['socials']           = $live['site']['socials'] ?? [];
                         }
@@ -216,7 +230,14 @@ class Home extends BaseController
                         if (!empty($seo['og_image_url'])) $seo['og_image_url'] = $fixUrl($seo['og_image_url']);
                         if (!empty($site['logo_a'])) $site['logo_a'] = $fixUrl($site['logo_a']);
                         if (!empty($site['logo_b'])) $site['logo_b'] = $fixUrl($site['logo_b']);
+                        if (!empty($site['logo_a_color'])) $site['logo_a_color'] = $fixUrl($site['logo_a_color']);
+                        if (!empty($site['logo_a_white'])) $site['logo_a_white'] = $fixUrl($site['logo_a_white']);
+                        if (!empty($site['logo_b_color'])) $site['logo_b_color'] = $fixUrl($site['logo_b_color']);
+                        if (!empty($site['logo_b_white'])) $site['logo_b_white'] = $fixUrl($site['logo_b_white']);
+                        if (!empty($site['logo_overview'])) $site['logo_overview'] = $fixUrl($site['logo_overview']);
+                        if (!empty($site['logo_floating'])) $site['logo_floating'] = $fixUrl($site['logo_floating']);
                         if (!empty($site['logo_footer'])) $site['logo_footer'] = $fixUrl($site['logo_footer']);
+                        if (!empty($site['logo_footer_white'])) $site['logo_footer_white'] = $fixUrl($site['logo_footer_white']);
 
                         foreach ($heroCarousel as &$slide) {
                             if (!empty($slide['image_url'])) $slide['image_url'] = $fixUrl($slide['image_url']);
@@ -348,7 +369,7 @@ class Home extends BaseController
         ]);
 
         $response = @file_get_contents(
-            'http://10.0.4.233/article/type=latest&num=20&tag=investor-daily-summit-2026&page=1',
+            'https://api.beritasatu.com/v4/article/type:bytag/tag:investor-daily-summit/start:0/limit:3',
             false,
             $context
         );

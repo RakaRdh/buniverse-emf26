@@ -3,17 +3,23 @@
   <?= view('partials/custom_placements', ['sectionKey' => 'sponsor', 'customPlacements' => $customPlacements ?? []]) ?>
 
   <div class="container">
+    <!-- Placeholder Sponsors & Partnerships Empty State Box -->
+    <div class="news-empty-state sponsor-empty-state">
+      <p class="news-empty-text">Belum ada sponsor saat ini</p>
+    </div>
+
+    <?php /* === DYNAMIC SPONSORS BANNER (COMMENTED OUT TEMPORARILY) ===
     <?php 
       $bannerUrl = !empty($sponsorPartnership['logo_url']) ? $sponsorPartnership['logo_url'] : base_url('assets/img/sponsors.webp');
       $bannerName = !empty($sponsorPartnership['name']) ? $sponsorPartnership['name'] : 'Sponsors & Partnerships';
     ?>
-    <!-- Single Consolidated Sponsors & Partnerships Banner -->
     <div class="sponsor-single-wrapper">
       <img src="<?= esc($bannerUrl) ?>" 
            alt="<?= esc($bannerName) ?>" 
            class="sponsor-banner-img" 
            loading="lazy">
     </div>
+    === END DYNAMIC SPONSORS BANNER === */ ?>
 
     <?php /* === LEGACY TIER-BASED SPONSORS (COMMENTED OUT) ===
     <!-- Group 1: SPONSORED BY -->

@@ -1,23 +1,43 @@
+<?php
+  $floatingBar = $site['floating_bar'] ?? [];
+  if (isset($floatingBar['enabled']) && empty($floatingBar['enabled'])) {
+      return;
+  }
+  $floatingText     = !empty($floatingBar['text']) ? $floatingBar['text'] : 'Get Your Seat Now!';
+  $floatingBtnLabel = !empty($floatingBar['btn_label']) ? $floatingBar['btn_label'] : ($site['cta_ticket_label'] ?? 'Get Tickets');
+  $floatingBtnUrl   = !empty($floatingBar['btn_url']) ? $floatingBar['btn_url'] : ($site['ticket_url'] ?? '#');
+  $floatingSlot = $site['logo_placements']['floating_bottom'] ?? null;
+  $floatingSlotActive = !isset($floatingSlot['is_active']) || !empty($floatingSlot['is_active']);
+  $floatingVariant = $floatingSlot['variant'] ?? 'auto';
+
+  if ($floatingVariant === 'color') {
+      $floatingLogo = !empty($site['logo_a_color']) ? $site['logo_a_color'] : (!empty($site['logo_floating']) ? $site['logo_floating'] : base_url('assets/img/logo_ids26_color.webp'));
+  } else {
+      $floatingLogo = !empty($site['logo_floating']) ? $site['logo_floating'] : (!empty($site['logo_a_white']) ? $site['logo_a_white'] : base_url('assets/img/logo_ids26_white.webp'));
+  }
+?>
 <div class="floating-bottom-bar" id="floatingBottomBar" role="region" aria-label="Quick registration bar">
   <div class="floating-bottom-card">
     
     <!-- Left: IDS 2026 Brand Logo -->
-    <div class="floating-bottom-brand">
-      <?php $barLogo = !empty($site['logo_a']) ? $site['logo_a'] : base_url('assets/img/logo_ids26.png'); ?>
-      <img src="<?= esc($barLogo) ?>" alt="<?= esc($site['title']) ?>" class="floating-bottom-logo">
-    </div>
+    <?php if ($floatingSlotActive): ?>
+      <div class="floating-bottom-brand">
+        <img src="<?= esc($floatingLogo) ?>" alt="<?= esc($site['title']) ?>" class="floating-bottom-logo">
+      </div>
+    <?php endif; ?>
 
     <!-- Center: Looping Typing Text Animation -->
     <div class="floating-bottom-center">
-      <span class="typing-text" id="floatingTypingText"></span><span class="typing-cursor" aria-hidden="true">|</span>
+      <span class="typing-text" id="floatingTypingText" data-phrase="<?= esc($floatingText) ?>"></span><span class="typing-cursor" aria-hidden="true">|</span>
     </div>
 
     <!-- Right: Get Ticket Button (matching navbar style with radius 10) -->
     <div class="floating-bottom-action">
-      <a href="<?= esc($site['ticket_url']) ?>" class="btn-floating-ticket" data-track-ticket="true">
-        <?= esc($site['cta_ticket_label'] ?? 'Get Tickets') ?>
+      <a href="<?= esc($floatingBtnUrl) ?>" class="btn-floating-ticket" data-track-ticket="true">
+        <?= esc($floatingBtnLabel) ?>
       </a>
     </div>
 
   </div>
 </div>
+

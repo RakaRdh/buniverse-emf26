@@ -93,7 +93,7 @@
 }
 
 html {
-  font-family: var(--font-sans);
+  font-family: 'Manrope', 'Montserrat', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-size: 16px;
   scroll-behavior: smooth;
   background-color: var(--bg-page);
@@ -228,6 +228,10 @@ button {
   gap: 28px;
 }
 
+.mobile-nav-header {
+  display: none;
+}
+
 .nav-link {
   font-size: 16px;
   font-weight: 500;
@@ -347,10 +351,23 @@ button {
   margin: 0 auto;
 }
 
+@keyframes heroFadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .hero-brand {
   margin-bottom: 28px;
   display: flex;
   justify-content: center;
+  animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.15s;
 }
 
 .hero-brand-logo {
@@ -372,6 +389,8 @@ button {
   margin-bottom: 20px;
   /* text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85); */
   box-sizing: border-box;
+  animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.32s;
 }
 
 .topic-badge {
@@ -402,6 +421,8 @@ button {
   margin-bottom: 8px;
   letter-spacing: 0.5px;
   /* text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8); */
+  animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.48s;
 }
 
 .hero-venue {
@@ -409,6 +430,58 @@ button {
   font-weight: 500;
   color: var(--text-secondary, rgba(255, 255, 255, 0.92));
   /* text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); */
+  animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.62s;
+}
+
+/* Hero Scroll Down Indicator (Desktop & Mobile with subtle bounce animation) */
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  pointer-events: auto;
+  cursor: pointer;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: heroScrollBounce 2.2s ease-in-out infinite;
+}
+
+.hero-scroll-indicator.is-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.hero-scroll-icon {
+  width: 44px;
+  height: 44px;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.45));
+  transition: transform 0.2s ease;
+}
+
+.hero-scroll-indicator:hover .hero-scroll-icon {
+  transform: scale(1.08);
+}
+
+@keyframes heroScrollBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  40% {
+    transform: translateX(-50%) translateY(7px);
+  }
+  60% {
+    transform: translateX(-50%) translateY(3.5px);
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -1003,7 +1076,7 @@ button {
   z-index: 1;
   width: 100%;
   max-width: 680px;
-  background: radial-gradient(circle at 50% 50%, #159DD2 0%, #0B516C 100%);
+  background: radial-gradient(circle at 50% 50%, var(--primary-2-5, #2e6b9a) 0%, var(--primary-1-6, #010a2d) 100%);
   border: 1px solid rgba(91, 166, 214, 0.35);
   border-radius: 20px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
@@ -1026,7 +1099,7 @@ button {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 20%, #159DD2 0%, #0B516C 100%);
+  background: radial-gradient(circle at 30% 20%, var(--primary-2-5, #2e6b9a) 0%, var(--primary-1-6, #010a2d) 100%);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #ffffff;
   display: flex;
@@ -1786,6 +1859,11 @@ button {
   border-top: 1px solid var(--border-divider);
 }
 
+.sponsor-empty-state {
+  margin: 0 auto;
+  max-width: 100%;
+}
+
 .sponsor-group {
   display: flex;
   flex-direction: column;
@@ -2179,6 +2257,14 @@ button {
   /* --------------------------------------------------------------------------
      A. NAVBAR: Hide both logos and Get Tickets, show ONLY hamburger.svg
      -------------------------------------------------------------------------- */
+  .site-header.header-transparent {
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border-bottom: none !important;
+  }
+
   .brand-lockup {
     display: none !important;
   }
@@ -2229,37 +2315,75 @@ button {
 
   .site-nav {
     display: flex;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: auto;
+    width: 290px;
+    max-width: 82vw;
+    height: 100vh;
+    height: 100dvh;
     background-color: rgba(1, 10, 45, 0.98);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     flex-direction: column;
-    padding: 0 20px;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
+    padding: 24px 22px 32px 22px;
+    max-height: none;
+    opacity: 1;
+    overflow-y: auto;
     visibility: hidden;
     gap: 16px;
-    border-bottom: 1px solid transparent;
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
-    transform: translateY(-8px);
-    transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                opacity 0.28s ease, 
-                transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), 
-                padding 0.35s ease, 
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: none;
+    box-shadow: -16px 0 40px rgba(0, 0, 0, 0.6);
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
                 visibility 0.35s;
+    z-index: 1005;
   }
 
   .site-nav.open {
-    max-height: 520px;
-    opacity: 1;
     visibility: visible;
-    padding: 24px 20px 28px 20px;
-    transform: translateY(0);
-    border-bottom-color: var(--border-divider);
+    transform: translateX(0);
+  }
+
+  .mobile-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .mobile-nav-title {
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gold, #c5a880);
+  }
+
+  .nav-close-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .nav-close-btn:active {
+    transform: scale(0.9);
+  }
+
+  .site-nav .nav-link {
+    font-size: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   /* --------------------------------------------------------------------------
@@ -2337,16 +2461,35 @@ button {
     text-align: center;
   }
 
-  /* .hero-date {
+  .hero-theme-text {
+    font-size: 15px;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    padding: 0 10px;
+  }
+
+  .hero-date {
     font-size: 20px;
     font-weight: 800;
-    margin-bottom: 8px;
-  } */
+    margin-bottom: 6px;
+  }
 
   .hero-venue {
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 500;
     opacity: 0.95;
+  }
+
+  .hero-scroll-indicator {
+    bottom: 24px;
+    width: 42px;
+    height: 42px;
+    pointer-events: auto;
+  }
+
+  .hero-scroll-icon {
+    width: 38px;
+    height: 38px;
   }
 
   /* --------------------------------------------------------------------------
@@ -2723,7 +2866,7 @@ button {
     width: 38px;
     height: 38px;
     border: 1.5px solid rgba(255, 255, 255, 0.35);
-    background: radial-gradient(circle at 30% 20%, rgba(21, 157, 210, 0.8) 0%, rgba(11, 81, 108, 0.9) 100%);
+    background: radial-gradient(circle at 30% 20%, var(--primary-2-5, #2e6b9a) 0%, var(--primary-1-6, #010a2d) 100%);
   }
 
   /* Footer responsive */
@@ -2806,12 +2949,19 @@ button {
   transition: opacity 0.3s ease;
 }
 
+.decoration-item.has-perspective {
+  perspective: var(--dec-persp, 800px);
+  perspective-origin: 50% 50%;
+}
+
 .decoration-inner-transform {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: rotateZ(var(--dec-rot-z, 0deg)) rotateX(var(--dec-rot-x, 0deg)) rotateY(var(--dec-rot-y, 0deg));
+  transform-style: preserve-3d;
 }
 
 .decoration-item img {
@@ -2937,7 +3087,18 @@ button {
 @media (max-width: 768px) {
   .decoration-item.hide-on-mobile,
   .decoration-auto-group.hide-on-mobile,
-  .decoration-auto-item.hide-on-mobile {
+  .decoration-auto-item.hide-on-mobile,
+  .custom-placement-item.hide-on-mobile {
+    display: none !important;
+  }
+}
+
+/* Hide on Desktop (Mobile Only) */
+@media (min-width: 769px) {
+  .decoration-item.hide-on-desktop,
+  .decoration-auto-group.hide-on-desktop,
+  .decoration-auto-item.hide-on-desktop,
+  .custom-placement-item.hide-on-desktop {
     display: none !important;
   }
 }
@@ -2989,7 +3150,7 @@ button {
   inset: 0;
   overflow: hidden;
   pointer-events: none;
-  z-index: 0;
+  z-index: 2;
 }
 .custom-placement-item {
   position: absolute;
@@ -3003,6 +3164,19 @@ button {
   pointer-events: none;
   user-select: none;
   transition: opacity 0.3s ease;
+}
+.custom-placement-item.has-perspective {
+  perspective: var(--cp-persp, 800px);
+  perspective-origin: 50% 50%;
+}
+.custom-placement-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotateZ(var(--cp-rot-z, 0deg)) rotateX(var(--cp-rot-x, 0deg)) rotateY(var(--cp-rot-y, 0deg));
+  transform-style: preserve-3d;
 }
 .custom-placement-item img {
   width: 100%;
@@ -3056,7 +3230,7 @@ button {
   transform: translate(-50%, -50%) rotate(-12deg) rotateX(12deg) rotateY(15deg);
   width: min(540px, 40vw);
   height: min(540px, 40vw);
-  opacity: 0.85;
+  opacity: 0.25;
 }
 
 /* Static Luminance & Radial Text-Cutout Mask Wrapper per Hero Revision Brief §B */
@@ -3089,6 +3263,7 @@ button {
   height: var(--deco-size, 150vh);
   perspective: var(--persp, 110vh);
   perspective-origin: 50% 50%;
+  opacity: 0.75;
 }
 
 .hero-deco-tilt {
@@ -3123,41 +3298,49 @@ button {
 }
 
 @media (max-width: 768px) {
-  /* Restore top-left disc for mobile */
+  /* Disc kecil di pojok kiri-BAWAH hero, statis tanpa animasi putar, menghadap kiri-atas (3D tilt ringan) */
   .hero-deco-topleft {
     display: block !important;
-    top: 0;
-    left: 0;
-    transform: translate(-45%, -45%) rotate(-12deg);
-    width: min(240px, 55vw) !important;
-    height: min(240px, 55vw) !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: auto !important;
+    /* transform: translate(-45%, 45%) rotate(-12deg) rotateY(10deg) !important; */
+    transform: translate(-45%, 45%) rotateZ(0deg) rotateX(35deg) rotateY(-20deg) !important;
+    width: min(380px, 85vw) !important;
+    height: min(380px, 85vw) !important;
+    opacity: 0.25;
+    z-index: 2;
+  }
+
+  /* Disc besar di pojok KANAN-ATAS hero -- mobile:
+     Posisi digeser lebih ke kanan agar pusatnya di luar sudut kanan atas hero (hanya sektor kiri-bawah yang terlihat),
+     perspektif miring ke kiri-bawah mengarah ke teks "Investor Daily Summit 2026" persis sesuai referensi */
+  .hero-deco-main-perspective {
+    top: -5% !important;
+    right: -25% !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: min(130vw, 660px) !important;
+    height: min(130vw, 660px) !important;
+    perspective: 1000px !important;
+    perspective-origin: 50% 50% !important;
     opacity: 0.75;
   }
 
-  /* Gear biru tepat di sudut kanan bawah, terpotong sebagian di pinggir layar */
-  .hero-deco-main-perspective {
-    left: auto !important;
-    right: -10% !important;
-    top: auto !important;
-    bottom: -8% !important;
-    transform: none !important;
-    width: min(100vw, 420px) !important;
-    height: min(100vw, 420px) !important;
-    perspective: 900px !important;
-  }
-
   .hero-deco-tilt {
-    transform: rotateZ(10deg) rotateX(12deg) rotateY(-36deg) !important;
+    transform: rotateZ(-40deg) rotateX(20deg) rotateY(-40deg) !important;
   }
 
-  /* Keep desktop-like radial & linear text cutout mask so text area fades out cleanly */
+  /* Masking radial & linear teks cutout khusus mobile agar area teks judul/tema tetap bersih terbaca */
   .hero-deco-main-mask {
     -webkit-mask-image: 
-      linear-gradient(100deg, transparent 15%, rgba(0, 0, 0, 0.25) 35%, #000000 65%),
-      radial-gradient(ellipse 50vw 40vh at 50% 45%, transparent 0, transparent 60%, #000000 100%) !important;
+      linear-gradient(225deg, #000000 50%, rgba(0, 0, 0, 0.25) 75%, transparent 92%),
+      radial-gradient(ellipse 55vw 35vh at 50% 50%, transparent 0, transparent 65%, #000000 100%) !important;
     mask-image: 
-      linear-gradient(100deg, transparent 15%, rgba(0, 0, 0, 0.25) 35%, #000000 65%),
-      radial-gradient(ellipse 50vw 40vh at 50% 45%, transparent 0, transparent 60%, #000000 100%) !important;
+      linear-gradient(225deg, #000000 50%, rgba(0, 0, 0, 0.25) 75%, transparent 92%),
+      radial-gradient(ellipse 55vw 35vh at 50% 50%, transparent 0, transparent 65%, #000000 100%) !important;
     -webkit-mask-composite: source-in !important;
     mask-composite: intersect !important;
     opacity: 0.95;
@@ -3405,12 +3588,12 @@ button {
 
 .floating-bottom-card {
   pointer-events: auto;
-  width: 990px;
+  width: 820px;
   max-width: 100%;
-  height: 80px;
+  height: 74px;
   background-color: var(--primary-1-10);
   border-radius: 20px;
-  padding: 16px 24px;
+  padding: 14px 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3499,21 +3682,29 @@ button {
     padding: 0 12px;
   }
   .floating-bottom-card {
-    height: 64px;
-    padding: 10px 16px;
+    height: auto;
+    min-height: 58px;
+    padding: 8px 14px;
     border-radius: 16px;
-    gap: 12px;
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
-  .floating-bottom-logo {
-    height: 28px;
-    max-width: 110px;
+  .floating-bottom-brand {
+    display: none !important; /* Hide logo on small mobile so text is never covered */
   }
   .floating-bottom-center {
-    font-size: 15px;
-    margin-left: 18px;
+    font-size: 13.5px;
+    margin-left: 0 !important;
+    flex: 1;
+    min-width: 0;
+  }
+  .floating-bottom-action {
+    flex-shrink: 0;
   }
   .btn-floating-ticket {
-    font-size: 13px;
+    font-size: 12.5px;
     padding: 8px 14px;
     border-radius: 8px;
   }

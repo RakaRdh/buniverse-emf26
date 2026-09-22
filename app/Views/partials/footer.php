@@ -6,12 +6,23 @@
       <div class="footer-left">
         <div class="footer-brand">
           <?php 
-            $footerLogoUrl = !empty($site['logo_b_target_url']) ? $site['logo_b_target_url'] : 'https://investor.id';
-            $footerLogo = !empty($site['logo_footer']) ? $site['logo_footer'] : (!empty($site['logo_b_white']) ? $site['logo_b_white'] : (!empty($site['logo_b']) ? $site['logo_b'] : base_url('assets/img/logo_id.png'))); 
+            $footerSlot = $site['logo_placements']['footer'] ?? null;
+            $footerSlotActive = !isset($footerSlot['is_active']) || !empty($footerSlot['is_active']);
+            $footerVariant = $footerSlot['variant'] ?? 'white';
+
+            $footerLogoUrl = !empty($site['logo_footer_target_url']) ? $site['logo_footer_target_url'] : (!empty($site['logo_b_target_url']) ? $site['logo_b_target_url'] : 'https://investor.id');
+            
+            if ($footerVariant === 'color') {
+                $footerLogo = !empty($site['logo_footer']) ? $site['logo_footer'] : (!empty($site['logo_b_color']) ? $site['logo_b_color'] : base_url('assets/img/logo_id_color.webp'));
+            } else {
+                $footerLogo = !empty($site['logo_footer_white']) ? $site['logo_footer_white'] : (!empty($site['logo_footer']) ? $site['logo_footer'] : base_url('assets/img/logo_id_white.webp'));
+            }
           ?>
-          <a href="<?= esc($footerLogoUrl) ?>" aria-label="Investor Daily Indonesia" <?= str_starts_with($footerLogoUrl, 'http') ? 'target="_blank" rel="noopener noreferrer"' : '' ?>>
-            <img src="<?= esc($footerLogo) ?>" alt="Investor Daily Indonesia" class="footer-logo-id">
-          </a>
+          <?php if ($footerSlotActive): ?>
+            <a href="<?= esc($footerLogoUrl) ?>" aria-label="Investor Daily Indonesia" <?= str_starts_with($footerLogoUrl, 'http') ? 'target="_blank" rel="noopener noreferrer"' : '' ?>>
+              <img src="<?= esc($footerLogo) ?>" alt="Investor Daily Indonesia" class="footer-logo-id">
+            </a>
+          <?php endif; ?>
         </div>
 
         <!-- Ikon Media Sosial di bawah Logo -->
@@ -59,13 +70,16 @@
 
       <!-- Sisi Kanan: Contact Us & Phone with icon (Group Link) -->
       <?php
-        $cPhone = $site['contact_phone'] ?? '+62 855-1235-000';
+        $cPhone = $site['contact_phone'] ?? '+62 812-1267-8789';
         $cLabel = $site['contact_label'] ?? 'Phone';
+        $cUrl   = $site['contact_url'] ?? '';
         $cleanPhone = preg_replace('/[^0-9+]/', '', $cPhone);
+        $finalContactLink = !empty($cUrl) ? $cUrl : ('tel:' . $cleanPhone);
+        $isExternal = str_starts_with($finalContactLink, 'http://') || str_starts_with($finalContactLink, 'https://');
       ?>
       <div class="footer-contact">
         <div class="footer-contact-title">Contact Us:</div>
-        <a href="tel:<?= esc($cleanPhone) ?>" class="footer-phone-link" aria-label="Hubungi kami di <?= esc($cPhone) ?>">
+        <a href="<?= esc($finalContactLink) ?>" class="footer-phone-link" aria-label="Hubungi kami di <?= esc($cPhone) ?>" <?= $isExternal ? 'target="_blank" rel="noopener noreferrer"' : '' ?>>
           <div class="footer-phone-icon">
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2z"/>

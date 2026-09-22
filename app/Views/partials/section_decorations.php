@@ -18,7 +18,15 @@ if (empty($items)) {
         $isRotated = !empty($item['is_rotated']);
         $rotDir    = $item['rotation_direction'] ?? 'clockwise';
         $rotClass  = $isRotated ? ('is-rotating rot-' . esc($rotDir)) : '';
-        $mobClass  = empty($item['show_on_mobile']) ? 'hide-on-mobile' : '';
+        
+        $devVis = $item['device_visibility'] ?? (!empty($item['show_on_mobile']) ? 'all' : 'desktop_only');
+        if ($devVis === 'desktop_only') {
+            $deviceClass = 'hide-on-mobile';
+        } elseif ($devVis === 'mobile_only') {
+            $deviceClass = 'hide-on-desktop';
+        } else {
+            $deviceClass = '';
+        }
         $layout    = $item['layout_mode'] ?? 'manual';
         ?>
 
@@ -30,7 +38,8 @@ if (empty($items)) {
         $perspVal = (int)($item['perspective_value'] ?? 800);
         $rotX     = (float)($item['rotate_x'] ?? 0);
         $rotY     = (float)($item['rotate_y'] ?? 0);
-        $perspStyle = $hasPerspective ? "--dec-persp: {$perspVal}px; --dec-rot-x: {$rotX}deg; --dec-rot-y: {$rotY}deg;" : '';
+        $rotZ     = (float)($item['rotate_z'] ?? 0);
+        $perspStyle = $hasPerspective ? "--dec-persp: {$perspVal}px; --dec-rot-x: {$rotX}deg; --dec-rot-y: {$rotY}deg; --dec-rot-z: {$rotZ}deg;" : "--dec-rot-z: {$rotZ}deg;";
         $perspClass = $hasPerspective ? 'has-perspective' : '';
         ?>
 
@@ -41,7 +50,7 @@ if (empty($items)) {
 
         <?php if ($layout === 'manual'): ?>
             <?php $posClass = 'pos-' . esc($item['position'] ?? 'middle-left'); ?>
-            <div class="decoration-item <?= $posClass ?> <?= $rotClass ?> <?= $mobClass ?> <?= $perspClass ?>"
+            <div class="decoration-item <?= $posClass ?> <?= $rotClass ?> <?= $deviceClass ?> <?= $perspClass ?>"
                  style="--dec-width: <?= (int)($item['size_px'] ?? 200) ?>px; --dec-opacity: <?= esc($item['opacity'] ?? 1.0) ?>; --dec-edge-offset: <?= $edgeOffset ?>; <?= $perspStyle ?>">
                 <div class="decoration-inner-transform">
                     <?php if ($tintColor): ?>
@@ -53,7 +62,7 @@ if (empty($items)) {
                 </div>
             </div>
         <?php else: ?>
-            <div class="decoration-auto-group <?= $rotClass ?> <?= $mobClass ?>"
+            <div class="decoration-auto-group <?= $rotClass ?> <?= $deviceClass ?>"
                  data-count="<?= (int)($item['auto_count'] ?? 1) ?>"
                  data-gap="<?= (int)($item['auto_gap_px'] ?? 100) ?>"
                  data-gap-unit="<?= esc($item['auto_gap_unit'] ?? 'px') ?>"

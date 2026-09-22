@@ -11,8 +11,27 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
       <!-- Left Column: Editorial Logo & Intro -->
       <div class="editorial-left">
         <div class="editorial-logo">
-          <?php $aboutLogo = !empty($site['logo_a']) ? $site['logo_a'] : base_url('assets/img/logo_ids26.webp'); ?>
-          <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title']) ?>" class="editorial-brand-logo">
+          <?php 
+            $overviewSlot = $site['logo_placements']['overview'] ?? null;
+            $overviewSlotActive = !isset($overviewSlot['is_active']) || !empty($overviewSlot['is_active']);
+            $overviewVariant = $overviewSlot['variant'] ?? 'auto';
+
+            if ($overviewVariant === 'white') {
+                $aboutLogo = !empty($site['logo_a_white']) ? $site['logo_a_white'] : base_url('assets/img/logo_ids26_white.webp');
+            } else {
+                $aboutLogo = !empty($site['logo_overview']) ? $site['logo_overview'] : (!empty($site['logo_a_color']) ? $site['logo_a_color'] : base_url('assets/img/logo_ids26_color.webp')); 
+            }
+            $aboutLogoTarget = !empty($site['logo_overview_target_url']) ? $site['logo_overview_target_url'] : null;
+          ?>
+          <?php if ($overviewSlotActive): ?>
+            <?php if (!empty($aboutLogoTarget) && $aboutLogoTarget !== '#'): ?>
+              <a href="<?= esc($aboutLogoTarget) ?>" <?= str_starts_with($aboutLogoTarget, 'http') ? 'target="_blank" rel="noopener noreferrer"' : '' ?> style="display:inline-block;">
+                <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title']) ?>" class="editorial-brand-logo">
+              </a>
+            <?php else: ?>
+              <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title']) ?>" class="editorial-brand-logo">
+            <?php endif; ?>
+          <?php endif; ?>
         </div>
 
         <p class="editorial-intro">

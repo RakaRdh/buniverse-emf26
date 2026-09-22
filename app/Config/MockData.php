@@ -12,7 +12,7 @@ class MockData extends BaseConfig
     public array $site = [
         'title'       => 'Investor Daily Summit 2026',
         'theme'       => "INDONESIA'S ECONOMIC MODEL",
-        'dates'       => 'October 7th - 8th, 2026',
+        'dates'       => 'October 7th-8th, 2026',
         'venue'       => 'Raffles Hotel, Jakarta',
         'ticket_url'  => '#tickets',
         'logo_ids'    => 'logo_ids26.webp',

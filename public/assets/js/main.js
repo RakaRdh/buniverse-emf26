@@ -143,14 +143,51 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4. Mobile Nav Toggle
+  // 4. Mobile Nav Toggle & Drawer
   const navToggle = document.getElementById('navToggle');
+  const navCloseBtn = document.getElementById('navCloseBtn');
   const siteNav = document.getElementById('siteNav');
 
+  const closeMobileNav = () => {
+    if (siteNav) siteNav.classList.remove('open');
+    if (navToggle) navToggle.classList.remove('open');
+  };
+
+  const openMobileNav = () => {
+    if (siteNav) siteNav.classList.add('open');
+    if (navToggle) navToggle.classList.add('open');
+  };
+
   if (navToggle && siteNav) {
-    navToggle.addEventListener('click', () => {
-      siteNav.classList.toggle('open');
-      navToggle.classList.toggle('open');
+    navToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (siteNav.classList.contains('open')) {
+        closeMobileNav();
+      } else {
+        openMobileNav();
+      }
+    });
+
+    if (navCloseBtn) {
+      navCloseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeMobileNav();
+      });
+    }
+
+    // Close when clicking nav links
+    const mobileLinks = siteNav.querySelectorAll('.nav-link, .btn-ticket');
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeMobileNav();
+      });
+    });
+
+    // Close when clicking outside of drawer on mobile
+    document.addEventListener('click', (e) => {
+      if (siteNav.classList.contains('open') && !siteNav.contains(e.target) && !navToggle.contains(e.target)) {
+        closeMobileNav();
+      }
     });
   }
 
@@ -158,11 +195,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const siteHeader = document.getElementById('header') || document.querySelector('.site-header');
   if (siteHeader) {
     let lastScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
-    let headerTicking = false;
+    const heroSection = document.getElementById('home') || document.querySelector('.hero-section');
+    const heroScrollIndicator = document.getElementById('heroScrollIndicator');
 
     const onScroll = () => {
       const currentScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
       
+      // Hide mobile hero scroll down indicator if scrolled down slightly (> 10px)
+      if (heroScrollIndicator) {
+        if (currentScrollY > 10) {
+          heroScrollIndicator.classList.add('is-hidden');
+        } else {
+          heroScrollIndicator.classList.remove('is-hidden');
+        }
+      }
+
+      // Check if within hero section on mobile
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile && heroSection) {
+        const heroBottom = heroSection.offsetHeight - 40;
+        if (currentScrollY < heroBottom) {
+          siteHeader.classList.add('header-transparent');
+        } else {
+          siteHeader.classList.remove('header-transparent');
+        }
+      } else {
+        siteHeader.classList.remove('header-transparent');
+      }
+
       // Don't hide if mobile menu is open
       const isMobileMenuOpen = siteNav && siteNav.classList.contains('open');
 
@@ -187,6 +247,19 @@ document.addEventListener('DOMContentLoaded', () => {
         headerTicking = true;
       }
     }, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    onScroll();
+
+    if (heroScrollIndicator) {
+      heroScrollIndicator.addEventListener('click', () => {
+        const nextSection = heroSection ? heroSection.nextElementSibling : null;
+        if (nextSection) {
+          nextSection.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          window.scrollBy({ top: window.innerHeight * 0.85, behavior: 'smooth' });
+        }
+      });
+    } // initial state check
   }
 
   // 4.2 Floating Back to Top Button & Floating Bottom Bar Appearance
@@ -519,6 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const width = parseInt(group.getAttribute('data-width'), 10) || 200;
       const opacity = group.getAttribute('data-opacity') || '1.0';
       const imgSrc = group.getAttribute('data-img') || '';
+      const tintColor = group.getAttribute('data-tint') || '';
       const isRotated = group.getAttribute('data-rotated') === '1';
       const rotDir = group.getAttribute('data-rot-dir') || 'clockwise';
       const rotClass = isRotated ? `is-rotating rot-${rotDir}` : '';
@@ -538,6 +612,25 @@ document.addEventListener('DOMContentLoaded', () => {
       // Clear previous generated items
       group.innerHTML = '';
 
+      const createItemInner = () => {
+        if (tintColor) {
+          const maskDiv = document.createElement('div');
+          maskDiv.className = 'decoration-tint-mask';
+          maskDiv.style.setProperty('--tint-color', tintColor);
+          maskDiv.style.setProperty('--mask-url', `url('${imgSrc}')`);
+          maskDiv.style.width = '100%';
+          maskDiv.style.height = '100%';
+          return maskDiv;
+        } else if (imgSrc) {
+          const img = document.createElement('img');
+          img.src = imgSrc;
+          img.alt = '';
+          img.loading = 'lazy';
+          return img;
+        }
+        return document.createTextNode('');
+      };
+
       const startLeft = (startSide === 'left');
 
       if (count === 1) {
@@ -548,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
         item.style.setProperty('--dec-width', `${width}px`);
         item.style.setProperty('--dec-opacity', opacity);
         item.style.setProperty('--dec-edge-offset', edgeOffset);
-        item.innerHTML = `<img src="${imgSrc}" alt="" loading="lazy">`;
+        item.appendChild(createItemInner());
         group.appendChild(item);
         return;
       }
@@ -574,7 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
         item.style.setProperty('--dec-width', `${width}px`);
         item.style.setProperty('--dec-opacity', opacity);
         item.style.setProperty('--dec-edge-offset', edgeOffset);
-        item.innerHTML = `<img src="${imgSrc}" alt="" loading="lazy">`;
+        item.appendChild(createItemInner());
         group.appendChild(item);
       }
     };
@@ -784,7 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 11. Typewriter Looping Effect for Floating Bottom Bar
   const typingEl = document.getElementById('floatingTypingText');
   if (typingEl) {
-    const textToType = 'Get Your Seat Now!';
+    const textToType = typingEl.getAttribute('data-phrase') || 'Get Your Seat Now!';
     let charIndex = 0;
     let isDeleting = false;
     const typingSpeed = 110;
@@ -912,71 +1005,4 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
-
-  // --------------------------------------------------------------------------
-  // Auto Layout Section Decorations Generator
-  // --------------------------------------------------------------------------
-  const autoGroups = document.querySelectorAll('.decoration-auto-group');
-  autoGroups.forEach(group => {
-    const count = parseInt(group.getAttribute('data-count') || '1', 10);
-    const gap = parseFloat(group.getAttribute('data-gap') || '100');
-    const gapUnit = group.getAttribute('data-gap-unit') || 'px';
-    const startSide = group.getAttribute('data-start-side') || 'left';
-    const edgeOffset = group.getAttribute('data-edge-offset') || '50%';
-    const width = parseInt(group.getAttribute('data-width') || '200', 10);
-    const opacity = group.getAttribute('data-opacity') || '1';
-    const imgUrl = group.getAttribute('data-img') || '';
-    const tintColor = group.getAttribute('data-tint') || '';
-    const isRotated = group.getAttribute('data-rotated') === '1';
-    const rotDir = group.getAttribute('data-rot-dir') || 'clockwise';
-    const rotClass = isRotated ? ('is-rotating rot-' + rotDir) : '';
-
-    const parent = group.parentElement;
-    const parentHeight = parent ? parent.offsetHeight : 600;
-
-    for (let i = 0; i < count; i++) {
-      const item = document.createElement('div');
-      // Alternate sides starting from startSide
-      const side = (i % 2 === 0) ? startSide : (startSide === 'left' ? 'right' : 'left');
-      item.className = `decoration-auto-item edge-${side} ${rotClass}`;
-      item.style.setProperty('--dec-width', width + 'px');
-      item.style.setProperty('--dec-opacity', opacity);
-      item.style.setProperty('--dec-edge-offset', edgeOffset);
-
-      // Vertical position calculation
-      if (count === 1) {
-        item.style.top = '50%';
-      } else if (gapUnit === '%') {
-        const topPercent = Math.min(95, Math.max(5, (gap * i) % 100));
-        item.style.top = topPercent + '%';
-      } else {
-        // px gap
-        const step = (gap && gap > 0) ? gap : (parentHeight / (count + 1));
-        const topPx = (step * (i + 1));
-        item.style.top = topPx + 'px';
-      }
-
-      if (tintColor) {
-        const maskDiv = document.createElement('div');
-        maskDiv.className = 'decoration-tint-mask';
-        maskDiv.style.setProperty('--tint-color', tintColor);
-        maskDiv.style.setProperty('--mask-url', `url('${imgUrl}')`);
-        maskDiv.style.width = '100%';
-        maskDiv.style.height = '100%';
-        item.appendChild(maskDiv);
-      } else if (imgUrl) {
-        const img = document.createElement('img');
-        img.src = imgUrl;
-        img.alt = '';
-        img.loading = 'lazy';
-        item.appendChild(img);
-      }
-
-      group.appendChild(item);
-    }
-  });
 });
-
-
-
-
