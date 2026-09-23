@@ -16,9 +16,10 @@ class Home extends BaseController
         $speakers      = $mock->speakers;
         $schedule      = $mock->schedule;
         $gallery       = $mock->gallery;
-        $relatedNews   = $this->fetchRelatedNewsFromApi() ?: [];
-        $relatedNewsBeritaSatu  = $relatedNews;
-        $relatedNewsJakartaGlobe = $relatedNews;
+        $relatedNewsInvestor     = $this->fetchNewsFromPortal('investor', 9) ?: [];
+        $relatedNewsBeritaSatu   = $this->fetchNewsFromPortal('beritasatu', 9) ?: [];
+        $relatedNewsJakartaGlobe = $this->fetchNewsFromPortal('jakartaglobe', 9) ?: [];
+        $relatedNews             = $relatedNewsInvestor;
         $sponsors      = $mock->sponsors;
 
         $themeProperties    = [];
@@ -334,6 +335,7 @@ class Home extends BaseController
             'gallery'                 => $gallery,
             'galleryImages'           => $galleryImages,
             'relatedNews'             => $relatedNews,
+            'relatedNewsInvestor'     => $relatedNewsInvestor,
             'relatedNewsBeritaSatu'   => $relatedNewsBeritaSatu,
             'relatedNewsJakartaGlobe' => $relatedNewsJakartaGlobe,
             'sponsors'                => $sponsors,
@@ -347,37 +349,42 @@ class Home extends BaseController
     }
 
     /**
-     * Fetch related news from external B-Universe article API
-     * http://10.0.4.233/article/type=latest&num=20&tag=investor-daily-summit-2025&page=1
-     * Includes 3-second timeout, 5-minute cache, and normalized output format.
+     * Fetch related news from external B-Universe article APIs per portal
+     * Default limit is 9 items per portal (slider carousel).
      */
-    private function fetchRelatedNewsFromApi(): ?array
+    private function fetchNewsFromPortal(string $portal, int $limit = 9): ?array
     {
-        $cacheKey = 'ids_related_news_api_v1';
+        $cacheKey = 'ids_news_' . $portal . '_limit' . $limit . '_v5';
         $cached = cache($cacheKey);
         if ($cached !== null) {
             return !empty($cached) ? $cached : null;
         }
 
+        $portalUrls = [
+            'investor'     => "https://api.investor.id/article/type=latest&num={$limit}&tag=investor-daily-summit-2026&page=1",
+            'beritasatu'   => "https://api.beritasatu.com/v4/article/type:bytag/tag:investor-daily-summit-2026/start:0/limit:{$limit}",
+            'jakartaglobe' => "https://api.jakartaglobe.id/apiweb-v2/article/type=latest&num={$limit}&tag=investor-daily-summit-2026&page=1",
+        ];
+
+        $targetUrl = $portalUrls[$portal] ?? null;
+        if (!$targetUrl) {
+            return null;
+        }
+
         $oldTimeout = ini_get('default_socket_timeout');
-        ini_set('default_socket_timeout', 2);
+        ini_set('default_socket_timeout', 3);
 
         $context = stream_context_create([
             'http' => [
-                'timeout' => 2,
+                'timeout'    => 3,
+                'user_agent' => 'Mozilla/5.0 (compatible; IDSNewsCrawler/1.0)',
             ]
         ]);
 
-        $response = @file_get_contents(
-            'https://api.beritasatu.com/v4/article/type:bytag/tag:investor-daily-summit/start:0/limit:3',
-            false,
-            $context
-        );
-
+        $response = @file_get_contents($targetUrl, false, $context);
         ini_set('default_socket_timeout', $oldTimeout);
 
         if (!$response) {
-            // Cache failure for 3 minutes so page loads instantly without repeating 2s timeout
             cache()->save($cacheKey, [], 180);
             return null;
         }
@@ -388,10 +395,14 @@ class Home extends BaseController
             return null;
         }
 
-        // Support array of articles or wrapped object (e.g. data / articles / items)
+        // Support array of articles or wrapped object (data / articles / items / result.list / list)
         $articles = [];
-        if (isset($res['data']) && is_array($res['data'])) {
+        if (isset($res['result']['list']) && is_array($res['result']['list'])) {
+            $articles = $res['result']['list'];
+        } elseif (isset($res['data']) && is_array($res['data'])) {
             $articles = $res['data'];
+        } elseif (isset($res['list']) && is_array($res['list'])) {
+            $articles = $res['list'];
         } elseif (isset($res['articles']) && is_array($res['articles'])) {
             $articles = $res['articles'];
         } elseif (isset($res['items']) && is_array($res['items'])) {
@@ -401,20 +412,34 @@ class Home extends BaseController
         }
 
         if (empty($articles)) {
+            cache()->save($cacheKey, [], 180);
             return null;
         }
 
         $normalized = [];
         foreach ($articles as $idx => $item) {
             $item = (array) $item;
-            $title = $item['title'] ?? $item['article_title'] ?? $item['post_title'] ?? '';
+            $title = $item['title'] ?? $item['headline'] ?? $item['headline_clean'] ?? $item['article_title'] ?? $item['post_title'] ?? '';
             if (empty($title)) {
                 continue;
             }
 
-            $url = $item['url'] ?? $item['link'] ?? $item['article_url'] ?? '#news-' . ($idx + 1);
-            $image = $item['image'] ?? $item['thumbnail'] ?? $item['image_url'] ?? $item['cover'] ?? $item['picture'] ?? 'image1.png';
-            $id = $item['id'] ?? $item['article_id'] ?? ($idx + 1);
+            $id = $item['articleID'] ?? $item['id'] ?? $item['article_id'] ?? ($idx + 1);
+            $sefurl = $item['sefurl'] ?? '';
+
+            // Construct Portal-specific redirect URL and image
+            if ($portal === 'investor') {
+                $url = !empty($sefurl) ? 'https://investor.id/' . ltrim($sefurl, '/') : ($item['url'] ?? 'https://investor.id');
+                $image = $item['media'][0]['imglarge'] ?? $item['media'][0]['imgsmall'] ?? ($item['image'] ?? 'image1.webp');
+            } elseif ($portal === 'jakartaglobe') {
+                $url = !empty($sefurl) ? 'https://jakartaglobe.id/' . ltrim($sefurl, '/') : ($item['url'] ?? 'https://jakartaglobe.id');
+                $filename = $item['media'][0]['filename'] ?? '';
+                $image = !empty($filename) ? 'https://img2.beritasatu.com/cache/jakartaglobe/960x620-3/' . $filename : ($item['image'] ?? 'image1.webp');
+            } else { // beritasatu
+                $url = !empty($sefurl) ? 'https://www.beritasatu.com/' . ltrim($sefurl, '/') : ($item['url'] ?? 'https://www.beritasatu.com');
+                $filename = $item['media'][0]['filename'] ?? ($item['media'][0]['url'] ?? '');
+                $image = !empty($filename) ? 'https://img2.beritasatu.com/cache/beritasatu/960x620-3/' . $filename : ($item['image'] ?? 'image1.webp');
+            }
 
             $normalized[] = [
                 'id'    => $id,
@@ -425,11 +450,11 @@ class Home extends BaseController
         }
 
         if (!empty($normalized)) {
-            // Cache successful response for 5 minutes (300s) to keep page load instant
             cache()->save($cacheKey, $normalized, 300);
             return $normalized;
         }
 
+        cache()->save($cacheKey, [], 180);
         return null;
     }
 

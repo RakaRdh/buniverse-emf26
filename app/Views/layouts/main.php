@@ -49,22 +49,23 @@
     <!-- 3. Overview (Indonesia's Economic Model Editorial) -->
     <?= $this->include('partials/overview') ?>
 
-    <!-- 4. Schedule & Speakers Section -->
-    <?= $this->include('partials/schedule/index') ?>
-
-    <!-- 5. Gallery Section -->
-    <?= $this->include('partials/gallery') ?>
-
-    <!-- 6. Related News Section -->
-    <?= $this->include('partials/related_news') ?>
-
-    <!-- 6.1 Highlights (YouTube) Section (Commented Out per Request) -->
-    <?php /* <?= $this->include('partials/highlights') ?> */ ?>
-
-    <!-- 6.2 Live Streaming (YouTube Embed) Section -->
+    <!-- 4. Live Streaming (YouTube Embed) Section -->
     <?= $this->include('partials/livestream') ?>
 
-    <!-- 7. Sponsor & Partners Section -->
+    <!-- 5. Schedule & Speakers Section -->
+    <?= $this->include('partials/schedule/index') ?>
+
+    <!-- 6. Gallery Section -->
+    <?= $this->include('partials/gallery') ?>
+
+    <!-- 7. Related News Section -->
+    <?= $this->include('partials/related_news') ?>
+
+    <!-- 7.1 Highlights (YouTube) Section (Commented Out per Request) -->
+    <?php /* <?= $this->include('partials/highlights') ?> */ ?>
+
+
+    <!-- 8. Sponsor & Partners Section -->
     <?= $this->include('partials/sponsors') ?>
   </main>
 
@@ -74,7 +75,10 @@
   <!-- 9. Speaker Detail Modal -->
   <?= $this->include('partials/speaker_modal') ?>
 
-  <!-- 9.1 Persistent Floating Bottom Action Bar -->
+  <!-- 9.1 Gallery Lightbox Modal -->
+  <?= $this->include('partials/gallery_modal') ?>
+
+  <!-- 9.2 Persistent Floating Bottom Action Bar -->
   <?= $this->include('partials/floating_bottom') ?>
 
   <!-- 10. Floating Back to Top Button -->

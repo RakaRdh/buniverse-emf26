@@ -60,87 +60,223 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Accordion Gallery Interaction
-  // - Desktop (>768px): Hover expands card and shows color, others stay B&W.
-  // - Mobile/Tablet (<=768px): Accordion layout with smooth auto-open sequence and tap-to-expand.
-  const galleryPanels = document.querySelectorAll('.gallery-panel');
+  // 3. 3D Coverflow Carousel & Modal Lightbox
+  const galleryWrapper = document.getElementById('galleryCoverflow');
+  const galleryCards = document.querySelectorAll('.gallery-card');
+  const prevBtn = document.getElementById('galleryPrevBtn');
+  const nextBtn = document.getElementById('galleryNextBtn');
 
-  if (galleryPanels.length > 0) {
-    const isMobile = () => window.innerWidth <= 768;
+  const galleryModal = document.getElementById('galleryModal');
+  const modalOverlay = document.getElementById('galleryModalOverlay');
+  const modalClose = document.getElementById('galleryModalClose');
+  const modalImg = document.getElementById('galleryModalImg');
+  const modalCaption = document.getElementById('galleryModalCaption');
 
-    const activatePanel = (panel) => {
-      galleryPanels.forEach(p => p.classList.remove('active'));
-      panel.classList.add('active');
+  if (galleryCards.length > 0) {
+    const totalCards = galleryCards.length;
+    let currentIndex = 2; // Default center card (index 2 out of 5)
+
+    const updateCoverflow = () => {
+      const leftIndex = (currentIndex - 1 + totalCards) % totalCards;
+      const rightIndex = (currentIndex + 1) % totalCards;
+
+      galleryCards.forEach((card, idx) => {
+        card.classList.remove('is-center', 'is-left', 'is-right', 'is-hidden');
+
+        if (idx === currentIndex) {
+          card.classList.add('is-center');
+          card.setAttribute('aria-selected', 'true');
+        } else if (idx === leftIndex) {
+          card.classList.add('is-left');
+          card.setAttribute('aria-selected', 'false');
+        } else if (idx === rightIndex) {
+          card.classList.add('is-right');
+          card.setAttribute('aria-selected', 'false');
+        } else {
+          card.classList.add('is-hidden');
+          card.setAttribute('aria-selected', 'false');
+        }
+      });
     };
 
-    galleryPanels.forEach(panel => {
-      // Desktop: mouseenter activates panel
-      panel.addEventListener('mouseenter', () => {
-        if (!isMobile()) {
-          activatePanel(panel);
-        }
-      });
+    const goToPrev = () => {
+      currentIndex = (currentIndex - 1 + totalCards) % totalCards;
+      updateCoverflow();
+    };
 
-      // Click / tap (works on both mobile and desktop)
-      panel.addEventListener('click', () => {
-        activatePanel(panel);
-        resetAutoTimer();
-      });
+    const goToNext = () => {
+      currentIndex = (currentIndex + 1) % totalCards;
+      updateCoverflow();
+    };
 
-      panel.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+    if (prevBtn) prevBtn.addEventListener('click', goToPrev);
+    if (nextBtn) nextBtn.addEventListener('click', goToNext);
+
+    // Modal handlers
+    const openModal = (card) => {
+      const img = card.querySelector('img');
+      const caption = card.getAttribute('data-caption') || (img ? img.alt : '');
+      if (img && modalImg) {
+        modalImg.src = img.src;
+        modalImg.alt = caption;
+      }
+      if (modalCaption) {
+        modalCaption.textContent = caption;
+      }
+      if (galleryModal) {
+        galleryModal.classList.add('is-open');
+        galleryModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+    };
+
+    const closeModal = () => {
+      if (galleryModal) {
+        galleryModal.classList.remove('is-open');
+        galleryModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+    };
+
+    if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+
+    // Drag and Touch Swipe Gesture for Coverflow Gallery
+    let startX = 0;
+    let startY = 0;
+    let isSwiping = false;
+    let hasMoved = false;
+    let wasDragging = false;
+
+    // Card click & interaction
+    galleryCards.forEach((card, idx) => {
+      card.addEventListener('click', (e) => {
+        if (wasDragging) {
           e.preventDefault();
-          activatePanel(panel);
-          resetAutoTimer();
-        }
-      });
-    });
-
-    // If on mobile on page load, override default open panel to the first one (index 0)
-    if (isMobile()) {
-      activatePanel(galleryPanels[0]);
-    }
-
-    // Auto-open sequence: ONLY for mobile (<=768px), every 4 seconds, expand next accordion panel automatically
-    // On desktop (>768px), behavior remains strictly hover-based per user request!
-    let currentAutoIndex = 0;
-    let autoInterval = null;
-
-    const startAutoSequence = () => {
-      if (!isMobile()) return; // strictly only for mobile
-      if (autoInterval) clearInterval(autoInterval);
-      autoInterval = setInterval(() => {
-        if (!isMobile()) {
-          clearInterval(autoInterval);
+          e.stopPropagation();
           return;
         }
-        currentAutoIndex = (currentAutoIndex + 1) % galleryPanels.length;
-        activatePanel(galleryPanels[currentAutoIndex]);
-      }, 4000);
-    };
+        if (idx === currentIndex) {
+          // Center card clicked -> open lightbox modal
+          openModal(card);
+        } else {
+          // Side card clicked -> navigate to make it center
+          currentIndex = idx;
+          updateCoverflow();
+        }
+      });
 
-    const resetAutoTimer = () => {
-      if (isMobile()) {
-        if (autoInterval) clearInterval(autoInterval);
-        startAutoSequence();
-      }
-    };
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (idx === currentIndex) {
+            openModal(card);
+          } else {
+            currentIndex = idx;
+            updateCoverflow();
+          }
+        }
+      });
+    });
 
-    // Initialize auto sequence only if on mobile
-    if (isMobile()) {
-      startAutoSequence();
+    if (galleryWrapper) {
+      // Touch events (Mobile)
+      galleryWrapper.addEventListener('touchstart', (e) => {
+        if (!e.touches || e.touches.length === 0) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isSwiping = true;
+        hasMoved = false;
+      }, { passive: true });
+
+      galleryWrapper.addEventListener('touchmove', (e) => {
+        if (!isSwiping || !e.touches || e.touches.length === 0) return;
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        const diffX = currentX - startX;
+        const diffY = currentY - startY;
+
+        // If horizontal swipe is dominant
+        if (Math.abs(diffX) > 10 && Math.abs(diffX) > Math.abs(diffY)) {
+          hasMoved = true;
+        }
+      }, { passive: true });
+
+      galleryWrapper.addEventListener('touchend', (e) => {
+        if (!isSwiping) return;
+        isSwiping = false;
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+        const endX = e.changedTouches[0].clientX;
+        const diffX = endX - startX;
+
+        // Swipe threshold: 35px
+        if (Math.abs(diffX) > 35) {
+          wasDragging = true;
+          setTimeout(() => { wasDragging = false; }, 80);
+          if (diffX < 0) {
+            goToNext();
+          } else {
+            goToPrev();
+          }
+        }
+      }, { passive: true });
+
+      // Mouse drag events (Desktop)
+      let isMouseDown = false;
+      let mouseStartX = 0;
+
+      galleryWrapper.addEventListener('mousedown', (e) => {
+        // Only trigger on left mouse click and not inside controls
+        if (e.button !== 0 || e.target.closest('.gallery-nav-btn')) return;
+        isMouseDown = true;
+        hasMoved = false;
+        mouseStartX = e.clientX;
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isMouseDown) return;
+        const diffX = e.clientX - mouseStartX;
+        if (Math.abs(diffX) > 10) {
+          hasMoved = true;
+        }
+      });
+
+      window.addEventListener('mouseup', (e) => {
+        if (!isMouseDown) return;
+        isMouseDown = false;
+        const diffX = e.clientX - mouseStartX;
+        if (Math.abs(diffX) > 35) {
+          wasDragging = true;
+          setTimeout(() => { wasDragging = false; }, 80);
+          if (diffX < 0) {
+            goToNext();
+          } else {
+            goToPrev();
+          }
+        }
+      });
+
+      // Keyboard navigation when carousel container has focus
+      galleryWrapper.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          goToPrev();
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          goToNext();
+        }
+      });
     }
 
-    window.addEventListener('resize', () => {
-      if (isMobile()) {
-        if (!autoInterval) startAutoSequence();
-      } else {
-        if (autoInterval) {
-          clearInterval(autoInterval);
-          autoInterval = null;
-        }
+    // Global escape key to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && galleryModal && galleryModal.classList.contains('is-open')) {
+        closeModal();
       }
     });
+
+    // Initial setup
+    updateCoverflow();
   }
 
   // 4. Mobile Nav Toggle & Drawer
@@ -210,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // Check if within hero section on mobile
+      // Check if within hero section
       const isMobile = window.innerWidth <= 768;
       if (isMobile && heroSection) {
         const heroBottom = heroSection.offsetHeight - 40;
@@ -219,8 +355,16 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           siteHeader.classList.remove('header-transparent');
         }
+        siteHeader.classList.remove('header-hero-transparent');
       } else {
         siteHeader.classList.remove('header-transparent');
+
+        // Desktop: Transparent background (preserving blur) at top of hero section, colored when scrolled slightly
+        if (currentScrollY <= 20) {
+          siteHeader.classList.add('header-hero-transparent');
+        } else {
+          siteHeader.classList.remove('header-hero-transparent');
+        }
       }
 
       // Don't hide if mobile menu is open

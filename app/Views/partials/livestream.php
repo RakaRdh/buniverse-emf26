@@ -1,6 +1,6 @@
 <?php
   $liveData = $livestream ?? [];
-  $isLiveActive = !isset($liveData['is_active']) || !empty($liveData['is_active']);
+  $isLiveActive = !empty($liveData['is_active']);
   if (!$isLiveActive) {
       return; // Do not render section if disabled in CMS
   }

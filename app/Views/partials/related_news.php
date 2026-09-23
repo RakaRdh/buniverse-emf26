@@ -13,7 +13,7 @@
         [
           'id'    => 'investor-daily',
           'title' => 'Investor Daily',
-          'items' => $relatedNews ?? [],
+          'items' => $relatedNewsInvestor ?? ($relatedNews ?? []),
         ],
         [
           'id'    => 'beritasatu',
@@ -46,10 +46,14 @@
           </a>
         </div>
 
-        <?php if (!empty($row['items'])): ?>
+        <?php if (!empty($row['items'])): 
+          $itemCount = count($row['items']);
+          $isCentered = ($itemCount < 3);
+        ?>
           <!-- News Slider Carousel Wrapper -->
-          <div class="news-slider-wrapper" data-slider-id="<?= esc($row['id']) ?>">
+          <div class="news-slider-wrapper <?= $isCentered ? 'is-centered' : '' ?>" data-slider-id="<?= esc($row['id']) ?>">
             
+            <?php if (!$isCentered): ?>
             <!-- Prev Navigation Arrow -->
             <button type="button" 
                     class="news-arrow-btn news-arrow-prev is-disabled" 
@@ -59,10 +63,11 @@
                 <polyline points="15 18 9 12 15 6"></polyline>
               </svg>
             </button>
+            <?php endif; ?>
 
             <!-- Scrollable / Swipeable Track -->
             <div class="news-slider-container">
-              <div class="news-slider-track">
+              <div class="news-slider-track <?= $isCentered ? 'is-centered' : '' ?>">
                 <?php foreach ($row['items'] as $news): 
                   $isExternalImage = preg_match('#^https?://#i', $news['image'] ?? '');
                   $imgSrc = $isExternalImage ? $news['image'] : base_url('assets/img/' . $news['image']);
@@ -82,6 +87,7 @@
               </div>
             </div>
 
+            <?php if (!$isCentered): ?>
             <!-- Next Navigation Arrow -->
             <button type="button" 
                     class="news-arrow-btn news-arrow-next" 
@@ -90,12 +96,13 @@
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
             </button>
+            <?php endif; ?>
 
           </div>
         <?php else: ?>
           <!-- Empty State when no news is available -->
           <div class="news-empty-state">
-            <p class="news-empty-text">Tidak ada berita <?= esc($row['title']) ?> saat ini</p>
+            <p class="news-empty-text">Tidak ada related news saat ini</p>
           </div>
         <?php endif; ?>
       </div>

@@ -8,47 +8,77 @@
       <h2 class="section-title">GALLERY</h2>
     </div>
 
-    <!-- Accordion / Carousel Gallery Container -->
-    <div class="gallery-accordion" id="galleryAccordion">
-      <?php if (!empty($galleryImages)): ?>
-        <?php foreach ($galleryImages as $idx => $g): 
-          $isFeatured = !empty($g['is_featured']) || $idx === 3;
+    <?php
+      // Prepare exactly 5 items for the coverflow carousel
+      $items = [];
+      $defaultImg = base_url('assets/img/image1.webp');
+
+      if (!empty($galleryImages) && is_array($galleryImages)) {
+          foreach ($galleryImages as $g) {
+              $items[] = [
+                  'image_url' => !empty($g['image_url']) ? $g['image_url'] : $defaultImg,
+                  'caption'   => $g['caption'] ?? 'Investor Daily Summit Moment',
+              ];
+              if (count($items) >= 5) break;
+          }
+      }
+
+      // If less than 5 items, fill up to 5 with placeholders (using image1.webp)
+      $placeholderCaptions = [
+          'Investor Daily Summit Opening Ceremony',
+          'Keynote Address: Strategic Economic Outlook',
+          'Plenary Panel: Decarbonization & Green Growth',
+          'Executive Networking & Strategic Discussion',
+          'Closing Remarks & Bilateral Collaboration',
+      ];
+
+      while (count($items) < 5) {
+          $idx = count($items);
+          $items[] = [
+              'image_url' => $defaultImg,
+              'caption'   => $placeholderCaptions[$idx] ?? ('Investor Daily Summit Highlight ' . ($idx + 1)),
+          ];
+      }
+    ?>
+
+    <!-- 3D Coverflow Carousel Container -->
+    <div class="gallery-coverflow-wrapper" id="galleryCoverflow" tabindex="0" aria-label="IDS Gallery Coverflow Carousel">
+      <div class="gallery-coverflow-track">
+        <?php foreach ($items as $idx => $item): 
+          // Center index starts at 0 (or 2)
+          $initialClass = ($idx === 2) ? 'is-center' : (($idx === 1) ? 'is-left' : (($idx === 3) ? 'is-right' : 'is-hidden'));
         ?>
-          <div class="gallery-panel <?= $isFeatured ? 'is-featured' : '' ?> <?= $isFeatured ? 'active' : '' ?>" 
-               data-index="<?= $idx + 1 ?>"
-               data-featured="<?= $isFeatured ? '1' : '0' ?>"
+          <div class="gallery-card <?= $initialClass ?>" 
+               data-index="<?= $idx ?>" 
+               data-caption="<?= esc($item['caption']) ?>"
                tabindex="0"
                role="button"
-               aria-label="<?= esc($g['caption'] ?: 'Gallery photo ' . ($idx + 1)) ?>">
-            <div class="gallery-panel-inner">
-              <img src="<?= esc($g['image_url']) ?>" 
-                   alt="<?= esc($g['caption'] ?: 'Investor Daily Summit Highlight ' . ($idx + 1)) ?>" 
+               aria-label="<?= esc($item['caption']) ?>">
+            <div class="gallery-card-inner">
+              <img src="<?= esc($item['image_url']) ?>" 
+                   alt="<?= esc($item['caption']) ?>" 
                    loading="lazy">
+              <div class="gallery-card-overlay">
+                <span class="gallery-card-badge">Click to enlarge</span>
+              </div>
             </div>
           </div>
         <?php endforeach; ?>
-      <?php else: ?>
-        <?php for ($i = 1; $i <= 7; $i++): 
-          $isFeatured = ($i === 4);
-        ?>
-          <div class="gallery-panel <?= $isFeatured ? 'is-featured' : '' ?> <?= $isFeatured ? 'active' : '' ?>" 
-               data-index="<?= $i ?>"
-               data-featured="<?= $isFeatured ? '1' : '0' ?>"
-               tabindex="0"
-               role="button"
-               aria-label="Gallery photo <?= $i ?>">
-            <div class="gallery-panel-inner">
-              <img src="<?= base_url("assets/img/gallery{$i}.webp") ?>" 
-                   alt="Investor Daily Summit Highlight <?= $i ?>" 
-                   loading="lazy">
-            </div>
-          </div>
-        <?php endfor; ?>
-      <?php endif; ?>
+      </div>
     </div>
 
-    <!-- Mobile Carousel Indicators -->
-    <div class="gallery-dots-mobile" id="galleryDotsMobile"></div>
-
+    <!-- Navigation Arrows -->
+    <div class="gallery-nav-controls">
+      <button type="button" class="gallery-nav-btn gallery-prev-btn" id="galleryPrevBtn" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <button type="button" class="gallery-nav-btn gallery-next-btn" id="galleryNextBtn" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
   </div>
 </section>
