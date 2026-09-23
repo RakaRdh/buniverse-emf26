@@ -16,9 +16,9 @@ class Home extends BaseController
         $speakers      = $mock->speakers;
         $schedule      = $mock->schedule;
         $gallery       = $mock->gallery;
-        $relatedNewsInvestor     = $this->fetchNewsFromPortal('investor', 9) ?: [];
-        $relatedNewsBeritaSatu   = $this->fetchNewsFromPortal('beritasatu', 9) ?: [];
-        $relatedNewsJakartaGlobe = $this->fetchNewsFromPortal('jakartaglobe', 9) ?: [];
+        $relatedNewsInvestor     = $this->fetchNewsFromPortal('investor', 4) ?: [];
+        $relatedNewsBeritaSatu   = $this->fetchNewsFromPortal('beritasatu', 4) ?: [];
+        $relatedNewsJakartaGlobe = $this->fetchNewsFromPortal('jakartaglobe', 4) ?: [];
         $relatedNews             = $relatedNewsInvestor;
         $sponsors      = $mock->sponsors;
 
@@ -137,6 +137,12 @@ class Home extends BaseController
                             'investor-daily' => ['name' => 'investor.id', 'url' => 'https://investor.id', 'is_active' => true],
                             'beritasatu'     => ['name' => 'beritasatu.com', 'url' => 'https://www.beritasatu.com', 'is_active' => true],
                             'jakartaglobe'   => ['name' => 'jakartaglobe.id', 'url' => 'https://jakartaglobe.id', 'is_active' => true],
+                        ];
+
+                        // Sync highlights from live API
+                        $highlights = $live['highlights'] ?? [
+                            'is_active' => false,
+                            'items'     => [],
                         ];
 
                         // Sync speakers if database has them
@@ -330,6 +336,10 @@ class Home extends BaseController
                 'beritasatu'     => ['name' => 'beritasatu.com', 'url' => 'https://www.beritasatu.com', 'is_active' => true],
                 'jakartaglobe'   => ['name' => 'jakartaglobe.id', 'url' => 'https://jakartaglobe.id', 'is_active' => true],
             ],
+            'highlights'              => $highlights ?? [
+                'is_active' => false,
+                'items'     => [],
+            ],
             'speakers'                => $speakers,
             'schedule'                => $schedule,
             'gallery'                 => $gallery,
@@ -361,9 +371,9 @@ class Home extends BaseController
         }
 
         $portalUrls = [
-            'investor'     => "https://api.investor.id/article/type=latest&num={$limit}&tag=investor-daily-summit-2026&page=1",
-            'beritasatu'   => "https://api.beritasatu.com/v4/article/type:bytag/tag:investor-daily-summit-2026/start:0/limit:{$limit}",
-            'jakartaglobe' => "https://api.jakartaglobe.id/apiweb-v2/article/type=latest&num={$limit}&tag=investor-daily-summit-2026&page=1",
+            'investor'     => "https://api.investor.id/article/type=latest&num={$limit}&tag=investor-daily-summit&page=1",
+            'beritasatu'   => "https://api.beritasatu.com/v4/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
+            'jakartaglobe' => "https://api.jakartaglobe.id/apiweb-v2/article/type=latest&num={$limit}&search=investor-daily-summit&page=1",
         ];
 
         $targetUrl = $portalUrls[$portal] ?? null;

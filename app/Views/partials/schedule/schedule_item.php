@@ -76,12 +76,22 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
                   <?php endif; ?>
 
                   <!-- Speakers Grid -->
-                  <?php if (!empty($subSession['speaker_ids'])): ?>
+                  <?php 
+                  $subSpeakersToRender = [];
+                  if (!empty($subSession['speakers'])) {
+                      $subSpeakersToRender = $subSession['speakers'];
+                  } elseif (!empty($subSession['speaker_ids'])) {
+                      foreach ($subSession['speaker_ids'] as $spKey) {
+                          if (isset($allSpeakers[$spKey])) {
+                              $subSpeakersToRender[] = $allSpeakers[$spKey];
+                          }
+                      }
+                  }
+                  ?>
+                  <?php if (!empty($subSpeakersToRender)): ?>
                     <div class="plenary-speaker-grid">
-                      <?php foreach ($subSession['speaker_ids'] as $spKey): ?>
-                        <?php if (isset($allSpeakers[$spKey])): ?>
-                          <?= view('partials/schedule/speaker_card', ['speaker' => $allSpeakers[$spKey]]) ?>
-                        <?php endif; ?>
+                      <?php foreach ($subSpeakersToRender as $spkItem): ?>
+                        <?= view('partials/schedule/speaker_card', ['speaker' => $spkItem]) ?>
                       <?php endforeach; ?>
                     </div>
                   <?php endif; ?>
@@ -135,12 +145,22 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
       <?php endif; ?>
 
       <!-- Speakers List / Grid (Standardized width) -->
-      <?php if (!empty($item['speaker_ids'])): ?>
+      <?php 
+      $speakersToRender = [];
+      if (!empty($item['speakers'])) {
+          $speakersToRender = $item['speakers'];
+      } elseif (!empty($item['speaker_ids'])) {
+          foreach ($item['speaker_ids'] as $spKey) {
+              if (isset($allSpeakers[$spKey])) {
+                  $speakersToRender[] = $allSpeakers[$spKey];
+              }
+          }
+      }
+      ?>
+      <?php if (!empty($speakersToRender)): ?>
         <div class="plenary-speaker-grid">
-          <?php foreach ($item['speaker_ids'] as $spKey): ?>
-            <?php if (isset($allSpeakers[$spKey])): ?>
-              <?= view('partials/schedule/speaker_card', ['speaker' => $allSpeakers[$spKey]]) ?>
-            <?php endif; ?>
+          <?php foreach ($speakersToRender as $spkItem): ?>
+            <?= view('partials/schedule/speaker_card', ['speaker' => $spkItem]) ?>
           <?php endforeach; ?>
         </div>
       <?php endif; ?>

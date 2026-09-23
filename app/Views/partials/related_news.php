@@ -68,10 +68,12 @@
             <!-- Scrollable / Swipeable Track -->
             <div class="news-slider-container">
               <div class="news-slider-track <?= $isCentered ? 'is-centered' : '' ?>">
-                <?php foreach ($row['items'] as $news): 
-                  $isExternalImage = preg_match('#^https?://#i', $news['image'] ?? '');
-                  $imgSrc = $isExternalImage ? $news['image'] : base_url('assets/img/' . $news['image']);
-                  $isExternalUrl = preg_match('#^https?://#i', $news['url'] ?? '');
+                <?php 
+                  $displayItems = array_slice($row['items'], 0, 4);
+                  foreach ($displayItems as $news): 
+                    $isExternalImage = preg_match('#^https?://#i', $news['image'] ?? '');
+                    $imgSrc = $isExternalImage ? $news['image'] : base_url('assets/img/' . $news['image']);
+                    $isExternalUrl = preg_match('#^https?://#i', $news['url'] ?? '');
                 ?>
                   <article class="news-card">
                     <a href="<?= esc($news['url']) ?>" class="news-card-link" <?= $isExternalUrl ? 'target="_blank" rel="noopener noreferrer"' : '' ?>>

@@ -55,7 +55,6 @@
       <div class="header-right-group">
         <nav class="site-nav" id="siteNav" aria-label="Main Navigation">
           <div class="mobile-nav-header">
-            <span class="mobile-nav-title">Menu</span>
             <button class="nav-close-btn" id="navCloseBtn" aria-label="Close navigation menu">&times;</button>
           </div>
           <?php

@@ -15,16 +15,21 @@
       </div>
     </div>
 
-    <!-- 2. Day Selector: Day 1 vs Day 2 (Auto-hidden when SPEAKERS tab is selected) -->
+    <!-- 2. Day Selector: October 7th vs October 8th (Auto-hidden when SPEAKERS tab is selected) -->
     <div class="day-selector-wrapper" id="daySelectorWrapper">
       <div class="day-selector" role="tablist">
         <button class="day-btn active" data-day="day_1" role="tab">
-          <?= esc($schedule['day_1']['label']) ?>
+          October 7th
         </button>
         <button class="day-btn" data-day="day_2" role="tab">
-          <?= esc($schedule['day_2']['label']) ?>
+          October 8th
         </button>
       </div>
+    </div>
+
+    <!-- Active Day Title between tab pill and schedule content -->
+    <div class="schedule-day-title-wrap" id="scheduleDayTitleWrap">
+      <h3 class="schedule-day-heading" id="scheduleDayHeading">DAY 1</h3>
     </div>
 
     <!-- 3. Schedule Tab Content (Day 1 & Day 2 lists) -->

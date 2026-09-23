@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <?php
-    $metaTitle = !empty($seo['meta_title']) ? $seo['meta_title'] : ($site['title'] . ' — ' . $site['theme']);
+    $metaTitle = !empty($seo['meta_title']) ? $seo['meta_title'] : $site['title'];
     $metaDesc  = !empty($seo['meta_description']) ? $seo['meta_description'] : ($site['title'] . '. ' . $site['dates'] . ' di ' . $site['venue'] . '. Forum investasi terbesar di Indonesia.');
     $ogImage   = !empty($seo['og_image_url']) ? $seo['og_image_url'] : base_url('assets/img/image1.png');
   ?>
@@ -61,8 +61,10 @@
     <!-- 7. Related News Section -->
     <?= $this->include('partials/related_news') ?>
 
-    <!-- 7.1 Highlights (YouTube) Section (Commented Out per Request) -->
-    <?php /* <?= $this->include('partials/highlights') ?> */ ?>
+    <!-- 7.1 Highlights (YouTube) Section -->
+    <?php if (!empty($highlights['is_active']) && !empty($highlights['items'])): ?>
+      <?= $this->include('partials/highlights') ?>
+    <?php endif; ?>
 
 
     <!-- 8. Sponsor & Partners Section -->

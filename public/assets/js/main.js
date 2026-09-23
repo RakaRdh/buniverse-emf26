@@ -28,6 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (daySelectorWrapper) {
           daySelectorWrapper.classList.remove('hidden');
         }
+        const dayHeadingWrap = document.getElementById('scheduleDayTitleWrap');
+        if (dayHeadingWrap) {
+          dayHeadingWrap.style.display = 'block';
+        }
       } else if (targetTab === 'speakers') {
         scheduleListView.style.display = 'none';
         speakersTabView.classList.add('active');
@@ -35,13 +39,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (daySelectorWrapper) {
           daySelectorWrapper.classList.add('hidden');
         }
+        const dayHeadingWrap = document.getElementById('scheduleDayTitleWrap');
+        if (dayHeadingWrap) {
+          dayHeadingWrap.style.display = 'none';
+        }
       }
     });
   });
 
-  // 2. Day Selector: Day 1 vs Day 2
+  // 2. Day Selector: Day 1 vs Day 2 (October 7th vs October 8th)
   const dayBtns = document.querySelectorAll('.day-btn');
   const daySchedules = document.querySelectorAll('.day-schedule-content');
+  const scheduleDayHeading = document.getElementById('scheduleDayHeading');
 
   dayBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -49,6 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       dayBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+
+      if (scheduleDayHeading) {
+        scheduleDayHeading.textContent = (targetDay === 'day_2') ? 'DAY 2' : 'DAY 1';
+      }
 
       daySchedules.forEach(schedule => {
         if (schedule.getAttribute('data-day') === targetDay) {
@@ -74,7 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (galleryCards.length > 0) {
     const totalCards = galleryCards.length;
-    let currentIndex = 2; // Default center card (index 2 out of 5)
+    // Permintaan user: ketika user refresh halaman dan menuju ke section gallery, gambar yang pertama buka gede itu akan random
+    let currentIndex = Math.floor(Math.random() * totalCards);
 
     const updateCoverflow = () => {
       const leftIndex = (currentIndex - 1 + totalCards) % totalCards;
@@ -275,8 +289,45 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // Autoslide implementation for Coverflow Gallery
+    let autoSlideTimer = null;
+    const startAutoSlide = () => {
+      stopAutoSlide();
+      autoSlideTimer = setInterval(() => {
+        // Jangan autoslide jika modal lightbox terbuka
+        if (galleryModal && galleryModal.classList.contains('is-open')) return;
+        goToNext();
+      }, 4500);
+    };
+
+    const stopAutoSlide = () => {
+      if (autoSlideTimer) {
+        clearInterval(autoSlideTimer);
+        autoSlideTimer = null;
+      }
+    };
+
+    // Pause autoslide on hover/interaction
+    galleryWrapper.addEventListener('mouseenter', stopAutoSlide);
+    galleryWrapper.addEventListener('mouseleave', startAutoSlide);
+    galleryWrapper.addEventListener('touchstart', stopAutoSlide, { passive: true });
+    galleryWrapper.addEventListener('touchend', () => {
+      // Resume autoslide after gesture ends
+      setTimeout(startAutoSlide, 2000);
+    }, { passive: true });
+
+    if (prevBtn) {
+      prevBtn.addEventListener('mouseenter', stopAutoSlide);
+      prevBtn.addEventListener('mouseleave', startAutoSlide);
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('mouseenter', stopAutoSlide);
+      nextBtn.addEventListener('mouseleave', startAutoSlide);
+    }
+
     // Initial setup
     updateCoverflow();
+    startAutoSlide();
   }
 
   // 4. Mobile Nav Toggle & Drawer
@@ -318,6 +369,49 @@ document.addEventListener('DOMContentLoaded', () => {
         closeMobileNav();
       });
     });
+
+    // ScrollSpy: Update active state on nav-links based on current visible section
+    const navLinks = document.querySelectorAll('.site-nav .nav-link');
+    const updateActiveNav = () => {
+      const scrollPos = (window.pageYOffset || document.documentElement.scrollTop || 0) + 160;
+      const sections = [];
+
+      navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#') && href.length > 1) {
+          const targetEl = document.querySelector(href);
+          if (targetEl) {
+            sections.push({ link, targetEl, top: targetEl.offsetTop, bottom: targetEl.offsetTop + targetEl.offsetHeight });
+          }
+        }
+      });
+
+      if (sections.length === 0) return;
+
+      let currentActiveLink = null;
+      for (let i = sections.length - 1; i >= 0; i--) {
+        if (scrollPos >= sections[i].top) {
+          currentActiveLink = sections[i].link;
+          break;
+        }
+      }
+
+      if (!currentActiveLink && sections.length > 0) {
+        currentActiveLink = sections[0].link;
+      }
+
+      navLinks.forEach(link => {
+        if (link === currentActiveLink) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    };
+
+    window.addEventListener('scroll', updateActiveNav, { passive: true });
+    window.addEventListener('resize', updateActiveNav, { passive: true });
+    updateActiveNav();
 
     // Close when clicking outside of drawer on mobile
     document.addEventListener('click', (e) => {
@@ -670,13 +764,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial check on load
     updateNewsArrowState();
 
-    // Mouse Drag to Scroll Gesture (Desktop swipe experience)
+    // Mouse Drag to Scroll Gesture (Mobile/tablet swipe experience when slider is active)
     let isMouseDown = false;
     let startX = 0;
     let initialScrollLeft = 0;
     let hasDragged = false;
 
     newsSliderContainer.addEventListener('mousedown', (e) => {
+      if (window.innerWidth > 768) return; // Desktop is a static 4-column grid, no dragging needed
       isMouseDown = true;
       hasDragged = false;
       startX = e.pageX - newsSliderContainer.offsetLeft;
@@ -860,140 +955,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 13. Highlights Section: Fetch 3 Fixed YouTube Videos via YouTube Data API v3
-  const initHighlightsSection = async () => {
-    const highlightsGrid = document.getElementById('highlightsGrid');
-    if (!highlightsGrid) return;
-
-    const API_KEY = 'AIzaSyAZjlB9xf0R-SjsRrOqnLHjuRJ0sbU3sds';
-    const HASHTAG = '#investordailysummit';
-    const CACHE_KEY = 'ids_highlights_yt_videos_v1';
-    const CACHE_TTL_MS = 60 * 60 * 1000; // 1 Jam Cache
-
-    // Fallback static videos in case API quota is reached or network is offline
-    const fallbackVideos = [
-      {
-        videoId: 'BCq3ycyxkf4',
-        title: 'Jakarta Tawarkan 37 proyek senilai US$7 M di U20 Mayors Summit 2026',
-        thumbnail: 'https://i.ytimg.com/vi/BCq3ycyxkf4/hqdefault.jpg',
-        videoUrl: 'https://www.youtube.com/watch?v=BCq3ycyxkf4'
-      },
-      {
-        videoId: 'svEJI3ph_VI',
-        title: 'Kiprah Indonesia Dalam Peta Ekonomi Dunia | Investor Daily Summit',
-        thumbnail: 'https://i.ytimg.com/vi/svEJI3ph_VI/hqdefault.jpg',
-        videoUrl: 'https://www.youtube.com/watch?v=svEJI3ph_VI'
-      },
-      {
-        videoId: 'dtIBlTHtotk',
-        title: 'Special Remarks & Solek Negeri Pikat Investasi | Investor Daily Summit',
-        thumbnail: 'https://i.ytimg.com/vi/dtIBlTHtotk/hqdefault.jpg',
-        videoUrl: 'https://www.youtube.com/watch?v=dtIBlTHtotk'
-      }
-    ];
-
-    const renderVideos = (videos) => {
-      // Ensure exactly 3 videos are displayed
-      const itemsToRender = (videos && videos.length >= 3) ? videos.slice(0, 3) : fallbackVideos.slice(0, 3);
-      highlightsGrid.innerHTML = '';
-
-      itemsToRender.forEach(v => {
-        const card = document.createElement('article');
-        card.className = 'highlights-card';
-        card.innerHTML = `
-          <a href="${v.videoUrl}" target="_blank" rel="noopener noreferrer" class="highlights-card-inner" title="${escapeHtml(v.title)}">
-            <div class="highlights-thumb-wrap">
-              <div class="highlights-thumb-bg" style="background-image: url('${v.thumbnail}');"></div>
-              <div class="highlights-play-badge" aria-hidden="true">
-                <svg viewBox="0 0 68 48" width="52" height="36" class="yt-play-svg">
-                  <path class="yt-play-bg" d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"></path>
-                  <path d="M 45,24 27,14 27,34" fill="#FFFFFF"></path>
-                </svg>
-              </div>
-              <div class="highlights-title-embedded">
-                <span class="highlights-title-text">${escapeHtml(v.title)}</span>
-              </div>
-            </div>
-          </a>
-        `;
-        highlightsGrid.appendChild(card);
-      });
-    };
-
-    const escapeHtml = (str) => {
-      if (!str) return '';
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    };
-
-    // Check localStorage cache
-    try {
-      const cachedDataStr = localStorage.getItem(CACHE_KEY);
-      if (cachedDataStr) {
-        const cachedObj = JSON.parse(cachedDataStr);
-        if (cachedObj && cachedObj.timestamp && (Date.now() - cachedObj.timestamp < CACHE_TTL_MS)) {
-          if (Array.isArray(cachedObj.videos) && cachedObj.videos.length >= 3) {
-            renderVideos(cachedObj.videos);
-            return;
-          }
-        }
-      }
-    } catch (e) {
-      // LocalStorage access restricted or invalid, proceed to fetch
-    }
-
-    // Fetch from YouTube Data API v3
-    try {
-      const encodedQuery = encodeURIComponent(HASHTAG);
-      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodedQuery}&type=video&maxResults=6&key=${API_KEY}`;
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`YouTube API returned status ${response.status}`);
-      }
-      const data = await response.json();
-
-      if (data && Array.isArray(data.items) && data.items.length > 0) {
-        const videos = data.items
-          .filter(item => item.id && item.id.videoId)
-          .map(item => ({
-            videoId: item.id.videoId,
-            title: item.snippet.title,
-            channelTitle: item.snippet.channelTitle,
-            publishedAt: item.snippet.publishedAt,
-            thumbnail: (item.snippet.thumbnails.high && item.snippet.thumbnails.high.url) || 
-                       (item.snippet.thumbnails.medium && item.snippet.thumbnails.medium.url) || 
-                       (item.snippet.thumbnails.default && item.snippet.thumbnails.default.url),
-            videoUrl: `https://www.youtube.com/watch?v=${item.id.videoId}`
-          }));
-
-        if (videos.length >= 3) {
-          try {
-            localStorage.setItem(CACHE_KEY, JSON.stringify({
-              timestamp: Date.now(),
-              videos: videos
-            }));
-          } catch (e) {}
-
-          renderVideos(videos);
-          return;
-        }
-      }
-
-      // If items count < 3, use fallback
-      renderVideos(fallbackVideos);
-    } catch (error) {
-      console.warn('YouTube Highlights API fetch error, rendering fallback videos:', error);
-      renderVideos(fallbackVideos);
-    }
-  };
-
-  // Highlights section commented out per user request; disabled init call
-  // initHighlightsSection();
+  // 13. Highlights Section: Rendered Server-Side (Zero Quota Database Pattern)
 
   // 10. Ticket Click Telemetry Tracking
   const trackTicketClick = () => {

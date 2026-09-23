@@ -9,7 +9,6 @@
     </div>
 
     <?php
-      // Prepare exactly 5 items for the coverflow carousel
       $items = [];
       $defaultImg = base_url('assets/img/image1.webp');
 
@@ -19,11 +18,10 @@
                   'image_url' => !empty($g['image_url']) ? $g['image_url'] : $defaultImg,
                   'caption'   => $g['caption'] ?? 'Investor Daily Summit Moment',
               ];
-              if (count($items) >= 5) break;
           }
       }
 
-      // If less than 5 items, fill up to 5 with placeholders (using image1.webp)
+      // If empty or less than 5 items, provide minimum defaults
       $placeholderCaptions = [
           'Investor Daily Summit Opening Ceremony',
           'Keynote Address: Strategic Economic Outlook',
@@ -58,9 +56,9 @@
               <img src="<?= esc($item['image_url']) ?>" 
                    alt="<?= esc($item['caption']) ?>" 
                    loading="lazy">
-              <div class="gallery-card-overlay">
+              <!-- <div class="gallery-card-overlay">
                 <span class="gallery-card-badge">Click to enlarge</span>
-              </div>
+              </div> -->
             </div>
           </div>
         <?php endforeach; ?>

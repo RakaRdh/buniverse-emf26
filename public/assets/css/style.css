@@ -381,6 +381,24 @@ button {
   animation-delay: 0.15s;
 }
 
+.hero-bundle-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 450px;
+  animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-bundle-img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+
 .hero-brand-logo {
   max-height: 170px;
   width: auto;
@@ -501,7 +519,11 @@ button {
    -------------------------------------------------------------------------- */
 .editorial-section {
   position: relative;
-  padding: 80px 0 100px 0;
+  min-height: 720px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 90px 0 110px 0;
   background-color: var(--primary-1-6, #004b84);
   border-top: none;
   /* border-bottom: 1px solid var(--border-divider); */
@@ -544,34 +566,25 @@ button {
   z-index: 3;
 }
 
-/* 4-Strip Slanted Photo Collage per Overview Brief §1-§4 & Figma Image 2 */
+/* 2-Strip Slanted Photo Collage (Non-overlapping, clean side-by-side gapless/subtle gap) */
 .editorial-wave-mask-wrap {
   position: absolute;
-  bottom: -60px;
-  left: 150px;
-  width: 620px;
-  height: 440px;
+  bottom: 0;
+  left: 0;
+  width: 650px;
+  height: 480px;
   pointer-events: none;
   z-index: 0; /* Behind the editorial-grid text on desktop */
-
-  /* Gap antar strip dicomment out agar menyatu tanpa celah */
-  /* --strip-gap: 14px; */
-  /* Strip pertama mepet banget ke pojok kiri bawah layar: */
-  /* Lebar horizontal polygon per strip = 117px (polygon 306px to 423px / 0 to 117px) */
-  --strip-1-left: -200px;
-  --strip-2-left: -83px;   /* -200px + 117px */
-  --strip-3-left: 34px;    /* -83px + 117px */
-  --strip-4-left: 151px;   /* 34px + 117px */
 }
 
 .editorial-strip {
   position: absolute;
   bottom: 0;
-  width: 423px;
-  height: 421px;
-  clip-path: polygon(306px 0, 423px 0, 117px 100%, 0 100%);
-  -webkit-mask-image: linear-gradient(to top, #000000 15%, rgba(0, 0, 0, 0.75) 45%, rgba(0, 0, 0, 0.35) 70%, transparent 100%);
-  mask-image: linear-gradient(to top, #000000 15%, rgba(0, 0, 0, 0.75) 45%, rgba(0, 0, 0, 0.35) 70%, transparent 100%);
+  width: 320px;
+  height: 480px;
+  clip-path: polygon(140px 0, 100% 0, calc(100% - 140px) 100%, 0 100%);
+  -webkit-mask-image: linear-gradient(to top, #000000 25%, rgba(0, 0, 0, 0.75) 55%, rgba(0, 0, 0, 0.3) 80%, transparent 100%);
+  mask-image: linear-gradient(to top, #000000 25%, rgba(0, 0, 0, 0.75) 55%, rgba(0, 0, 0, 0.3) 80%, transparent 100%);
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   overflow: hidden;
@@ -585,10 +598,16 @@ button {
   display: block;
 }
 
-.editorial-strip-1 { left: var(--strip-1-left); }
-.editorial-strip-2 { left: var(--strip-2-left); }
-.editorial-strip-3 { left: var(--strip-3-left); }
-.editorial-strip-4 { left: var(--strip-4-left); }
+/* Strip 1 and Strip 2 placed side by side with zero overlapping: width is 320px, offset by width - slant width (320 - 140 = 180px) */
+.editorial-strip-1 {
+  left: -20px;
+  z-index: 1;
+}
+
+.editorial-strip-2 {
+  left: 162px; /* -20px + 182px (allowing clean 2px separation without overlapping faces/bodies) */
+  z-index: 2;
+}
 
 @media (max-width: 1024px) {
   .editorial-wave-mask-wrap {
@@ -718,6 +737,21 @@ button {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
+/* Day Title between tab pill and schedule list (Matching Gambar 2 Reference) */
+.schedule-day-title-wrap {
+  margin-top: 6px;
+  margin-bottom: 24px;
+}
+
+.schedule-day-heading {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary, #ffffff);
+  letter-spacing: 0.5px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
 /* Schedule Rows & Items */
 .schedule-list {
   display: flex;
@@ -837,8 +871,8 @@ button {
 }
 
 .moderator-photo {
-  width: 72px;
-  height: 72px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   overflow: hidden;
   background-color: var(--primary-1-7);
@@ -1011,17 +1045,20 @@ button {
 .speaker-photo-wrap {
   position: relative;
   z-index: 2;
-  width: 80px;
-  height: 80px;
+  width: 75px;
+  height: 75px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
   border: none;
   background: linear-gradient(180deg, var(--primary-2-5) 0%, var(--primary-1-10) 100%);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   box-shadow: none;
+  box-sizing: border-box;
+  -webkit-mask-image: -webkit-radial-gradient(white, black); /* Crisp round mask clipping for WebKit */
+  mask-image: radial-gradient(circle, #000 99%, transparent 100%);
 }
 
 .speaker-photo-wrap img {
@@ -1029,7 +1066,8 @@ button {
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  object-position: center;
+  object-position: top center;
+  display: block;
 }
 
 .speaker-info {
@@ -1258,7 +1296,7 @@ button {
   aspect-ratio: 2 / 2.35;
   border: 1.5px solid rgba(55, 146, 205, 0.4);
   border-radius: 24px;
-  background-color: transparent;
+  background: radial-gradient(circle at 50% 40%, var(--primary-2-6, #004b84) 0%, var(--primary-1-6, #010a2d) 100%);
   overflow: hidden;
   transition: border-color 300ms ease-out, box-shadow 300ms ease-out;
 }
@@ -1364,7 +1402,7 @@ button {
    Alternating Section 4: Primary 2-6 (#004b84)
    -------------------------------------------------------------------------- */
 .gallery-section {
-  padding: 90px 0;
+  padding: 48px 0;
   background-color: var(--primary-2-6, #004b84);
   border-top: 1px solid var(--border-divider);
 }
@@ -1440,6 +1478,13 @@ button {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.35, 1);
+  will-change: transform;
+}
+
+/* Hover zoom HANYA aktif untuk foto yang sedang muncul di tengah (is-center) */
+.gallery-card.is-center:hover .gallery-card-inner {
+  transform: scale(1.06);
 }
 
 .gallery-card img {
@@ -1448,6 +1493,7 @@ button {
   object-fit: cover;
   object-position: center;
   display: block;
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.35, 1);
 }
 
 .gallery-card-overlay {
@@ -1492,15 +1538,15 @@ button {
 .gallery-card.is-left {
   transform: translate3d(-52%, 0, -50px) rotateY(35deg) scale(0.85);
   z-index: 5;
-  opacity: 0.65;
-  filter: grayscale(80%) brightness(0.75);
+  opacity: 0.85;
+  filter: grayscale(40%) brightness(0.85);
 }
 
 .gallery-card.is-right {
   transform: translate3d(52%, 0, -50px) rotateY(-35deg) scale(0.85);
   z-index: 5;
-  opacity: 0.65;
-  filter: grayscale(80%) brightness(0.75);
+  opacity: 0.85;
+  filter: grayscale(40%) brightness(0.85);
 }
 
 .gallery-card.is-hidden {
@@ -1707,15 +1753,14 @@ button {
   /* transform: translateX(3px); */
 }
 
-/* Slider wrapper with relative positioning for arrows */
+/* Related news on Desktop: 4-column static grid (no slider/arrows). Mobile retains swipeable slider. */
+/* === DESKTOP SLIDER STYLES COMMENTED OUT PER USER REQUEST ===
 .news-slider-wrapper {
   position: relative;
   width: 100%;
   display: flex;
   align-items: center;
 }
-
-/* Scrollable container with native gesture swipe and hidden scrollbars */
 .news-slider-container {
   width: 100%;
   overflow-x: auto;
@@ -1723,22 +1768,33 @@ button {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  /* Firefox */
   -ms-overflow-style: none;
-  /* IE/Edge */
   padding: 10px 4px 20px 4px;
 }
+=== END DESKTOP SLIDER STYLES COMMENTED OUT === */
 
-.news-slider-container::-webkit-scrollbar {
-  display: none;
-  /* Chrome/Safari */
+.news-slider-wrapper {
+  position: relative;
+  width: 100%;
 }
 
-/* Flex track holding all news cards */
+/* On Desktop: slider container displays static 4-column grid */
+.news-slider-container {
+  width: 100%;
+  overflow: visible;
+  padding: 10px 0 20px 0;
+}
+
 .news-slider-track {
-  display: flex;
-  gap: 28px;
-  width: max-content;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+/* Arrows hidden on desktop */
+.news-arrow-btn {
+  display: none !important;
 }
 
 /* Centered layout when only 1 or 2 news items are available */
@@ -1748,13 +1804,7 @@ button {
 
 .news-slider-track.is-centered {
   min-width: 100%;
-  width: max-content;
-  justify-content: center;
-  margin: 0 auto;
-}
-
-.news-slider-wrapper.is-centered .news-arrow-btn {
-  display: none !important;
+  width: 100%;
 }
 
 /* Empty State when no news is available */
@@ -1776,11 +1826,10 @@ button {
   letter-spacing: 0.2px;
 }
 
-/* News card in slider: 3 visible at once on desktop, fixed comfortable width */
+/* News card in 4-column grid on desktop */
 .news-card {
-  width: 380px;
-  max-width: 85vw;
-  flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   transition: transform var(--transition-normal);
@@ -2269,7 +2318,7 @@ button {
 .footer-left {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
   flex: 1;
 }
@@ -2277,6 +2326,8 @@ button {
 .footer-brand {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .footer-logo-id {
@@ -2284,12 +2335,15 @@ button {
   width: auto;
   object-fit: contain;
   display: block;
+  margin: 0 auto;
 }
 
 .footer-socials {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
+  width: 100%;
 }
 
 .social-circle-btn {
@@ -2691,7 +2745,7 @@ button {
   .mobile-nav-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     padding-bottom: 14px;
     margin-bottom: 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -2783,6 +2837,23 @@ button {
     margin-bottom: 20px;
   }
 
+  .hero-bundle-wrap {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hero-bundle-img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+
   .hero-brand-logo {
     max-height: 95px;
     width: auto;
@@ -2871,12 +2942,14 @@ button {
     max-width: 100%;
     text-align: left;
     font-weight: 500;
+    margin-bottom: 30px;
   }
 
   .editorial-right {
     align-items: flex-start;
     text-align: left;
     width: 100%;
+    margin-top: 6px;
   }
 
   .editorial-right .topic-badge {
@@ -2888,7 +2961,8 @@ button {
     font-weight: 800;
     letter-spacing: 0.6px;
     padding: 12px 16px;
-    margin-bottom: 22px;
+    margin-top: 6px;
+    margin-bottom: 30px;
     box-sizing: border-box;
     text-align: center;
   }
@@ -2911,6 +2985,11 @@ button {
 
   .editorial-section {
     position: relative;
+    min-height: 820px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
     padding: 45px 0 250px 0; /* Extra bottom padding so text doesn't overlap the bottom-anchored collage */
     overflow: hidden;
   }
@@ -2932,11 +3011,19 @@ button {
     margin: 0 !important;
     transform: translateX(-50%) scale(0.68) !important;
     transform-origin: bottom center !important;
-    width: 620px !important;
-    height: 420px !important;
+    width: 500px !important;
+    height: 440px !important;
     opacity: 0.95;
     z-index: 1 !important;
     pointer-events: none;
+  }
+
+  .editorial-strip-1 {
+    left: -20px !important;
+  }
+
+  .editorial-strip-2 {
+    left: 162px !important;
   }
 
   /* --------------------------------------------------------------------------
@@ -3141,12 +3228,39 @@ button {
     font-size: 13.5px;
   }
 
+  .news-slider-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .news-slider-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 10px 4px 20px 4px;
+  }
+
+  .news-slider-container::-webkit-scrollbar {
+    display: none;
+  }
+
   .news-slider-track {
+    display: flex !important;
+    grid-template-columns: none !important;
     gap: 18px;
+    width: max-content !important;
   }
 
   .news-card {
-    width: 280px;
+    width: 280px !important;
+    max-width: 85vw !important;
+    flex-shrink: 0 !important;
   }
 
   .news-image-wrap {
@@ -3698,7 +3812,7 @@ button {
    ========================================================================== */
 .livestream-section {
   position: relative;
-  padding: 80px 0;
+  padding: 48px 0;
   background-color: var(--primary-2-6, #004b84);
   overflow: hidden;
 }

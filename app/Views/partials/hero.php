@@ -21,29 +21,12 @@
     </div>
   </div>
 
-  <!-- 2. Centered Content Group: logo_ids26.webp, tema, tanggal, lokasi -->
+  <!-- 2. Centered Content Group: Bundle single image hero.png -->
   <div class="container hero-container">
     <div class="hero-content hero-content-centered">
-      
-      <!-- Brand Logo IDS 2026 (logo_ids26.webp) -->
-      <div class="hero-brand">
-        <?php $heroLogo = !empty($site['logo_a']) ? $site['logo_a'] : base_url('assets/img/logo_ids26.webp'); ?>
-        <img src="<?= esc($heroLogo) ?>" alt="<?= esc($site['title']) ?>" class="hero-brand-logo">
+      <div class="hero-bundle-wrap">
+        <img src="<?= base_url('assets/img/hero.png') ?>" alt="<?= esc($site['title'] ?? 'Investor Daily Summit 2026') ?>" class="hero-bundle-img">
       </div>
-
-      <!-- Topic / Theme -->
-      <div class="hero-theme-text">
-        <?= esc($site['theme'] ?? "INDONESIA'S ECONOMIC MODEL") ?>
-      </div>
-
-      <!-- Date & Venue -->
-      <div class="hero-date">
-        <?= esc($site['dates']) ?>
-      </div>
-      <div class="hero-venue">
-        <?= esc($site['venue']) ?>
-      </div>
-
     </div>
   </div>
 
