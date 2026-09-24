@@ -8,43 +8,88 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Main Tabs: SCHEDULE vs SPEAKERS
+  // 1. Main Tabs: SCHEDULE vs SPEAKERS (Persisted across page refresh via sessionStorage & hash)
   const mainTabBtns = document.querySelectorAll('.main-tab-btn');
   const scheduleListView = document.getElementById('scheduleListView');
   const speakersTabView = document.getElementById('speakersTabView');
   const daySelectorWrapper = document.getElementById('daySelectorWrapper');
 
+  const switchMainTab = (targetTab, updateHistory = true) => {
+    const activeBtn = document.querySelector(`.main-tab-btn[data-tab="${targetTab}"]`);
+    if (!activeBtn) return;
+
+    mainTabBtns.forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    activeBtn.classList.add('active');
+    activeBtn.setAttribute('aria-selected', 'true');
+
+    if (targetTab === 'schedule') {
+      if (scheduleListView) scheduleListView.style.display = 'block';
+      if (speakersTabView) speakersTabView.classList.remove('active');
+      // Tampilkan Day selector di tab Schedule
+      if (daySelectorWrapper) {
+        daySelectorWrapper.classList.remove('hidden');
+      }
+      const dayHeadingWrap = document.getElementById('scheduleDayTitleWrap');
+      if (dayHeadingWrap) {
+        dayHeadingWrap.style.display = 'block';
+      }
+    } else if (targetTab === 'speakers') {
+      if (scheduleListView) scheduleListView.style.display = 'none';
+      if (speakersTabView) speakersTabView.classList.add('active');
+      // Sembunyikan Day selector saat tab SPEAKERS aktif
+      if (daySelectorWrapper) {
+        daySelectorWrapper.classList.add('hidden');
+      }
+      const dayHeadingWrap = document.getElementById('scheduleDayTitleWrap');
+      if (dayHeadingWrap) {
+        dayHeadingWrap.style.display = 'none';
+      }
+    }
+
+    try {
+      sessionStorage.setItem('active_ids_tab', targetTab);
+    } catch (e) {}
+
+    if (updateHistory) {
+      if (targetTab === 'speakers') {
+        history.replaceState(null, null, '#speakers');
+      } else if (targetTab === 'schedule' && window.location.hash === '#speakers') {
+        history.replaceState(null, null, '#schedule');
+      }
+    }
+  };
+
   mainTabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const targetTab = btn.getAttribute('data-tab');
-
-      mainTabBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      if (targetTab === 'schedule') {
-        scheduleListView.style.display = 'block';
-        speakersTabView.classList.remove('active');
-        // Kondisioning: Tampilkan Day selector di tab Schedule
-        if (daySelectorWrapper) {
-          daySelectorWrapper.classList.remove('hidden');
-        }
-        const dayHeadingWrap = document.getElementById('scheduleDayTitleWrap');
-        if (dayHeadingWrap) {
-          dayHeadingWrap.style.display = 'block';
-        }
-      } else if (targetTab === 'speakers') {
-        scheduleListView.style.display = 'none';
-        speakersTabView.classList.add('active');
-        // Kondisioning spesifik sesuai permintaan user: Day selector disembunyikan saat tab SPEAKERS aktif!
-        if (daySelectorWrapper) {
-          daySelectorWrapper.classList.add('hidden');
-        }
-        const dayHeadingWrap = document.getElementById('scheduleDayTitleWrap');
-        if (dayHeadingWrap) {
-          dayHeadingWrap.style.display = 'none';
-        }
-      }
+      switchMainTab(targetTab, true);
     });
+  });
+
+  // Restore Main Tab state on initial load / refresh
+  const initialHash = (window.location.hash || '').toLowerCase();
+  let savedTab = null;
+  try {
+    savedTab = sessionStorage.getItem('active_ids_tab');
+  } catch (e) {}
+
+  if (initialHash === '#speakers' || initialHash === '#speaker' || savedTab === 'speakers') {
+    switchMainTab('speakers', false);
+  } else if (savedTab === 'schedule') {
+    switchMainTab('schedule', false);
+  }
+
+  // Support direct hash change navigation
+  window.addEventListener('hashchange', () => {
+    const currentHash = (window.location.hash || '').toLowerCase();
+    if (currentHash === '#speakers' || currentHash === '#speaker') {
+      switchMainTab('speakers', false);
+    } else if (currentHash === '#schedule') {
+      switchMainTab('schedule', false);
+    }
   });
 
   // 2. Day Selector: Day 1 vs Day 2 (October 7th vs October 8th)
@@ -52,26 +97,45 @@ document.addEventListener('DOMContentLoaded', () => {
   const daySchedules = document.querySelectorAll('.day-schedule-content');
   const scheduleDayHeading = document.getElementById('scheduleDayHeading');
 
+  const switchDay = (targetDay) => {
+    const activeBtn = document.querySelector(`.day-btn[data-day="${targetDay}"]`);
+    if (!activeBtn) return;
+
+    dayBtns.forEach(b => b.classList.remove('active'));
+    activeBtn.classList.add('active');
+
+    if (scheduleDayHeading) {
+      scheduleDayHeading.textContent = activeBtn.getAttribute('data-heading') || ((targetDay === 'day_2') ? 'DAY 2' : 'DAY 1');
+    }
+
+    daySchedules.forEach(schedule => {
+      if (schedule.getAttribute('data-day') === targetDay) {
+        schedule.style.display = 'block';
+      } else {
+        schedule.style.display = 'none';
+      }
+    });
+
+    try {
+      sessionStorage.setItem('active_ids_day', targetDay);
+    } catch (e) {}
+  };
+
   dayBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const targetDay = btn.getAttribute('data-day');
-
-      dayBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      if (scheduleDayHeading) {
-        scheduleDayHeading.textContent = btn.getAttribute('data-heading') || ((targetDay === 'day_2') ? 'DAY 2' : 'DAY 1');
-      }
-
-      daySchedules.forEach(schedule => {
-        if (schedule.getAttribute('data-day') === targetDay) {
-          schedule.style.display = 'block';
-        } else {
-          schedule.style.display = 'none';
-        }
-      });
+      switchDay(targetDay);
     });
   });
+
+  // Restore Day state if available
+  let savedDay = null;
+  try {
+    savedDay = sessionStorage.getItem('active_ids_day');
+  } catch (e) {}
+  if (savedDay) {
+    switchDay(savedDay);
+  }
 
   // 3. 3D Coverflow Carousel & Modal Lightbox
   const galleryWrapper = document.getElementById('galleryCoverflow');
@@ -136,6 +200,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (modalCaption) {
         modalCaption.textContent = caption;
+        const modalInfo = galleryModal ? galleryModal.querySelector('.gallery-modal-info') : null;
+        if (modalInfo) {
+          modalInfo.style.display = caption ? '' : 'none';
+        }
       }
       if (galleryModal) {
         galleryModal.classList.add('is-open');
@@ -335,17 +403,20 @@ document.addEventListener('DOMContentLoaded', () => {
   if (floorPlanCard) {
     floorPlanCard.addEventListener('click', () => {
       const imgUrl = floorPlanCard.getAttribute('data-img-url');
-      const title = floorPlanCard.getAttribute('data-title') || 'General Layout';
       const galleryModal = document.getElementById('galleryModal');
       const modalImg = document.getElementById('galleryModalImg');
       const modalCaption = document.getElementById('galleryModalCaption');
 
       if (imgUrl && modalImg) {
         modalImg.src = imgUrl;
-        modalImg.alt = title;
+        modalImg.alt = '';
       }
       if (modalCaption) {
-        modalCaption.textContent = title;
+        modalCaption.textContent = '';
+      }
+      const modalInfo = galleryModal ? galleryModal.querySelector('.gallery-modal-info') : null;
+      if (modalInfo) {
+        modalInfo.style.display = 'none';
       }
       if (galleryModal) {
         galleryModal.classList.add('is-open');
@@ -450,6 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const siteHeader = document.getElementById('header') || document.querySelector('.site-header');
   if (siteHeader) {
     let lastScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    let headerTicking = false;
     const heroSection = document.getElementById('home') || document.querySelector('.hero-section');
     const heroScrollIndicator = document.getElementById('heroScrollIndicator');
 

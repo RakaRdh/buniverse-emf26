@@ -33,7 +33,7 @@
 
     <!-- Right: Get Ticket Button (matching navbar style with radius 10) -->
     <div class="floating-bottom-action">
-      <a href="<?= esc($floatingBtnUrl) ?>" class="btn-floating-ticket" data-track-ticket="true">
+      <a href="<?= esc($floatingBtnUrl) ?>" class="btn-floating-ticket" data-track-ticket="true" target="_blank" rel="noopener noreferrer">
         <?= esc($floatingBtnLabel) ?>
       </a>
     </div>

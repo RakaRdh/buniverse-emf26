@@ -579,9 +579,9 @@ button {
 .editorial-wave-mask-wrap {
   position: absolute;
   bottom: 0;
-  left: max(var(--container-padding, 80px), calc((100% - 1200px) / 2));
+  left: max(var(--container-padding, 80px), calc((97% - 1200px) / 2));
   width: 780px;
-  height: 380px;
+  height: 220px;
   pointer-events: none;
   z-index: 0;
   /* Behind the editorial-grid text on desktop */
@@ -591,7 +591,7 @@ button {
   position: absolute;
   bottom: 0;
   width: 260px;
-  height: 380px;
+  height: 220px;
   clip-path: polygon(110px 0, 100% 0, calc(100% - 110px) 100%, 0 100%);
   -webkit-mask-image: linear-gradient(to top, #000000 25%, rgba(0, 0, 0, 0.75) 55%, rgba(0, 0, 0, 0.3) 80%, transparent 100%);
   mask-image: linear-gradient(to top, #000000 25%, rgba(0, 0, 0, 0.75) 55%, rgba(0, 0, 0, 0.3) 80%, transparent 100%);
@@ -906,7 +906,7 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: top center;
   display: block;
 }
 
@@ -1420,9 +1420,25 @@ button {
    Alternating Section 4: Primary 2-6 (#004b84)
    -------------------------------------------------------------------------- */
 .gallery-section {
+  position: relative;
   padding: 48px 0;
   background-color: var(--primary-2-6, #004b84);
-  border-top: 1px solid var(--border-divider);
+}
+
+/* Border top matching exact width & horizontal alignment of footer-inner */
+.gallery-section::before,
+.locations-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - (2 * var(--container-padding, 80px)));
+  max-width: calc(var(--container-max-width, 1440px) - (2 * var(--container-padding, 80px)));
+  height: 1px;
+  background-color: var(--border-divider);
+  z-index: 2;
+  pointer-events: none;
 }
 
 .section-header-center {
@@ -2193,7 +2209,6 @@ button {
 .sponsors-section {
   padding: 90px 0 60px 0;
   background-color: var(--bg-page);
-  border-top: 1px solid var(--border-divider);
 }
 
 .sponsor-empty-state {
@@ -3048,18 +3063,18 @@ button {
     width: 100%;
   }
 
-  /* Mobile: Anchored to the bottom inside container */
+  /* Mobile: Anchored to the bottom, centered horizontally */
   .editorial-wave-mask-wrap {
     display: block !important;
     position: absolute !important;
-    bottom: -250px !important;
-    left: 0 !important;
+    bottom: 0 !important;
+    left: 50% !important;
     right: auto !important;
     top: auto !important;
     margin: 0 !important;
-    transform: scale(0.68) !important;
-    transform-origin: bottom left !important;
-    width: 500px !important;
+    transform: translateX(-50%) scale(0.68) !important;
+    transform-origin: bottom center !important;
+    width: 564px !important;
     height: 440px !important;
     opacity: 0.95;
     z-index: 1 !important;

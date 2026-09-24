@@ -32,7 +32,7 @@ if (!$isActive) {
       
       <!-- Left: General Layout / Floor Plan Banner (Clickable Lightbox) -->
       <?php if (!empty($floorPlanImg)): ?>
-        <div class="locations-floorplan-card is-clickable" id="locationFloorPlanCard" data-img-url="<?= esc($floorPlanImg) ?>" data-title="<?= esc($hotelName) ?> - General Layout" title="Klik untuk memperbesar gambar">
+        <div class="locations-floorplan-card is-clickable" id="locationFloorPlanCard" data-img-url="<?= esc($floorPlanImg) ?>" title="Klik untuk memperbesar gambar">
           <!-- <div class="locations-floorplan-badge">
             <span>GENERAL LAYOUT</span>
             <span class="locations-zoom-hint">

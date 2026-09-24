@@ -58,9 +58,9 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
   <!-- 3-Strip Slanted Photo Collage (Anchored to bottom of section, left aligned with content) -->
   <?php
     $collageImgs = $overviewData['collage_images'] ?? [];
-    $img1 = !empty($collageImgs['img_1']) ? $collageImgs['img_1'] : base_url('assets/img/gallery1.webp');
-    $img2 = !empty($collageImgs['img_2']) ? $collageImgs['img_2'] : base_url('assets/img/gallery2.webp');
-    $img3 = !empty($collageImgs['img_3']) ? $collageImgs['img_3'] : (!empty($collageImgs['img_1']) ? $collageImgs['img_1'] : base_url('assets/img/gallery3.webp'));
+    $img1 = !empty($collageImgs['img_1']) ? $collageImgs['img_1'] : (!empty($collageImgs[0]) ? $collageImgs[0] : base_url('assets/img/gallery1.webp'));
+    $img2 = !empty($collageImgs['img_2']) ? $collageImgs['img_2'] : (!empty($collageImgs[1]) ? $collageImgs[1] : base_url('assets/img/gallery2.webp'));
+    $img3 = !empty($collageImgs['img_3']) ? $collageImgs['img_3'] : (!empty($collageImgs[2]) ? $collageImgs[2] : (!empty($img1) ? $img1 : base_url('assets/img/gallery3.webp')));
   ?>
   <div class="editorial-wave-mask-wrap" aria-hidden="true">
     <div class="editorial-strip editorial-strip-1">

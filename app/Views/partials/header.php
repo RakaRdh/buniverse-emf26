@@ -73,14 +73,14 @@
             </a>
           <?php endforeach; ?>
           <?php if (!empty($site['cta_ticket_active'])): ?>
-            <a href="<?= esc($site['ticket_url']) ?>" class="btn-ticket btn-ticket-mobile" data-track-ticket="true">
+            <a href="<?= esc($site['ticket_url']) ?>" class="btn-ticket btn-ticket-mobile" data-track-ticket="true" target="_blank" rel="noopener noreferrer">
               <?= esc($site['cta_ticket_label'] ?? 'Get Tickets') ?>
             </a>
           <?php endif; ?>
         </nav>
 
         <?php if (!empty($site['cta_ticket_active'])): ?>
-          <a href="<?= esc($site['ticket_url']) ?>" class="btn-ticket btn-ticket-desktop" data-track-ticket="true">
+          <a href="<?= esc($site['ticket_url']) ?>" class="btn-ticket btn-ticket-desktop" data-track-ticket="true" target="_blank" rel="noopener noreferrer">
             <?= esc($site['cta_ticket_label'] ?? 'Get Tickets') ?>
           </a>
         <?php endif; ?>
