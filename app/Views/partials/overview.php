@@ -55,7 +55,7 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
     </div>
   </div>
 
-  <!-- 3-Strip Slanted Photo Collage (Anchored directly to bottom left of section) -->
+  <!-- 3-Strip Slanted Photo Collage (Anchored to bottom of section, left aligned with content) -->
   <?php
     $collageImgs = $overviewData['collage_images'] ?? [];
     $img1 = !empty($collageImgs['img_1']) ? $collageImgs['img_1'] : base_url('assets/img/gallery1.webp');

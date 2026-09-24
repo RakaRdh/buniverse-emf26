@@ -27,7 +27,7 @@
   <div class="container hero-container">
     <div class="hero-content hero-content-centered">
       <div class="hero-bundle-wrap">
-        <img src="<?= base_url('assets/img/hero.png') ?>" alt="<?= esc($site['title'] ?? 'Investor Daily Summit 2026') ?>" class="hero-bundle-img">
+        <img src="<?= base_url('assets/img/hero.webp') ?>" alt="<?= esc($site['title'] ?? 'Investor Daily Summit 2026') ?>" class="hero-bundle-img">
       </div>
     </div>
   </div>

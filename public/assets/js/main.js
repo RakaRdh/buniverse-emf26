@@ -550,9 +550,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Back to top appears after scrolling down 350px, but disappears once reaching footer
+    // Back to top appears after scrolling down 350px and stays visible all the way down
     if (backToTopBtn) {
-      if (scrollPos > 350 && !isPastSponsor) {
+      if (scrollPos > 350) {
         backToTopBtn.classList.add('is-visible');
       } else {
         backToTopBtn.classList.remove('is-visible');
@@ -561,6 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Floating bottom bar appears when reaching overview section (#about-us) and continues downwards,
     // but hides at the end of sponsor section so footer stays clean at the bottom
+    let isFloatingBarShown = false;
     if (floatingBottomBar) {
       if (isPastSponsor) {
         floatingBottomBar.classList.remove('is-visible');
@@ -568,13 +569,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const overviewTop = overviewSection.getBoundingClientRect().top + scrollPos;
         if (scrollPos >= overviewTop - 300) {
           floatingBottomBar.classList.add('is-visible');
+          isFloatingBarShown = true;
         } else {
           floatingBottomBar.classList.remove('is-visible');
         }
       } else if (scrollPos > 450) {
         floatingBottomBar.classList.add('is-visible');
+        isFloatingBarShown = true;
       } else {
         floatingBottomBar.classList.remove('is-visible');
+      }
+    }
+
+    // In mobile, back-to-top stays lifted only when floatingBottomBar is visible, but drops to bottom corner cleanly in footer
+    if (backToTopBtn) {
+      if (isFloatingBarShown) {
+        backToTopBtn.classList.add('is-lifted');
+      } else {
+        backToTopBtn.classList.remove('is-lifted');
       }
     }
   };
