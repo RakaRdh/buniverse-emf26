@@ -175,6 +175,9 @@ class Home extends BaseController
             if (!empty($live['speakers']) && count($live['speakers']) > 0) {
                 $syncedSpeakers = [];
                 foreach ($live['speakers'] as $idx => $sp) {
+                    if (isset($sp['is_active']) && empty($sp['is_active'])) {
+                        continue;
+                    }
                     $slug = !empty($sp['slug']) ? $sp['slug'] : url_title($sp['name'], '-', true);
                     $syncedSpeakers[$slug] = [
                         'id' => $sp['id'],

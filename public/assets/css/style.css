@@ -387,7 +387,7 @@ button {
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: clamp(450px, 34vw, 600px);
+  max-width: clamp(320px, 85vw, 500px);
   animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -434,8 +434,8 @@ button {
   border: 1px solid rgba(145, 178, 202, 0.35);
   color: var(--text-primary, #ffffff);
   font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 2px;
+  font-weight: bold;
+  letter-spacing: 1px;
   padding: 12px 36px;
   border-radius: var(--radius-pill);
   margin-bottom: 24px;
@@ -573,55 +573,35 @@ button {
   max-width: 480px;
   position: relative;
   z-index: 3;
+  white-space: pre-line;
 }
 
-/* 3-Strip Slanted Photo Collage (Anchored to bottom of section, left aligned with content grid) */
+/* Single Slanted Photo Collage (Anchored to bottom of section, left aligned with content grid) */
 .editorial-wave-mask-wrap {
   position: absolute;
   bottom: 0;
-  left: max(var(--container-padding, 80px), calc((97% - 1200px) / 2));
-  width: 780px;
-  height: 220px;
+  left: max(var(--container-padding, 80px), calc((100% - 1200px) / 2));
+  width: auto;
+  max-width: 800px;
+  height: 250px;
   pointer-events: none;
   z-index: 0;
-  /* Behind the editorial-grid text on desktop */
-}
-
-.editorial-strip {
-  position: absolute;
-  bottom: 0;
-  width: 260px;
-  height: 220px;
-  clip-path: polygon(110px 0, 100% 0, calc(100% - 110px) 100%, 0 100%);
   -webkit-mask-image: linear-gradient(to top, #000000 25%, rgba(0, 0, 0, 0.75) 55%, rgba(0, 0, 0, 0.3) 80%, transparent 100%);
   mask-image: linear-gradient(to top, #000000 25%, rgba(0, 0, 0, 0.75) 55%, rgba(0, 0, 0, 0.3) 80%, transparent 100%);
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   overflow: hidden;
+  display: flex;
+  align-items: flex-end;
 }
 
-.editorial-strip img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+.editorial-collage-img {
+  height: 250px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: bottom left;
   display: block;
-}
-
-/* Strips 1, 2, and 3 placed side by side: width 260px, slant 110px -> offset step 150px */
-.editorial-strip-1 {
-  left: 0;
-  z-index: 1;
-}
-
-.editorial-strip-2 {
-  left: 152px;
-  z-index: 2;
-}
-
-.editorial-strip-3 {
-  left: 304px;
-  z-index: 3;
 }
 
 @media (max-width: 1024px) {
@@ -1247,7 +1227,8 @@ button {
   font-size: 16px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.95);
-  line-height: 1.5;
+  line-height: 1.4;
+  white-space: pre-line;
 }
 
 /* --------------------------------------------------------------------------
@@ -1363,10 +1344,11 @@ button {
 .speaker-tile-role {
   font-size: 12px;
   font-weight: 600;
-  color: var(--primary-2-5);
+  color: var(--neutral-1);
   /* #5ba6d6 */
-  line-height: 1.6;
+  line-height: 1.4;
   max-width: 94%;
+  white-space: pre-line;
 }
 
 /* Tombol "View More Speakers" */
@@ -3065,35 +3047,31 @@ button {
 
   /* Mobile: Anchored to the bottom, centered horizontally */
   .editorial-wave-mask-wrap {
-    display: block !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
     position: absolute !important;
     bottom: 0 !important;
     left: 50% !important;
     right: auto !important;
     top: auto !important;
     margin: 0 !important;
-    transform: translateX(-50%) scale(0.68) !important;
+    transform: translateX(-50%) !important;
     transform-origin: bottom center !important;
-    width: 564px !important;
-    height: 440px !important;
+    width: 100% !important;
+    max-width: 500px !important;
+    height: 180px !important;
     opacity: 0.95;
     z-index: 1 !important;
     pointer-events: none;
   }
 
-  .editorial-strip-1 {
-    left: 0px !important;
-    z-index: 1 !important;
-  }
-
-  .editorial-strip-2 {
-    left: 152px !important;
-    z-index: 2 !important;
-  }
-
-  .editorial-strip-3 {
-    left: 304px !important;
-    z-index: 3 !important;
+  .editorial-collage-img {
+    height: 100% !important;
+    width: auto !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    object-position: bottom center !important;
   }
 
   /* --------------------------------------------------------------------------

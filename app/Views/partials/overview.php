@@ -24,13 +24,7 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
             $aboutLogoTarget = !empty($site['logo_overview_target_url']) ? $site['logo_overview_target_url'] : null;
           ?>
           <?php if ($overviewSlotActive): ?>
-            <?php if (!empty($aboutLogoTarget) && $aboutLogoTarget !== '#'): ?>
-              <a href="<?= esc($aboutLogoTarget) ?>" <?= str_starts_with($aboutLogoTarget, 'http') ? 'target="_blank" rel="noopener noreferrer"' : '' ?> style="display:inline-block;">
-                <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title']) ?>" class="editorial-brand-logo">
-              </a>
-            <?php else: ?>
-              <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title']) ?>" class="editorial-brand-logo">
-            <?php endif; ?>
+            <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title']) ?>" class="editorial-brand-logo">
           <?php endif; ?>
         </div>
 
@@ -55,22 +49,8 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
     </div>
   </div>
 
-  <!-- 3-Strip Slanted Photo Collage (Anchored to bottom of section, left aligned with content) -->
-  <?php
-    $collageImgs = $overviewData['collage_images'] ?? [];
-    $img1 = !empty($collageImgs['img_1']) ? $collageImgs['img_1'] : (!empty($collageImgs[0]) ? $collageImgs[0] : base_url('assets/img/gallery1.webp'));
-    $img2 = !empty($collageImgs['img_2']) ? $collageImgs['img_2'] : (!empty($collageImgs[1]) ? $collageImgs[1] : base_url('assets/img/gallery2.webp'));
-    $img3 = !empty($collageImgs['img_3']) ? $collageImgs['img_3'] : (!empty($collageImgs[2]) ? $collageImgs[2] : (!empty($img1) ? $img1 : base_url('assets/img/gallery3.webp')));
-  ?>
+  <!-- Slanted Photo Collage (Anchored to bottom of section, left aligned with content) -->
   <div class="editorial-wave-mask-wrap" aria-hidden="true">
-    <div class="editorial-strip editorial-strip-1">
-      <img src="<?= esc($img1) ?>" alt="Overview collage 1" loading="lazy">
-    </div>
-    <div class="editorial-strip editorial-strip-2">
-      <img src="<?= esc($img2) ?>" alt="Overview collage 2" loading="lazy">
-    </div>
-    <div class="editorial-strip editorial-strip-3">
-      <img src="<?= esc($img3) ?>" alt="Overview collage 3" loading="lazy">
-    </div>
+    <img src="<?= base_url('assets/img/overview_kolase.webp') ?>" alt="Overview collage" class="editorial-collage-img" loading="lazy">
   </div>
 </section>
