@@ -69,6 +69,9 @@
 
     <!-- 8. Sponsor & Partners Section -->
     <?= $this->include('partials/sponsors') ?>
+
+    <!-- 8.1 Locations & Floor Plan Section -->
+    <?= $this->include('partials/locations') ?>
   </main>
 
   <!-- 8. Footer -->

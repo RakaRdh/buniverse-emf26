@@ -47,7 +47,7 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
 
         <div class="editorial-paragraphs">
           <?php foreach ($paragraphs as $p): ?>
-            <p><?= esc($p) ?></p>
+            <p><?= strip_tags($p, '<span><em><strong><i><b><u><br>') ?></p>
           <?php endforeach; ?>
         </div>
       </div>
@@ -55,11 +55,12 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
     </div>
   </div>
 
-  <!-- 2-Strip Slanted Photo Collage (Anchored directly to bottom left of section) -->
+  <!-- 3-Strip Slanted Photo Collage (Anchored directly to bottom left of section) -->
   <?php
     $collageImgs = $overviewData['collage_images'] ?? [];
     $img1 = !empty($collageImgs['img_1']) ? $collageImgs['img_1'] : base_url('assets/img/gallery1.webp');
     $img2 = !empty($collageImgs['img_2']) ? $collageImgs['img_2'] : base_url('assets/img/gallery2.webp');
+    $img3 = !empty($collageImgs['img_3']) ? $collageImgs['img_3'] : (!empty($collageImgs['img_1']) ? $collageImgs['img_1'] : base_url('assets/img/gallery3.webp'));
   ?>
   <div class="editorial-wave-mask-wrap" aria-hidden="true">
     <div class="editorial-strip editorial-strip-1">
@@ -67,6 +68,9 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
     </div>
     <div class="editorial-strip editorial-strip-2">
       <img src="<?= esc($img2) ?>" alt="Overview collage 2" loading="lazy">
+    </div>
+    <div class="editorial-strip editorial-strip-3">
+      <img src="<?= esc($img3) ?>" alt="Overview collage 3" loading="lazy">
     </div>
   </div>
 </section>

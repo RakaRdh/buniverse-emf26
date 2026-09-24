@@ -15,21 +15,33 @@
       </div>
     </div>
 
-    <!-- 2. Day Selector: October 7th vs October 8th (Auto-hidden when SPEAKERS tab is selected) -->
+    <!-- 2. Day Selector: Auto-hidden when SPEAKERS tab is selected -->
+    <?php
+      $formatScheduleDate = function($dateVal, $fallback) {
+        if (!empty($dateVal)) {
+          $ts = strtotime($dateVal);
+          if ($ts !== false) {
+            return date('F j, Y', $ts);
+          }
+          return $dateVal;
+        }
+        return $fallback;
+      };
+    ?>
     <div class="day-selector-wrapper" id="daySelectorWrapper">
       <div class="day-selector" role="tablist">
-        <button class="day-btn active" data-day="day_1" role="tab">
-          October 7th
+        <button class="day-btn active" data-day="day_1" data-heading="<?= esc(strtoupper($schedule['day_1']['label'] ?? 'DAY 1')) ?>" role="tab">
+          <?= esc($formatScheduleDate($schedule['day_1']['date'] ?? '', $schedule['day_1']['label'] ?? 'October 7, 2026')) ?>
         </button>
-        <button class="day-btn" data-day="day_2" role="tab">
-          October 8th
+        <button class="day-btn" data-day="day_2" data-heading="<?= esc(strtoupper($schedule['day_2']['label'] ?? 'DAY 2')) ?>" role="tab">
+          <?= esc($formatScheduleDate($schedule['day_2']['date'] ?? '', $schedule['day_2']['label'] ?? 'October 8, 2026')) ?>
         </button>
       </div>
     </div>
 
     <!-- Active Day Title between tab pill and schedule content -->
     <div class="schedule-day-title-wrap" id="scheduleDayTitleWrap">
-      <h3 class="schedule-day-heading" id="scheduleDayHeading">DAY 1</h3>
+      <h3 class="schedule-day-heading" id="scheduleDayHeading"><?= esc(strtoupper($schedule['day_1']['label'] ?? 'DAY 1')) ?></h3>
     </div>
 
     <!-- 3. Schedule Tab Content (Day 1 & Day 2 lists) -->

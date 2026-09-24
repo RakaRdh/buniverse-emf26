@@ -123,29 +123,8 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
         </div>
       <?php endif; ?>
 
-      <!-- Optional Moderator -->
-      <?php if (!empty($item['moderator'])): 
-        $singleModPhoto = $item['moderator']['photo'] ?? 'placeholder.png';
-        if (empty($singleModPhoto)) {
-            $singleModPhoto = 'placeholder.png';
-        }
-        if (!str_starts_with($singleModPhoto, 'http')) {
-            $singleModPhoto = base_url('assets/img/' . ltrim($singleModPhoto, '/'));
-        }
-      ?>
-        <div class="moderator-row">
-          <div class="moderator-photo">
-            <img src="<?= esc($singleModPhoto) ?>" alt="<?= esc($item['moderator']['name']) ?>" loading="lazy">
-          </div>
-          <div class="moderator-text">
-            <div class="moderator-label"><?= esc($item['moderator']['label']) ?></div>
-            <div class="moderator-name-role"><?= esc($item['moderator']['name']) ?> (<?= esc($item['moderator']['role']) ?>)</div>
-          </div>
-        </div>
-      <?php endif; ?>
-
-      <!-- Speakers List / Grid (Standardized width) -->
       <?php 
+      $hasPengantar = !empty($item['pengantar']);
       $speakersToRender = [];
       if (!empty($item['speakers'])) {
           $speakersToRender = $item['speakers'];
@@ -157,12 +136,89 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
           }
       }
       ?>
-      <?php if (!empty($speakersToRender)): ?>
-        <div class="plenary-speaker-grid">
-          <?php foreach ($speakersToRender as $spkItem): ?>
-            <?= view('partials/schedule/speaker_card', ['speaker' => $spkItem]) ?>
-          <?php endforeach; ?>
+
+      <?php if ($hasPengantar): ?>
+        <!-- Layout Khusus dengan Pengantar (Sesuai Gambar 3) -->
+        <div class="session-speakers-pengantar-wrap">
+          
+          <!-- MODERATOR (jika ada) -->
+          <?php if (!empty($item['moderator'])): 
+            $singleModPhoto = $item['moderator']['photo'] ?? 'placeholder.png';
+            if (empty($singleModPhoto)) $singleModPhoto = 'placeholder.png';
+            if (!str_starts_with($singleModPhoto, 'http')) {
+                $singleModPhoto = base_url('assets/img/' . ltrim($singleModPhoto, '/'));
+            }
+          ?>
+            <div class="schedule-group-section">
+              <div class="schedule-group-label">MOD:</div>
+              <div class="moderator-row">
+                <div class="moderator-photo">
+                  <img src="<?= esc($singleModPhoto) ?>" alt="<?= esc($item['moderator']['name']) ?>" loading="lazy">
+                </div>
+                <div class="moderator-text">
+                  <div class="moderator-name-role"><?= esc($item['moderator']['name']) ?> (<?= esc($item['moderator']['role']) ?>)</div>
+                </div>
+              </div>
+            </div>
+          <?php endif; ?>
+
+          <!-- PENGANTAR -->
+          <div class="schedule-group-section">
+            <div class="schedule-group-label">Pengantar:</div>
+            <div class="plenary-speaker-grid">
+              <?php foreach ($item['pengantar'] as $pngItem): ?>
+                <?= view('partials/schedule/speaker_card', ['speaker' => $pngItem]) ?>
+              <?php endforeach; ?>
+            </div>
+          </div>
+
+          <!-- SPEAKER -->
+          <?php if (!empty($speakersToRender)): ?>
+            <div class="schedule-group-section">
+              <div class="schedule-group-label">Speaker:</div>
+              <div class="plenary-speaker-grid">
+                <?php foreach ($speakersToRender as $spkItem): ?>
+                  <?= view('partials/schedule/speaker_card', ['speaker' => $spkItem]) ?>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          <?php endif; ?>
+
         </div>
+
+      <?php else: ?>
+
+        <!-- Standard Layout (Tanpa Pengantar) -->
+        <!-- Optional Moderator -->
+        <?php if (!empty($item['moderator'])): 
+          $singleModPhoto = $item['moderator']['photo'] ?? 'placeholder.png';
+          if (empty($singleModPhoto)) {
+              $singleModPhoto = 'placeholder.png';
+          }
+          if (!str_starts_with($singleModPhoto, 'http')) {
+              $singleModPhoto = base_url('assets/img/' . ltrim($singleModPhoto, '/'));
+          }
+        ?>
+          <div class="moderator-row">
+            <div class="moderator-photo">
+              <img src="<?= esc($singleModPhoto) ?>" alt="<?= esc($item['moderator']['name']) ?>" loading="lazy">
+            </div>
+            <div class="moderator-text">
+              <div class="moderator-label"><?= esc($item['moderator']['label']) ?></div>
+              <div class="moderator-name-role"><?= esc($item['moderator']['name']) ?> (<?= esc($item['moderator']['role']) ?>)</div>
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <!-- Speakers List / Grid (Standardized width) -->
+        <?php if (!empty($speakersToRender)): ?>
+          <div class="plenary-speaker-grid">
+            <?php foreach ($speakersToRender as $spkItem): ?>
+              <?= view('partials/schedule/speaker_card', ['speaker' => $spkItem]) ?>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
+
       <?php endif; ?>
 
     <?php endif; ?>

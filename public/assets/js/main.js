@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('active');
 
       if (scheduleDayHeading) {
-        scheduleDayHeading.textContent = (targetDay === 'day_2') ? 'DAY 2' : 'DAY 1';
+        scheduleDayHeading.textContent = btn.getAttribute('data-heading') || ((targetDay === 'day_2') ? 'DAY 2' : 'DAY 1');
       }
 
       daySchedules.forEach(schedule => {
@@ -328,6 +328,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial setup
     updateCoverflow();
     startAutoSlide();
+  }
+
+  // 3.1 Locations Floor Plan Lightbox Modal Trigger
+  const floorPlanCard = document.getElementById('locationFloorPlanCard');
+  if (floorPlanCard) {
+    floorPlanCard.addEventListener('click', () => {
+      const imgUrl = floorPlanCard.getAttribute('data-img-url');
+      const title = floorPlanCard.getAttribute('data-title') || 'General Layout';
+      const galleryModal = document.getElementById('galleryModal');
+      const modalImg = document.getElementById('galleryModalImg');
+      const modalCaption = document.getElementById('galleryModalCaption');
+
+      if (imgUrl && modalImg) {
+        modalImg.src = imgUrl;
+        modalImg.alt = title;
+      }
+      if (modalCaption) {
+        modalCaption.textContent = title;
+      }
+      if (galleryModal) {
+        galleryModal.classList.add('is-open');
+        galleryModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+    });
   }
 
   // 4. Mobile Nav Toggle & Drawer
@@ -1111,4 +1136,33 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
+
+  // 12. CMS Custom Placement Studio Live Sync Handler
+  // Allows CMS iframe to request target section bounding rect & exact height for 1:1 coordinate precision
+  window.addEventListener('message', (event) => {
+    if (!event.data || event.data.type !== 'cms_request_section_info') return;
+    const secKey = event.data.sectionKey;
+    const targetEl = document.getElementById(secKey) || document.querySelector(`[data-section="${secKey}"]`);
+    if (targetEl) {
+      const rect = targetEl.getBoundingClientRect();
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      const topOffset = rect.top + scrollY;
+      const height = targetEl.offsetHeight || rect.height;
+
+      // Scroll smoothly to section inside iframe
+      targetEl.scrollIntoView({ behavior: 'auto', block: 'start' });
+
+      // Reply back to CMS parent window with exact dimensions
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({
+          type: 'cms_section_info_response',
+          sectionKey: secKey,
+          top: topOffset,
+          height: height,
+          width: targetEl.offsetWidth || rect.width
+        }, '*');
+      }
+    }
+  });
 });
+

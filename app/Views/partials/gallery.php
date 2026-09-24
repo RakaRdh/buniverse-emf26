@@ -21,6 +21,15 @@
           }
       }
 
+      // Fallback images if fewer than 5
+      $fallbackImgs = [
+          base_url('assets/img/image1.webp'),
+          base_url('assets/img/gallery1.webp'),
+          base_url('assets/img/gallery2.webp'),
+          base_url('assets/img/gallery3.webp'),
+          base_url('assets/img/image1.webp'),
+      ];
+
       // If empty or less than 5 items, provide minimum defaults
       $placeholderCaptions = [
           'Investor Daily Summit Opening Ceremony',
@@ -33,18 +42,22 @@
       while (count($items) < 5) {
           $idx = count($items);
           $items[] = [
-              'image_url' => $defaultImg,
+              'image_url' => $fallbackImgs[$idx % count($fallbackImgs)],
               'caption'   => $placeholderCaptions[$idx] ?? ('Investor Daily Summit Highlight ' . ($idx + 1)),
           ];
       }
+
+      $totalCount = count($items);
+      $randomCenter = array_rand($items);
+      $leftIdx = ($randomCenter - 1 + $totalCount) % $totalCount;
+      $rightIdx = ($randomCenter + 1) % $totalCount;
     ?>
 
     <!-- 3D Coverflow Carousel Container -->
     <div class="gallery-coverflow-wrapper" id="galleryCoverflow" tabindex="0" aria-label="IDS Gallery Coverflow Carousel">
       <div class="gallery-coverflow-track">
         <?php foreach ($items as $idx => $item): 
-          // Center index starts at 0 (or 2)
-          $initialClass = ($idx === 2) ? 'is-center' : (($idx === 1) ? 'is-left' : (($idx === 3) ? 'is-right' : 'is-hidden'));
+          $initialClass = ($idx === $randomCenter) ? 'is-center' : (($idx === $leftIdx) ? 'is-left' : (($idx === $rightIdx) ? 'is-right' : 'is-hidden'));
         ?>
           <div class="gallery-card <?= $initialClass ?>" 
                data-index="<?= $idx ?>" 

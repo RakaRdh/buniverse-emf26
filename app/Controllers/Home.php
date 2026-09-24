@@ -29,6 +29,7 @@ class Home extends BaseController
         $sectionDecorations = [];
         $customPlacements   = [];
         $seo                = [];
+        $locations          = null;
 
         // Attempt live synchronization with BackendCMS REST API
         $apiUrls = [
@@ -45,6 +46,16 @@ class Home extends BaseController
                     $json = json_decode($response->getBody(), true);
                     if (!empty($json['data'])) {
                         $live = $json['data'];
+
+                        // Helper to normalize any assets/uploads URLs returned from BackendCMS (port 8081)
+                        // so they load directly from Frontend domain/tunnel without mixed content or localhost blocking
+                        $fixUrl = function ($url) {
+                            if (empty($url) || !is_string($url)) return $url;
+                            if (preg_match('#^https?://[^/]+/(assets/.*|uploads/.*)$#', $url, $m)) {
+                                return base_url($m[1]);
+                            }
+                            return $url;
+                        };
 
                         // Sync SEO metadata
                         if (!empty($live['seo'])) {
@@ -178,6 +189,17 @@ class Home extends BaseController
                             $customPlacements = $live['custom_placements'];
                         }
 
+                        // Sync event locations from live API
+                        if (!empty($live['locations'])) {
+                            $locations = $live['locations'];
+                            $locations['address']          = $locations['hotel_address'] ?? ($locations['address'] ?? '');
+                            $locations['gmaps_embed_url']  = $locations['gmaps_iframe'] ?? ($locations['gmaps_embed_url'] ?? '');
+                            $locations['floor_plan_image'] = $locations['layout_image_url'] ?? ($locations['floor_plan_image'] ?? '');
+                            if (!empty($locations['floor_plan_image'])) {
+                                $locations['floor_plan_image'] = $fixUrl($locations['floor_plan_image']);
+                            }
+                        }
+
                         /* === LEGACY TIER-BASED SPONSORS SYNC (COMMENTED OUT) ===
                         if (!empty($live['sponsors'])) {
                             $sponsors = $live['sponsors'];
@@ -188,12 +210,14 @@ class Home extends BaseController
                         if (!empty($live['schedule'])) {
                             if (!empty($live['schedule']['day_1'])) {
                                 $schedule['day_1']['label'] = $live['schedule']['day_1']['label'] ?? ($schedule['day_1']['label'] ?? 'Day 1');
+                                $schedule['day_1']['date']  = $live['schedule']['day_1']['date'] ?? ($schedule['day_1']['date'] ?? '');
                                 if (!empty($live['schedule']['day_1']['sessions'])) {
                                     $schedule['day_1']['items'] = $live['schedule']['day_1']['sessions'];
                                 }
                             }
                             if (!empty($live['schedule']['day_2'])) {
                                 $schedule['day_2']['label'] = $live['schedule']['day_2']['label'] ?? ($schedule['day_2']['label'] ?? 'Day 2');
+                                $schedule['day_2']['date']  = $live['schedule']['day_2']['date'] ?? ($schedule['day_2']['date'] ?? '');
                                 if (!empty($live['schedule']['day_2']['sessions'])) {
                                     $schedule['day_2']['items'] = $live['schedule']['day_2']['sessions'];
                                 }
@@ -202,12 +226,14 @@ class Home extends BaseController
                                 $daysData = $live['schedule']['days'];
                                 if (isset($daysData[0])) {
                                     $schedule['day_1']['label'] = $daysData[0]['label'] ?? $schedule['day_1']['label'];
+                                    $schedule['day_1']['date']  = $daysData[0]['date'] ?? ($schedule['day_1']['date'] ?? '');
                                     if (!empty($daysData[0]['sessions'])) {
                                         $schedule['day_1']['items'] = $daysData[0]['sessions'];
                                     }
                                 }
                                 if (isset($daysData[1])) {
                                     $schedule['day_2']['label'] = $daysData[1]['label'] ?? $schedule['day_2']['label'];
+                                    $schedule['day_2']['date']  = $daysData[1]['date'] ?? ($schedule['day_2']['date'] ?? '');
                                     if (!empty($daysData[1]['sessions'])) {
                                         $schedule['day_2']['items'] = $daysData[1]['sessions'];
                                     }
@@ -216,15 +242,6 @@ class Home extends BaseController
                         }
 
                         // Successfully synced
-                        // Normalize any assets/uploads URLs returned from BackendCMS (port 8081)
-                        // so they load directly from Frontend domain/tunnel without mixed content or localhost blocking
-                        $fixUrl = function ($url) {
-                            if (empty($url) || !is_string($url)) return $url;
-                            if (preg_match('#^https?://[^/]+/(assets/.*|uploads/.*)$#', $url, $m)) {
-                                return base_url($m[1]);
-                            }
-                            return $url;
-                        };
 
                         if (!empty($overview['collage_images'])) {
                             foreach ($overview['collage_images'] as &$cImg) {
@@ -282,6 +299,12 @@ class Home extends BaseController
                                     if (!empty($item['moderator']['photo'])) {
                                         $item['moderator']['photo'] = $fixUrl($item['moderator']['photo']);
                                     }
+                                    if (!empty($item['pengantar'])) {
+                                        foreach ($item['pengantar'] as &$png) {
+                                            if (!empty($png['photo'])) $png['photo'] = $fixUrl($png['photo']);
+                                        }
+                                        unset($png);
+                                    }
                                     if (!empty($item['speakers'])) {
                                         foreach ($item['speakers'] as &$spk) {
                                             if (!empty($spk['photo'])) $spk['photo'] = $fixUrl($spk['photo']);
@@ -294,6 +317,12 @@ class Home extends BaseController
                                             foreach ($room['sessions'] as &$sub) {
                                                 if (!empty($sub['moderator']['photo'])) {
                                                     $sub['moderator']['photo'] = $fixUrl($sub['moderator']['photo']);
+                                                }
+                                                if (!empty($sub['pengantar'])) {
+                                                    foreach ($sub['pengantar'] as &$png) {
+                                                        if (!empty($png['photo'])) $png['photo'] = $fixUrl($png['photo']);
+                                                    }
+                                                    unset($png);
                                                 }
                                                 if (!empty($sub['speakers'])) {
                                                     foreach ($sub['speakers'] as &$spk) {
@@ -352,6 +381,7 @@ class Home extends BaseController
             'sponsorPartnership'      => $sponsorPartnership,
             'sectionDecorations'      => $sectionDecorations,
             'customPlacements'        => $customPlacements,
+            'locations'               => $locations,
             'seo'                     => $seo,
         ];
 

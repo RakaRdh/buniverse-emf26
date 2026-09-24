@@ -1,4 +1,6 @@
 <section class="hero-section" id="home">
+  <?= view('partials/section_decorations', ['sectionKey' => 'home', 'decorations' => $sectionDecorations ?? []]) ?>
+  <?= view('partials/custom_placements', ['sectionKey' => 'home', 'customPlacements' => $customPlacements ?? []]) ?>
   <!-- 1. Pure CSS Hero Background Canvas (Base #010A2D with ambient royal blue glow #0C2F88 at top-left) -->
   <div class="hero-bg-canvas" aria-hidden="true"></div>
 
