@@ -6,8 +6,8 @@
     <div class="gallery-modal-media">
       <img src="" alt="" id="galleryModalImg" class="gallery-modal-img">
     </div>
-    <div class="gallery-modal-info">
+    <!-- <div class="gallery-modal-info">
       <p id="galleryModalCaption" class="gallery-modal-caption"></p>
-    </div>
+    </div> -->
   </div>
 </div>

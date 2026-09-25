@@ -31,9 +31,10 @@ class Home extends BaseController
         $seo = [];
         $locations = null;
 
-        // Attempt live synchronization with BackendCMS REST API (cached 120s for optimal performance)
+        // Attempt live synchronization with BackendCMS REST API (cached for optimal performance)
         $cacheKey = 'cms_live_event_active';
-        $live = cache($cacheKey);
+        $noCache = $this->request->getGet('nocache') !== null || $this->request->getGet('refresh') !== null;
+        $live = $noCache ? null : cache($cacheKey);
 
         if ($live === null) {
             $apiUrls = [
@@ -50,7 +51,8 @@ class Home extends BaseController
                         $json = json_decode($response->getBody(), true);
                         if (!empty($json['data'])) {
                             $live = $json['data'];
-                            cache()->save($cacheKey, $live, 120);
+                            $cacheTtl = (ENVIRONMENT === 'development') ? 5 : 120;
+                            cache()->save($cacheKey, $live, $cacheTtl);
                             break;
                         }
                     }
@@ -582,6 +584,35 @@ class Home extends BaseController
         return $this->response->setJSON([
             'status' => $success ? 'success' : 'forwarded',
             'message' => 'Ticket click telemetry logged',
+        ]);
+    }
+
+    /**
+     * Cache Invalidation Endpoint (triggered by BackendCMS or manually)
+     * Route: api/clear-cache
+     */
+    public function clearCache()
+    {
+        cache()->delete('cms_live_event_active');
+
+        // Optional: clear file uploads disk cache if needed
+        $cacheDir = WRITEPATH . 'cache/uploads/';
+        if (is_dir($cacheDir)) {
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($cacheDir, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::CHILD_FIRST
+            );
+            foreach ($files as $fileinfo) {
+                if ($fileinfo->isFile()) {
+                    @unlink($fileinfo->getRealPath());
+                }
+            }
+        }
+
+        return $this->response->setJSON([
+            'success'   => true,
+            'message'   => 'Frontend cache cleared successfully.',
+            'timestamp' => date('Y-m-d H:i:s'),
         ]);
     }
 }

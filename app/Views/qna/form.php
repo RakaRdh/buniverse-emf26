@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Q&A Session — <?= esc($sessionTitle) ?> | <?= esc($site['title'] ?? 'Investor Daily Summit 2026') ?></title>
   
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
+  <link rel="icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
+  
   <!-- Google Fonts: Manrope & Playfair Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,8 +71,8 @@
       padding: 6px 14px;
       border-radius: 999px;
       background: rgba(201, 148, 0, 0.12);
-      border: 1px solid rgba(201, 148, 0, 0.4);
-      color: #ffd24d;
+      border: 1px solid var(--primary-2-5);
+      color: var(--primary-2-4);
       font-size: 11.5px;
       font-weight: 700;
       letter-spacing: 0.08em;
@@ -83,6 +87,15 @@
       line-height: 1.35;
       margin: 0 0 4px 0;
       text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .qna-session-subtitle {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #5e9cbf;
+      line-height: 1.4;
+      margin: 4px 0 8px 0;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
     }
 
     .qna-session-time {
@@ -117,7 +130,7 @@
     }
 
     .qna-field-label span {
-      color: #f59e0b;
+      color: var(--primary-2-4);
     }
 
     .qna-input, .qna-textarea {
@@ -135,9 +148,9 @@
     }
 
     .qna-input:focus, .qna-textarea:focus {
-      border-color: #c99400;
+      border-color: var(--primary-2-4);
       background: rgba(1, 10, 45, 0.85);
-      box-shadow: 0 0 0 3px rgba(201, 148, 0, 0.2);
+      /* box-shadow: 0 0 0 3px var(--primary-2-5); */
     }
 
     .qna-input::placeholder, .qna-textarea::placeholder {
@@ -146,7 +159,7 @@
 
     .qna-textarea {
       resize: vertical;
-      min-height: 110px;
+      min-height: 200px;
       line-height: 1.5;
     }
 
@@ -161,7 +174,7 @@
     .qna-btn-submit {
       width: 100%;
       padding: 14px 20px;
-      background: linear-gradient(135deg, #e5a900 0%, #c99400 50%, #9e7200 100%);
+      background: var(--primary-2-4);
       color: #010a2d;
       font-size: 15px;
       font-weight: 800;
@@ -172,15 +185,15 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      box-shadow: 0 6px 20px rgba(201, 148, 0, 0.35);
+      /* box-shadow: 0 6px 20px var(--primary-2-5); */
       transition: all 0.2s ease;
       letter-spacing: 0.03em;
     }
 
     .qna-btn-submit:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(201, 148, 0, 0.5);
-      filter: brightness(1.08);
+      /* box-shadow: 0 8px 25px var(--primary-2-5); */
+      /* filter: brightness(1.08); */
     }
 
     .qna-btn-submit:active {
@@ -286,79 +299,148 @@
       
       <!-- Brand Header -->
       <div class="qna-brand-header">
-        <img src="<?= base_url('assets/img/hero.webp') ?>" alt="<?= esc($site['title'] ?? 'Investor Daily Summit') ?>" class="qna-logo-img">
-        <div>
-          <span class="qna-session-badge">
-            <?= esc($dayLabel) ?> &bull; Q&amp;A Room
+        <a href="<?= base_url('/') ?>"><img src="<?= base_url('assets/img/logo_theme.webp') ?>" alt="<?= esc($site['title'] ?? 'Investor Daily Summit') ?>" class="qna-logo-img"></a>
+        <?php if (!empty($sessionNotFound)): ?>
+          <span class="qna-session-badge" style="background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.35); color: #f87171;">
+            404 • Sesi Tidak Ditemukan
           </span>
-        </div>
-        <h1 class="qna-session-title"><?= esc($sessionTitle) ?></h1>
-        <?php if (!empty($sessionTime)): ?>
-          <div class="qna-session-time"><?= esc($sessionTime) ?></div>
+          <h1 class="qna-session-title"><?= esc($sessionTitle) ?></h1>
+          <?php if (!empty($sessionSubtitle)): ?>
+            <div class="qna-session-subtitle" style="color: #94a3b8;"><?= esc($sessionSubtitle) ?></div>
+          <?php endif; ?>
+        <?php else: ?>
+          <span class="qna-session-badge">
+            <?= !empty($roomName) ? esc($roomName) : (!empty($dayNumber) ? 'Day ' . esc($dayNumber) : esc($dayLabel ?? 'Q&A Session')) ?>
+          </span>
+          <h1 class="qna-session-title"><?= esc($sessionTitle) ?></h1>
+          <?php if (!empty($sessionSubtitle)): ?>
+            <div class="qna-session-subtitle"><?= esc($sessionSubtitle) ?></div>
+          <?php endif; ?>
+          <?php if (!empty($sessionTime)): ?>
+            <div class="qna-session-time"><?= esc($sessionTime) ?></div>
+          <?php endif; ?>
         <?php endif; ?>
       </div>
 
-      <!-- Form Card -->
+      <!-- Form Card or Not Found State -->
       <div class="qna-form-box" id="qnaFormCard">
-        <form id="qnaForm" method="POST" action="<?= base_url('qna/submit') ?>">
-          <?= csrf_field() ?>
-          
-          <!-- Hidden IDs dynamically extracted from URL -->
-          <input type="hidden" name="schedule_day_id" value="<?= esc($dayId) ?>">
-          <input type="hidden" name="schedule_session_id" value="<?= esc($sessionId) ?>">
-
-          <!-- Nama Penanya -->
-          <div class="qna-field-group">
-            <label class="qna-field-label" for="askerName">Nama Penanya <span>*</span></label>
-            <input 
-              type="text" 
-              id="askerName" 
-              name="asker_name" 
-              class="qna-input" 
-              placeholder="Ketik nama lengkap Anda..." 
-              required 
-              maxlength="150"
-              autocomplete="name"
-            >
-          </div>
-
-          <!-- Pertanyaan -->
-          <div class="qna-field-group">
-            <label class="qna-field-label" for="questionText">Pertanyaan Anda <span>*</span></label>
-            <textarea 
-              id="questionText" 
-              name="question" 
-              class="qna-textarea" 
-              placeholder="Tuliskan pertanyaan Anda untuk pembicara sesi ini..." 
-              required 
-              maxlength="2000"
-            ></textarea>
-            <div class="qna-char-counter">
-              <span id="charCount">0</span> / 2000 karakter
+        <?php if (!empty($sessionNotFound)): ?>
+          <!-- Invalid / Not Found Route State (Form is completely hidden) -->
+          <div class="qna-not-found-box" style="text-align: center; padding: 24px 12px;">
+            <div class="qna-not-found-icon" style="width: 72px; height: 72px; background: rgba(239, 68, 68, 0.12); border: 2px solid rgba(239, 68, 68, 0.35); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: #f87171; box-shadow: 0 0 28px rgba(239, 68, 68, 0.2);">
+              <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
             </div>
+            <h2 style="font-size: 21px; font-weight: 800; color: #ffffff; margin: 0 0 10px 0; letter-spacing: -0.01em;">Sesi Tidak Ditemukan</h2>
+            <p style="font-size: 14px; color: rgba(255, 255, 255, 0.72); line-height: 1.6; margin: 0 auto 28px auto; max-width: 420px;">
+              Tautan sesi tanya jawab yang Anda buka tidak valid, telah berakhir, atau tidak sesuai dengan hari kegiatan yang dipilih.
+            </p>
+            <!-- <div style="display: flex; flex-direction: column; gap: 12px;">
+              <a href="<?= base_url('/#schedule') ?>" class="qna-btn-submit" style="text-decoration: none; justify-content: center;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Lihat Jadwal Sesi Lengkap</span>
+              </a>
+              <a href="<?= base_url('/') ?>" class="qna-btn-secondary" style="text-decoration: none; justify-content: center;">
+                <span>Kembali ke Beranda Utama</span>
+              </a>
+            </div> -->
           </div>
+        <?php else: ?>
+          <!-- Active QnA Form -->
+          <form id="qnaForm" method="POST" action="<?= base_url('qna/submit') ?>">
+            <?= csrf_field() ?>
+            
+            <?php if (!empty($sessionId)): ?>
+              <!-- Hidden IDs dynamically extracted from URL/Barcode -->
+              <input type="hidden" name="schedule_day_id" value="<?= esc($dayId) ?>">
+              <input type="hidden" name="schedule_session_id" value="<?= esc($sessionId) ?>">
+              <?php if (!empty($itemId)): ?>
+                <input type="hidden" name="session_item_id" value="<?= esc($itemId) ?>">
+              <?php endif; ?>
+            <?php else: ?>
+              <!-- Session Selector when no specific session barcode is scanned -->
+              <div class="qna-field-group">
+                <label class="qna-field-label" for="sessionSelect">Pilih Sesi Acara <span>*</span></label>
+                <select id="sessionSelect" name="schedule_session_id" class="qna-input" style="background: rgba(1, 10, 45, 0.95); cursor: pointer;" required>
+                  <option value="">-- Pilih Sesi Tanya Jawab --</option>
+                  <?php if (!empty($allDays)): ?>
+                    <?php foreach ($allDays as $d): ?>
+                      <?php if (!empty($d['sessions'])): ?>
+                        <optgroup label="Day <?= esc($d['day_number']) ?><?= !empty($d['formatted_date']) ? ' (' . esc($d['formatted_date']) . ')' : (!empty($d['event_date']) ? ' (' . date('F j, Y', strtotime($d['event_date'])) . ')' : '') ?>">
+                          <?php foreach ($d['sessions'] as $s): ?>
+                            <option value="<?= $s['id'] ?><?= !empty($s['item_id']) ? ':' . $s['item_id'] : '' ?>">
+                              [<?= esc($s['start_time']) ?>] <?= esc($s['title']) ?><?= !empty($s['subtitle']) ? ' — ' . esc($s['subtitle']) : '' ?>
+                            </option>
+                          <?php endforeach; ?>
+                        </optgroup>
+                      <?php endif; ?>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
+                </select>
+              </div>
+            <?php endif; ?>
 
-          <!-- Error Message Notice -->
-          <div id="qnaErrorNotice" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; font-size: 13px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;"></div>
+            <!-- Nama Penanya -->
+            <div class="qna-field-group">
+              <label class="qna-field-label" for="askerName">Nama Penanya <span>*</span></label>
+              <input 
+                type="text" 
+                id="askerName" 
+                name="asker_name" 
+                class="qna-input" 
+                placeholder="Ketik nama lengkap Anda..." 
+                required 
+                maxlength="150"
+                autocomplete="name"
+              >
+            </div>
 
-          <!-- Submit Button -->
-          <button type="submit" id="btnSubmitQna" class="qna-btn-submit">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            <span>Kirim Pertanyaan</span>
-          </button>
-        </form>
+            <!-- Pertanyaan -->
+            <div class="qna-field-group">
+              <label class="qna-field-label" for="questionText">Pertanyaan Anda <span>*</span></label>
+              <textarea 
+                id="questionText" 
+                name="question" 
+                class="qna-textarea" 
+                placeholder="Tuliskan pertanyaan Anda untuk pembicara sesi ini..." 
+                required 
+                maxlength="2000"
+              ></textarea>
+              <div class="qna-char-counter">
+                <span id="charCount">0</span> / 2000 karakter
+              </div>
+            </div>
 
-        <!-- Success State View (Revealed after submit) -->
-        <div class="qna-success-box" id="qnaSuccessBox">
-          <div class="qna-success-icon">
-            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <!-- Error Message Notice -->
+            <div id="qnaErrorNotice" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; font-size: 13px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;"></div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="btnSubmitQna" class="qna-btn-submit">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              <span>Kirim Pertanyaan</span>
+            </button>
+          </form>
+
+          <!-- Success State View (Revealed after submit) -->
+          <div class="qna-success-box" id="qnaSuccessBox">
+            <div class="qna-success-icon">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h2 class="qna-success-title">Pertanyaan Terkirim!</h2>
+            <p class="qna-success-desc">Terima kasih atas partisipasi Anda. Pertanyaan Anda telah masuk dan akan dibacakan oleh moderator sesi.</p>
+            <button type="button" id="btnAskAnother" class="qna-btn-secondary">
+              + Ajukan Pertanyaan Lain
+            </button>
           </div>
-          <h2 class="qna-success-title">Pertanyaan Terkirim!</h2>
-          <p class="qna-success-desc">Terima kasih atas partisipasi Anda. Pertanyaan Anda telah masuk dan akan dibacakan oleh moderator sesi.</p>
-          <button type="button" id="btnAskAnother" class="qna-btn-secondary">
-            + Ajukan Pertanyaan Lain
-          </button>
-        </div>
+        <?php endif; ?>
       </div>
 
       <div class="qna-footer-note">

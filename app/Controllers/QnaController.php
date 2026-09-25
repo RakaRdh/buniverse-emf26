@@ -72,21 +72,32 @@ class QnaController extends BaseController
     {
         $dayParam     = $this->request->getGet('day') ?: $this->request->getGet('day_id');
         $sessionParam = $this->request->getGet('session') ?: $this->request->getGet('session_id');
+        $itemParam    = $this->request->getGet('item') ?: $this->request->getGet('item_id');
 
-        return $this->renderForm((int)$dayParam, (int)$sessionParam);
+        return $this->renderForm((int)$dayParam, (int)$sessionParam, (int)$itemParam);
+    }
+
+    public function sessionItem($session, $item)
+    {
+        return $this->renderForm(0, (int)$session, (int)$item);
+    }
+
+    public function daySessionItem($day, $session, $item)
+    {
+        return $this->renderForm((int)$day, (int)$session, (int)$item);
     }
 
     public function daySession($day, $session)
     {
-        return $this->renderForm((int)$day, (int)$session);
+        return $this->renderForm((int)$day, (int)$session, 0);
     }
 
     public function sessionOnly($session)
     {
-        return $this->renderForm(0, (int)$session);
+        return $this->renderForm(0, (int)$session, 0);
     }
 
-    protected function renderForm(int $dayId, int $sessionId)
+    protected function renderForm(int $dayId, int $sessionId, int $itemId = 0)
     {
         $data = $this->getCommonData();
 
@@ -97,49 +108,111 @@ class QnaController extends BaseController
         $targetSession = null;
         $targetDay     = null;
 
-        if (!empty($sessionId)) {
+        // 1. If dayId is specified, find the specific day first
+        if (!empty($dayId)) {
             foreach ($days as $d) {
-                if (!empty($d['sessions'])) {
-                    foreach ($d['sessions'] as $s) {
-                        if ($s['id'] === $sessionId) {
+                if ((int)$d['day_id'] === $dayId || (int)$d['day_number'] === $dayId) {
+                    $targetDay = $d;
+                    break;
+                }
+            }
+
+            // Strictly search for session/item ONLY within this specific day
+            if ($targetDay && (!empty($sessionId) || !empty($itemId))) {
+                if (!empty($targetDay['sessions'])) {
+                    foreach ($targetDay['sessions'] as $s) {
+                        if (!empty($itemId) && !empty($s['item_id']) && (int)$s['item_id'] === $itemId) {
+                            if (empty($sessionId) || (int)$s['id'] === $sessionId) {
+                                $targetSession = $s;
+                                break;
+                            }
+                        }
+                        if (empty($itemId) && !empty($sessionId) && (int)$s['id'] === $sessionId) {
                             $targetSession = $s;
-                            $targetDay = $d;
-                            break 2;
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            // 2. If dayId is 0, search across all days
+            if (!empty($sessionId) || !empty($itemId)) {
+                foreach ($days as $d) {
+                    if (!empty($d['sessions'])) {
+                        foreach ($d['sessions'] as $s) {
+                            if (!empty($itemId) && !empty($s['item_id']) && (int)$s['item_id'] === $itemId) {
+                                if (empty($sessionId) || (int)$s['id'] === $sessionId) {
+                                    $targetSession = $s;
+                                    $targetDay = $d;
+                                    break 2;
+                                }
+                            }
+                            if (empty($itemId) && !empty($sessionId) && (int)$s['id'] === $sessionId) {
+                                $targetSession = $s;
+                                $targetDay = $d;
+                                break 2;
+                            }
                         }
                     }
                 }
             }
         }
 
-        // If dayId is provided and matched
-        if (!$targetDay && !empty($dayId)) {
-            foreach ($days as $d) {
-                if ($d['day_id'] === $dayId || $d['day_number'] === $dayId) {
-                    $targetDay = $d;
-                    break;
-                }
-            }
+        if ($targetSession && $targetDay) {
+            $data['dayId']           = $targetDay['day_id'];
+            $data['dayNumber']       = $targetDay['day_number'];
+            $data['dayLabel']        = $targetDay['label'];
+            $data['dayDate']         = !empty($targetDay['formatted_date']) ? $targetDay['formatted_date'] : (!empty($targetDay['event_date']) ? date('F j, Y', strtotime($targetDay['event_date'])) : '');
+            $data['sessionId']       = $targetSession['id'];
+            $data['itemId']          = $targetSession['item_id'] ?? null;
+            $data['sessionTitle']    = $targetSession['title'] ?? 'Sesi Acara';
+            $data['sessionSubtitle'] = $targetSession['subtitle'] ?? '';
+            $data['roomName']        = $targetSession['room_name'] ?? '';
+            $data['sessionTime']     = !empty($targetSession['start_time']) ? ($targetSession['start_time'] . ' - ' . $targetSession['end_time'] . ' WIB') : '';
+            $data['targetSession']   = $targetSession;
+            $data['targetDay']       = $targetDay;
+            $data['sessionNotFound'] = false;
+        } else {
+            // Strict mismatch or invalid session/day requested
+            $isRequestedSpecific = (!empty($sessionId) || !empty($itemId) || (!empty($dayId) && empty($targetDay)));
+
+            $data['dayId']           = $targetDay['day_id'] ?? $dayId;
+            $data['dayNumber']       = $targetDay['day_number'] ?? $dayId;
+            $data['dayLabel']        = $targetDay['label'] ?? ($dayId ? 'Day ' . $dayId : 'Day 1');
+            $data['dayDate']         = !empty($targetDay['formatted_date']) ? $targetDay['formatted_date'] : '';
+            $data['sessionId']       = 0;
+            $data['itemId']          = 0;
+            $data['sessionTitle']    = $isRequestedSpecific ? 'Sesi Tidak Ditemukan' : 'Pilih Sesi Acara';
+            $data['sessionSubtitle'] = $isRequestedSpecific ? 'Sesi acara yang Anda akses tidak terdaftar atau tautan tidak valid.' : '';
+            $data['roomName']        = '';
+            $data['sessionTime']     = '';
+            $data['targetSession']   = null;
+            $data['targetDay']       = $targetDay;
+            $data['sessionNotFound'] = $isRequestedSpecific;
         }
 
-        $data['dayId']         = $targetDay['day_id'] ?? $dayId;
-        $data['dayNumber']     = $targetDay['day_number'] ?? $dayId;
-        $data['dayLabel']      = $targetDay['label'] ?? ($dayId ? 'Day ' . $dayId : 'Day 1');
-        $data['sessionId']     = $targetSession['id'] ?? $sessionId;
-        $data['sessionTitle']  = $targetSession['title'] ?? 'Sesi Acara';
-        $data['sessionTime']   = !empty($targetSession['start_time']) ? ($targetSession['start_time'] . ' - ' . $targetSession['end_time'] . ' WIB') : '';
-        $data['targetSession'] = $targetSession;
-        $data['targetDay']     = $targetDay;
-        $data['allDays']       = $days;
+        $data['allDays'] = $days;
 
         return view('qna/form', $data);
     }
 
     public function submit()
     {
-        $askerName = trim((string)$this->request->getPost('asker_name'));
-        $question  = trim((string)$this->request->getPost('question'));
-        $sessionId = (int)$this->request->getPost('schedule_session_id');
+        $askerName = trim(strip_tags((string)$this->request->getPost('asker_name')));
+        $question  = trim(strip_tags((string)$this->request->getPost('question')));
+        $rawSession = $this->request->getPost('schedule_session_id');
         $dayId     = (int)$this->request->getPost('schedule_day_id');
+        $itemId    = (int)$this->request->getPost('session_item_id');
+
+        if (is_string($rawSession) && strpos($rawSession, ':') !== false) {
+            $parts = explode(':', $rawSession, 2);
+            $sessionId = (int)$parts[0];
+            if (empty($itemId) && !empty($parts[1])) {
+                $itemId = (int)$parts[1];
+            }
+        } else {
+            $sessionId = (int)$rawSession;
+        }
 
         $isAjax = $this->request->isAJAX() || $this->request->getHeaderLine('Accept') === 'application/json';
 
@@ -157,6 +230,7 @@ class QnaController extends BaseController
             'asker_name'          => $askerName,
             'question'            => $question,
             'schedule_session_id' => $sessionId,
+            'session_item_id'     => $itemId ?: null,
             'schedule_day_id'     => $dayId,
         ];
 
@@ -188,7 +262,21 @@ class QnaController extends BaseController
         $data = $this->getCommonData();
 
         $filterDay     = $this->request->getGet('day_id') ? (int)$this->request->getGet('day_id') : null;
-        $filterSession = $this->request->getGet('session_id') ? (int)$this->request->getGet('session_id') : null;
+        $rawSession    = $this->request->getGet('session_id');
+        $filterSession = null;
+        $filterItem    = $this->request->getGet('item_id') ? (int)$this->request->getGet('item_id') : null;
+
+        if (!empty($rawSession)) {
+            if (is_string($rawSession) && strpos($rawSession, ':') !== false) {
+                $parts = explode(':', $rawSession, 2);
+                $filterSession = (int)$parts[0];
+                if (empty($filterItem) && !empty($parts[1])) {
+                    $filterItem = (int)$parts[1];
+                }
+            } else {
+                $filterSession = (int)$rawSession;
+            }
+        }
 
         // Fetch sessions list for dropdown filters
         $sessionsData = $this->fetchApi('qna/sessions');
@@ -198,11 +286,13 @@ class QnaController extends BaseController
         $queryParams = [];
         if (!empty($filterDay))     $queryParams['day_id'] = $filterDay;
         if (!empty($filterSession)) $queryParams['session_id'] = $filterSession;
+        if (!empty($filterItem))    $queryParams['item_id'] = $filterItem;
 
         $qnaResp = $this->fetchApi('qna', 'GET', $queryParams);
         $data['questions']     = $qnaResp['data'] ?? [];
         $data['filterDay']     = $filterDay;
-        $data['filterSession'] = $filterSession;
+        $data['filterSession'] = !empty($filterItem) ? ($filterSession . ':' . $filterItem) : $filterSession;
+        $data['filterItem']    = $filterItem;
 
         return view('qna/dashboard', $data);
     }
@@ -210,11 +300,26 @@ class QnaController extends BaseController
     public function apiList()
     {
         $filterDay     = $this->request->getGet('day_id') ? (int)$this->request->getGet('day_id') : null;
-        $filterSession = $this->request->getGet('session_id') ? (int)$this->request->getGet('session_id') : null;
+        $rawSession    = $this->request->getGet('session_id');
+        $filterSession = null;
+        $filterItem    = $this->request->getGet('item_id') ? (int)$this->request->getGet('item_id') : null;
+
+        if (!empty($rawSession)) {
+            if (is_string($rawSession) && strpos($rawSession, ':') !== false) {
+                $parts = explode(':', $rawSession, 2);
+                $filterSession = (int)$parts[0];
+                if (empty($filterItem) && !empty($parts[1])) {
+                    $filterItem = (int)$parts[1];
+                }
+            } else {
+                $filterSession = (int)$rawSession;
+            }
+        }
 
         $queryParams = [];
         if (!empty($filterDay))     $queryParams['day_id'] = $filterDay;
         if (!empty($filterSession)) $queryParams['session_id'] = $filterSession;
+        if (!empty($filterItem))    $queryParams['item_id'] = $filterItem;
 
         $qnaResp = $this->fetchApi('qna', 'GET', $queryParams);
 

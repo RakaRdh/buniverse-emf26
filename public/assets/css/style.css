@@ -567,7 +567,7 @@ button {
 }
 
 .editorial-intro {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.75;
   color: var(--text-secondary);
   max-width: 480px;
@@ -644,7 +644,7 @@ button {
 }
 
 .editorial-paragraphs p {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.75;
   color: #ffffff;
 }

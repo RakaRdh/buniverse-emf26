@@ -164,7 +164,7 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
 
           <!-- PENGANTAR -->
           <div class="schedule-group-section">
-            <div class="schedule-group-label">Pengantar:</div>
+            <div class="schedule-group-label">Introductory Speech:</div>
             <div class="plenary-speaker-grid">
               <?php foreach ($item['pengantar'] as $pngItem): ?>
                 <?= view('partials/schedule/speaker_card', ['speaker' => $pngItem]) ?>
