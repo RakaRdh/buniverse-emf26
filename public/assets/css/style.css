@@ -1865,12 +1865,19 @@ button {
 .news-image-wrap {
   position: relative;
   width: 100%;
-  height: 220px;
+  aspect-ratio: 960 / 620;
+  height: auto;
   border-radius: var(--radius-md);
   overflow: hidden;
   margin-bottom: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Specific ratio helper if 300x170 (16:9 approx) or datasatu ratio is preferred */
+[data-slider-id="datasatu"] .news-image-wrap {
+  aspect-ratio: 300 / 170;
+  height: auto;
 }
 
 .news-image-wrap img {
@@ -3312,7 +3319,7 @@ button {
   }
 
   .news-image-wrap {
-    height: 170px;
+    height: auto;
   }
 
   /* Speaker Modal Mobile (Gambar 2 Reference): Foto di atas, nama & jabatan di bawah terpusat */

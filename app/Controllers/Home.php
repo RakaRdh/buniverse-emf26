@@ -19,6 +19,7 @@ class Home extends BaseController
         $relatedNewsInvestor = $this->fetchNewsFromPortal('investor', 4) ?: [];
         $relatedNewsBeritaSatu = $this->fetchNewsFromPortal('beritasatu', 4) ?: [];
         $relatedNewsJakartaGlobe = $this->fetchNewsFromPortal('jakartaglobe', 4) ?: [];
+        $relatedNewsDatasatu = $this->fetchNewsFromPortal('datasatu', 4) ?: [];
         $relatedNews = $relatedNewsInvestor;
         $sponsors = $mock->sponsors;
 
@@ -414,6 +415,7 @@ class Home extends BaseController
             'relatedNewsInvestor' => $relatedNewsInvestor,
             'relatedNewsBeritaSatu' => $relatedNewsBeritaSatu,
             'relatedNewsJakartaGlobe' => $relatedNewsJakartaGlobe,
+            'relatedNewsDatasatu' => $relatedNewsDatasatu,
             'sponsors' => $sponsors,
             'sponsorPartnership' => $sponsorPartnership,
             'sectionDecorations' => $sectionDecorations,
@@ -441,6 +443,7 @@ class Home extends BaseController
             'investor' => "https://api.investor.id/article/type=latest&num={$limit}&tag=investor-daily-summit&page=1",
             'beritasatu' => "https://api.beritasatu.com/v4/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
             'jakartaglobe' => "https://api.jakartaglobe.id/apiweb-v2/search/keyword=investor-daily-summit&num={$limit}&page=0",
+            'datasatu' => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
         ];
 
         $targetUrl = $portalUrls[$portal] ?? null;
@@ -523,6 +526,19 @@ class Home extends BaseController
 
                 $filename = $item['media'][0]['filename'] ?? '';
                 $image = !empty($filename) ? 'https://img2.beritasatu.com/cache/jakartaglobe/960x620-3/' . $filename : ($item['image'] ?? 'image1.webp');
+            } elseif ($portal === 'datasatu') {
+                if (!empty($item['canonical'])) {
+                    $url = 'https://datasatu.com/' . ltrim($item['canonical'], '/');
+                } elseif (!empty($item['categoryName']) && !empty($item['articleID']) && !empty($item['slug'])) {
+                    $url = 'https://datasatu.com/' . $item['categoryName'] . '/' . $item['articleID'] . '/' . $item['slug'];
+                } elseif (!empty($item['slug'])) {
+                    $url = 'https://datasatu.com/' . ltrim($item['slug'], '/');
+                } else {
+                    $url = $item['url'] ?? 'https://datasatu.com';
+                }
+
+                $mediaPath = $item['mediaPath'] ?? ($item['media'][0]['filename'] ?? '');
+                $image = !empty($mediaPath) ? 'https://img2.beritasatu.com/cache/datasatu/960x620-3/' . ltrim($mediaPath, '/') : ($item['image'] ?? 'image1.webp');
             } else { // beritasatu
                 $url = !empty($sefurl) ? 'https://www.beritasatu.com/' . ltrim($sefurl, '/') : ($item['url'] ?? 'https://www.beritasatu.com');
                 $filename = $item['media'][0]['filename'] ?? ($item['media'][0]['url'] ?? '');

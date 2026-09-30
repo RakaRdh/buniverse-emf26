@@ -16,7 +16,7 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
         <circle cx="12" cy="12" r="10"></circle>
         <polyline points="12 6 12 12 16 14"></polyline>
       </svg>
-      <span><?= esc($item['time']) ?></span>
+      <span><?= esc(format_schedule_time($item['time'] ?? '', $item['start_time'] ?? null, $item['end_time'] ?? null)) ?></span>
     </div>
   </div>
 
@@ -150,7 +150,7 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
             }
           ?>
             <div class="schedule-group-section">
-              <div class="schedule-group-label">MOD:</div>
+              <div class="schedule-group-label">Moderator:</div>
               <div class="moderator-row">
                 <div class="moderator-photo">
                   <img src="<?= esc($singleModPhoto) ?>" alt="<?= esc($item['moderator']['name']) ?>" loading="lazy">

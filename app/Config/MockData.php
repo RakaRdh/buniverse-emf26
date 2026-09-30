@@ -440,7 +440,7 @@ class MockData extends BaseConfig
                     'title'       => "Plenary Session 1:\nPowering Tomorrow: Integrating Sustainable Energy and Minerals for Economic Leap",
                     'is_break'    => false,
                     'moderator'   => [
-                        'label' => 'MOD:',
+                        'label' => 'Moderator:',
                         'name'  => 'Djaka Susila',
                         'role'  => 'Editor In Chief - Integrated Investor',
                         'photo'    => 'placeholder.png'
@@ -487,7 +487,7 @@ class MockData extends BaseConfig
                                 [
                                     'title'       => "Special Session A.1:\nRebalancing Growth For Stronger Indonesia",
                                     'moderator'   => [
-                                        'label' => 'MOD:',
+                                        'label' => 'Moderator:',
                                         'name'  => 'Nasori Ahmad',
                                         'role'  => 'Managing Editor Investor Daily',
                                         'photo'    => 'placeholder.png'
@@ -532,7 +532,7 @@ class MockData extends BaseConfig
                     'title'       => "Plenary Session 2:\nCapital Market Evolution & Financial Inclusivity in Transition Economy",
                     'is_break'    => false,
                     'moderator'   => [
-                        'label' => 'MOD:',
+                        'label' => 'Moderator:',
                         'name'  => 'Djaka Susila',
                         'role'  => 'Editor In Chief - Integrated Investor',
                         'photo'    => 'placeholder.png'

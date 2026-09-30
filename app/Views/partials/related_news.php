@@ -25,6 +25,11 @@
           'title' => 'JakartaGlobe',
           'items' => $relatedNewsJakartaGlobe ?? [],
         ],
+        [
+          'id'    => 'datasatu',
+          'title' => 'Datasatu',
+          'items' => $relatedNewsDatasatu ?? [],
+        ],
       ];
     ?>
 
@@ -36,6 +41,7 @@
         if ($portalKey === 'investor-daily') $portalUrl = 'https://investor.id';
         elseif ($portalKey === 'beritasatu') $portalUrl = 'https://www.beritasatu.com';
         elseif ($portalKey === 'jakartaglobe') $portalUrl = 'https://jakartaglobe.id';
+        elseif ($portalKey === 'datasatu') $portalUrl = 'https://datasatu.com/tag/investor-daily-summit';
       }
     ?>
       <div class="news-source-block">
