@@ -19,14 +19,12 @@ if (!str_starts_with($photoUrl, 'http')) {
      data-speaker-photo="<?= esc($photoUrl) ?>"
      data-speaker-bio="<?= esc($speaker['bio'] ?? '') ?>">
   
-  <!-- Zona Visual Atas: Bingkai portrait dengan outline tipis & bleed photo -->
   <div class="speaker-tile-frame">
     <div class="speaker-tile-photo-wrap">
       <img src="<?= esc($photoUrl) ?>" alt="<?= esc($speaker['name']) ?>" loading="lazy">
     </div>
   </div>
 
-  <!-- Zona Teks Bawah: Nama & Keterangan rata tengah -->
   <div class="speaker-tile-caption">
     <div class="speaker-tile-name"><?= esc($speaker['name']) ?></div>
     <div class="speaker-tile-role"><?= esc($speaker['role']) ?></div>

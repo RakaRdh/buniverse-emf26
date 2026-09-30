@@ -645,10 +645,10 @@
 <body>
 
   <div class="qna-dash-wrapper">
-    <!-- 1. Pure CSS Hero Canvas Ambient Glow Background -->
+    <?php /* 1. Pure CSS Hero Canvas Ambient Glow Background */ ?>
     <div class="hero-bg-canvas" aria-hidden="true"></div>
 
-    <!-- 2. Decorative Rotating Discs -->
+    <?php /* 2. Decorative Rotating Discs */ ?>
     <div class="hero-deco-wrap" aria-hidden="true" style="opacity: 0.6;">
       <div class="hero-deco-item hero-deco-topleft">
         <img src="<?= base_url('assets/img/decoration.png') ?>" alt="" class="hero-deco-img">
@@ -664,10 +664,10 @@
       </div>
     </div>
 
-    <!-- 3. Main Dashboard Content -->
+    <?php /* 3. Main Dashboard Content */ ?>
     <div class="qna-dash-container">
       
-      <!-- Top Brand Bar -->
+      <?php /* Top Brand Bar */ ?>
       <div class="qna-dash-header">
         <div class="qna-dash-brand">
           <a href="<?= base_url('/') ?>"><img src="<?= base_url('assets/img/logo_theme.webp') ?>" alt="Logo" class="qna-dash-logo"></a>
@@ -677,7 +677,8 @@
           </div>
         </div>
 
-        <!-- <div style="display: flex; align-items: center; gap: 14px;">
+        <?php /*
+        <div style="display: flex; align-items: center; gap: 14px;">
           <div class="qna-live-pill">
             <span class="qna-live-dot"></span>
             <span>Live Sync</span>
@@ -685,15 +686,16 @@
           <div style="font-size: 13px; font-weight: 700; color: #5e9cbf;">
             <span id="totalQuestionsCount"><?= count($questions) ?></span> Pertanyaan
           </div>
-        </div> -->
+        </div>
+        */ ?>
       </div>
 
-      <!-- Filters Bar -->
+      <?php /* Filters Bar */ ?>
       <div class="qna-filter-bar">
         <div class="qna-filter-group">
           <span class="qna-filter-label">Filter:</span>
           
-          <!-- Day Filter -->
+          <?php /* Day Filter */ ?>
           <select id="filterDay" class="qna-select">
             <option value="">Semua Hari (All Days)</option>
             <?php if (!empty($days)): ?>
@@ -708,7 +710,7 @@
             <?php endif; ?>
           </select>
 
-          <!-- Session Filter -->
+          <?php /* Session Filter */ ?>
           <select id="filterSession" class="qna-select">
             <option value="">Semua Sesi (All Sessions)</option>
             <?php if (!empty($days)): ?>
@@ -733,7 +735,7 @@
           </select>
         </div>
 
-        <!-- View Switcher -->
+        <?php /* View Switcher */ ?>
         <div style="flex-shrink: 0;">
           <div class="qna-view-switch">
             <button type="button" id="viewCardBtn" class="qna-switch-btn active" title="Tampilan Kartu">
@@ -748,7 +750,7 @@
         </div>
       </div>
 
-      <!-- 1. Questions List Grid (Card View) -->
+      <?php /* 1. Questions List Grid (Card View) */ ?>
       <div class="qna-grid" id="qnaGrid">
         <?php if (!empty($questions)): ?>
           <?php foreach ($questions as $idx => $q): ?>
@@ -794,7 +796,7 @@
         <?php endif; ?>
       </div>
 
-      <!-- 2. Questions Table Container (Table View) -->
+      <?php /* 2. Questions Table Container (Table View) */ ?>
       <div class="qna-table-container" id="qnaTableContainer">
         <div style="overflow-x: auto;">
           <table class="qna-table" id="qnaTable">
@@ -856,15 +858,15 @@
     </div>
   </div>
 
-  <!-- 4. Spotlight / Zoom Focus Modal for Moderator -->
+  <?php /* 4. Spotlight / Zoom Focus Modal for Moderator */ ?>
   <div class="qna-spotlight-modal" id="qnaSpotlightModal" role="dialog" aria-modal="true" aria-labelledby="modalAskerName">
     <div class="qna-spotlight-card" id="qnaSpotlightCard">
-      <!-- Close Button -->
+      <?php /* Close Button */ ?>
       <button type="button" class="qna-spotlight-close" id="btnSpotlightClose" aria-label="Tutup Mode Fokus">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
 
-      <!-- Moderator Header -->
+      <?php /* Moderator Header */ ?>
       <div class="qna-spotlight-header">
         <div class="qna-spotlight-avatar" id="modalAskerAvatar">?</div>
         <div>
@@ -873,12 +875,12 @@
         </div>
       </div>
 
-      <!-- Large Question Body -->
+      <?php /* Large Question Body */ ?>
       <div class="qna-spotlight-body" id="modalQuestionText">
         Isi pertanyaan audiens akan tampil di sini dengan ukuran teks yang besar dan mudah dibaca oleh moderator.
       </div>
 
-      <!-- Navigation & Controls -->
+      <?php /* Navigation & Controls */ ?>
       <div class="qna-spotlight-footer">
         <div class="qna-spotlight-nav">
           <button type="button" class="qna-nav-btn" id="btnPrevQuestion">

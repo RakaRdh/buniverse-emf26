@@ -2,9 +2,9 @@
   <div class="container">
     <div class="header-inner">
       
-      <!-- Dual-logo brand lockup dengan URL terpisah untuk masing-masing logo -->
+      <?php /* Dual-logo brand lockup dengan URL terpisah untuk masing-masing logo */ ?>
       <div class="brand-lockup">
-        <!-- Logo 1: INVESTOR DAILY SUMMIT 2026 -->
+        <?php /* Logo 1: INVESTOR DAILY SUMMIT 2026 */ ?>
         <?php 
           $slot1 = $site['logo_placements']['navbar_slot_1'] ?? null;
           $slot1Active = !isset($slot1['is_active']) || !empty($slot1['is_active']);
@@ -24,7 +24,7 @@
           </a>
         <?php endif; ?>
 
-        <!-- Vertical Divider -->
+        <?php /* Vertical Divider */ ?>
         <?php 
           $slot2 = $site['logo_placements']['navbar_slot_2'] ?? null;
           $slot2Active = !isset($slot2['is_active']) || !empty($slot2['is_active']);
@@ -33,7 +33,7 @@
           <div class="brand-divider" aria-hidden="true"></div>
         <?php endif; ?>
 
-        <!-- Logo 2: INVESTOR DAILY INDONESIA -->
+        <?php /* Logo 2: INVESTOR DAILY INDONESIA */ ?>
         <?php 
           $slot2Variant = $slot2['variant'] ?? 'auto';
           $logoBUrl = !empty($site['logo_b_target_url']) ? $site['logo_b_target_url'] : 'https://investor.id';
@@ -51,7 +51,7 @@
         <?php endif; ?>
       </div>
 
-      <!-- Right Group: Navigation links + Get Tickets CTA -->
+      <?php /* Right Group: Navigation links + Get Tickets CTA */ ?>
       <div class="header-right-group">
         <nav class="site-nav" id="siteNav" aria-label="Main Navigation">
           <div class="mobile-nav-header">

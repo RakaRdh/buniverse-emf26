@@ -1,17 +1,17 @@
 <section class="hero-section" id="home">
   <?= view('partials/section_decorations', ['sectionKey' => 'home', 'decorations' => $sectionDecorations ?? []]) ?>
   <?= view('partials/custom_placements', ['sectionKey' => 'home', 'customPlacements' => $customPlacements ?? []]) ?>
-  <!-- 1. Pure CSS Hero Background Canvas (Base #010A2D with ambient royal blue glow #0C2F88 at top-left) -->
+  <?php /* 1. Pure CSS Hero Background Canvas */ ?>
   <div class="hero-bg-canvas" aria-hidden="true"></div>
 
-  <!-- Hero Hardcoded Decorative Discs -->
+  <?php /* Hero Hardcoded Decorative Discs */ ?>
   <div class="hero-deco-wrap" aria-hidden="true">
-    <!-- Deco A: Top Left Subtle Accent -->
+    <?php /* Deco A: Top Left Subtle Accent */ ?>
     <div class="hero-deco-item hero-deco-topleft">
       <img src="<?= base_url('assets/img/decoration.png') ?>" alt="" class="hero-deco-img">
     </div>
 
-    <!-- Deco B: Center-Right Perspective 3D Spinning Disc wrapped with static Luminance mask -->
+    <?php /* Deco B: Center-Right Perspective 3D Spinning Disc */ ?>
     <div class="hero-deco-main-mask">
       <div class="hero-deco-item hero-deco-main-perspective">
         <div class="hero-deco-tilt">
@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  <!-- 2. Centered Content Group: Bundle single image hero.png -->
+  <?php /* 2. Centered Content Group: Bundle single image */ ?>
   <div class="container hero-container">
     <div class="hero-content hero-content-centered">
       <div class="hero-bundle-wrap">
@@ -32,7 +32,7 @@
     </div>
   </div>
 
-  <!-- Mobile Scroll Indicator (Polos, statis, menghilang saat scroll ke atas sedikitpun) -->
+  <?php /* Mobile Scroll Indicator */ ?>
   <div class="hero-scroll-indicator" id="heroScrollIndicator" aria-hidden="true">
     <svg class="hero-scroll-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="24" cy="24" r="22.5" stroke="#ffffff" stroke-width="1.8"/>

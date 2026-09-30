@@ -8,7 +8,7 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
   <div class="container">
     <div class="editorial-grid">
       
-      <!-- Left Column: Editorial Logo & Intro -->
+      <?php /* Left Column: Editorial Logo & Intro */ ?>
       <div class="editorial-left">
         <div class="editorial-logo">
           <?php 
@@ -33,7 +33,7 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
         </p>
       </div>
 
-      <!-- Right Column: Topic Badge & Editorial Paragraphs -->
+      <?php /* Right Column: Topic Badge & Editorial Paragraphs */ ?>
       <div class="editorial-right">
         <div class="topic-badge">
           <?= esc($overviewData['badge'] ?? "INDONESIA'S ECONOMIC MODEL") ?>
@@ -49,7 +49,7 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
     </div>
   </div>
 
-  <!-- Slanted Photo Collage (Anchored to bottom of section, left aligned with content) -->
+  <?php /* Slanted Photo Collage */ ?>
   <div class="editorial-wave-mask-wrap" aria-hidden="true">
     <img src="<?= base_url('assets/img/overview_kolase.webp') ?>" alt="Overview collage" class="editorial-collage-img" loading="lazy">
   </div>

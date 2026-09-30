@@ -2,7 +2,7 @@
   <div class="container">
     <div class="footer-inner">
       
-      <!-- Sisi Kiri: Logo Footer + Social Media di bawahnya -->
+      <?php /* Sisi Kiri: Logo Footer + Social Media di bawahnya */ ?>
       <div class="footer-left">
         <div class="footer-brand">
           <?php 
@@ -25,7 +25,7 @@
           <?php endif; ?>
         </div>
 
-        <!-- Ikon Media Sosial di bawah Logo -->
+        <?php /* Ikon Media Sosial di bawah Logo */ ?>
         <div class="footer-socials">
           <?php
             $igUrl = $site['socials']['instagram'] ?? 'https://www.instagram.com/investordailyid/';
@@ -33,7 +33,7 @@
             $fbUrl = $site['socials']['facebook'] ?? 'https://www.facebook.com/investordailyid/';
             $tiktokUrl = $site['socials']['tiktok'] ?? ($site['socials']['tiktok_url'] ?? 'https://www.tiktok.com/@investordaily');
           ?>
-          <!-- Instagram -->
+          <?php /* Instagram */ ?>
           <?php if (!empty($igUrl)): ?>
             <a href="<?= esc($igUrl) ?>" target="_blank" rel="noopener noreferrer" class="social-circle-btn" aria-label="Instagram">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -44,7 +44,7 @@
             </a>
           <?php endif; ?>
 
-          <!-- YouTube -->
+          <?php /* YouTube */ ?>
           <?php if (!empty($ytUrl)): ?>
             <a href="<?= esc($ytUrl) ?>" target="_blank" rel="noopener noreferrer" class="social-circle-btn" aria-label="YouTube">
               <svg viewBox="0 0 24 24" fill="currentColor">
@@ -53,7 +53,7 @@
             </a>
           <?php endif; ?>
 
-          <!-- Facebook -->
+          <?php /* Facebook */ ?>
           <?php if (!empty($fbUrl)): ?>
             <a href="<?= esc($fbUrl) ?>" target="_blank" rel="noopener noreferrer" class="social-circle-btn" aria-label="Facebook">
               <svg viewBox="0 0 24 24" fill="currentColor">
@@ -62,7 +62,7 @@
             </a>
           <?php endif; ?>
 
-          <!-- TikTok -->
+          <?php /* TikTok */ ?>
           <?php if (!empty($tiktokUrl)): ?>
             <a href="<?= esc($tiktokUrl) ?>" target="_blank" rel="noopener noreferrer" class="social-circle-btn" aria-label="TikTok">
               <svg viewBox="0 0 24 24" fill="currentColor">
@@ -73,12 +73,12 @@
         </div>
       </div>
 
-      <!-- Bagian Tengah: Teks Copyright -->
+      <?php /* Bagian Tengah: Teks Copyright */ ?>
       <div class="footer-copy">
         &copy; Copyright <?= date('Y') ?>. <?= esc($site['copyright'] ?? 'Investor Daily Summit.') ?>
       </div>
 
-      <!-- Sisi Kanan: Contact Us & Phone with icon (Group Link) -->
+      <?php /* Sisi Kanan: Contact Us & Phone */ ?>
       <?php
         $cPhone = $site['contact_phone'] ?? '+62 812-1267-8789';
         $cLabel = $site['contact_label'] ?? 'Phone';

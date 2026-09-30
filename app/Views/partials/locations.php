@@ -19,7 +19,7 @@ if (!$isActive) {
   <?= view('partials/custom_placements', ['sectionKey' => 'location', 'customPlacements' => $customPlacements ?? []]) ?>
   <div class="container">
     
-    <!-- Top: Centered Hotel Name & Address -->
+    <?php /* Top: Centered Hotel Name & Address */ ?>
     <div class="locations-header-center">
       <h2 class="locations-hotel-name"><?= esc($hotelName) ?></h2>
       <div class="locations-address">
@@ -27,26 +27,28 @@ if (!$isActive) {
       </div>
     </div>
 
-    <!-- Bottom Side-by-Side: Floor Plan (Left) & Google Maps Embed (Right) -->
+    <?php /* Bottom Side-by-Side: Floor Plan & Google Maps Embed */ ?>
     <div class="locations-content-grid">
       
-      <!-- Left: General Layout / Floor Plan Banner (Clickable Lightbox) -->
+      <?php /* Left: General Layout / Floor Plan Banner */ ?>
       <?php if (!empty($floorPlanImg)): ?>
         <div class="locations-floorplan-card is-clickable" id="locationFloorPlanCard" data-img-url="<?= esc($floorPlanImg) ?>" title="Klik untuk memperbesar gambar">
-          <!-- <div class="locations-floorplan-badge">
+          <?php /* 
+          <div class="locations-floorplan-badge">
             <span>GENERAL LAYOUT</span>
             <span class="locations-zoom-hint">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
               Perbesar
             </span>
-          </div> -->
+          </div>
+          */ ?>
           <div class="locations-floorplan-img-wrapper">
             <img src="<?= esc($floorPlanImg) ?>" alt="<?= esc($hotelName) ?> - General Layout" loading="lazy">
           </div>
         </div>
       <?php endif; ?>
 
-      <!-- Right: Google Maps Embed (Sejajar dengan Floor Design) -->
+      <?php /* Right: Google Maps Embed */ ?>
       <div class="locations-map-card">
         <?php if (str_contains($gmapsEmbed, '<iframe')): ?>
           <div class="locations-map-embed-wrapper">

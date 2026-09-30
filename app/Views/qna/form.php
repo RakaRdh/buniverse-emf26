@@ -272,17 +272,17 @@
 <body>
 
   <div class="qna-hero-wrapper">
-    <!-- 1. Pure CSS Hero Background Canvas (Base #010A2D with ambient royal blue glow #0C2F88 at top-left) -->
+    <?php /* 1. Pure CSS Hero Background Canvas (Base #010A2D with ambient royal blue glow #0C2F88 at top-left) */ ?>
     <div class="hero-bg-canvas" aria-hidden="true"></div>
 
-    <!-- 2. Hero Decorative Discs (Identical positioning & animation to Hero section) -->
+    <?php /* 2. Hero Decorative Discs (Identical positioning & animation to Hero section) */ ?>
     <div class="hero-deco-wrap" aria-hidden="true">
-      <!-- Deco A: Top Left Subtle Accent -->
+      <?php /* Deco A: Top Left Subtle Accent */ ?>
       <div class="hero-deco-item hero-deco-topleft">
         <img src="<?= base_url('assets/img/decoration.png') ?>" alt="" class="hero-deco-img">
       </div>
 
-      <!-- Deco B: Center-Right Perspective 3D Spinning Disc wrapped with static Luminance mask -->
+      <?php /* Deco B: Center-Right Perspective 3D Spinning Disc wrapped with static Luminance mask */ ?>
       <div class="hero-deco-main-mask">
         <div class="hero-deco-item hero-deco-main-perspective">
           <div class="hero-deco-tilt">
@@ -294,10 +294,10 @@
       </div>
     </div>
 
-    <!-- 3. Main Centered Interactive QnA Container -->
+    <?php /* 3. Main Centered Interactive QnA Container */ ?>
     <div class="qna-card-container">
       
-      <!-- Brand Header -->
+      <?php /* Brand Header */ ?>
       <div class="qna-brand-header">
         <a href="<?= base_url('/') ?>"><img src="<?= base_url('assets/img/logo_theme.webp') ?>" alt="<?= esc($site['title'] ?? 'Investor Daily Summit') ?>" class="qna-logo-img"></a>
         <?php if (!empty($sessionNotFound)): ?>
@@ -322,10 +322,10 @@
         <?php endif; ?>
       </div>
 
-      <!-- Form Card or Not Found State -->
+      <?php /* Form Card or Not Found State */ ?>
       <div class="qna-form-box" id="qnaFormCard">
         <?php if (!empty($sessionNotFound)): ?>
-          <!-- Invalid / Not Found Route State (Form is completely hidden) -->
+          <?php /* Invalid / Not Found Route State (Form is completely hidden) */ ?>
           <div class="qna-not-found-box" style="text-align: center; padding: 24px 12px;">
             <div class="qna-not-found-icon" style="width: 72px; height: 72px; background: rgba(239, 68, 68, 0.12); border: 2px solid rgba(239, 68, 68, 0.35); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: #f87171; box-shadow: 0 0 28px rgba(239, 68, 68, 0.2);">
               <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -338,7 +338,8 @@
             <p style="font-size: 14px; color: rgba(255, 255, 255, 0.72); line-height: 1.6; margin: 0 auto 28px auto; max-width: 420px;">
               Tautan sesi tanya jawab yang Anda buka tidak valid, telah berakhir, atau tidak sesuai dengan hari kegiatan yang dipilih.
             </p>
-            <!-- <div style="display: flex; flex-direction: column; gap: 12px;">
+            <?php /*
+            <div style="display: flex; flex-direction: column; gap: 12px;">
               <a href="<?= base_url('/#schedule') ?>" class="qna-btn-submit" style="text-decoration: none; justify-content: center;">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -351,22 +352,23 @@
               <a href="<?= base_url('/') ?>" class="qna-btn-secondary" style="text-decoration: none; justify-content: center;">
                 <span>Kembali ke Beranda Utama</span>
               </a>
-            </div> -->
+            </div>
+            */ ?>
           </div>
         <?php else: ?>
-          <!-- Active QnA Form -->
+          <?php /* Active QnA Form */ ?>
           <form id="qnaForm" method="POST" action="<?= base_url('qna/submit') ?>">
             <?= csrf_field() ?>
             
             <?php if (!empty($sessionId)): ?>
-              <!-- Hidden IDs dynamically extracted from URL/Barcode -->
+              <?php /* Hidden IDs dynamically extracted from URL/Barcode */ ?>
               <input type="hidden" name="schedule_day_id" value="<?= esc($dayId) ?>">
               <input type="hidden" name="schedule_session_id" value="<?= esc($sessionId) ?>">
               <?php if (!empty($itemId)): ?>
                 <input type="hidden" name="session_item_id" value="<?= esc($itemId) ?>">
               <?php endif; ?>
             <?php else: ?>
-              <!-- Session Selector when no specific session barcode is scanned -->
+              <?php /* Session Selector when no specific session barcode is scanned */ ?>
               <div class="qna-field-group">
                 <label class="qna-field-label" for="sessionSelect">Pilih Sesi Acara <span>*</span></label>
                 <select id="sessionSelect" name="schedule_session_id" class="qna-input" style="background: rgba(1, 10, 45, 0.95); cursor: pointer;" required>
@@ -388,7 +390,7 @@
               </div>
             <?php endif; ?>
 
-            <!-- Nama Penanya -->
+            <?php /* Nama Penanya */ ?>
             <div class="qna-field-group">
               <label class="qna-field-label" for="askerName">Nama Penanya <span>*</span></label>
               <input 
@@ -403,7 +405,7 @@
               >
             </div>
 
-            <!-- Pertanyaan -->
+            <?php /* Pertanyaan */ ?>
             <div class="qna-field-group">
               <label class="qna-field-label" for="questionText">Pertanyaan Anda <span>*</span></label>
               <textarea 
@@ -419,17 +421,17 @@
               </div>
             </div>
 
-            <!-- Error Message Notice -->
+            <?php /* Error Message Notice */ ?>
             <div id="qnaErrorNotice" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; font-size: 13px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;"></div>
 
-            <!-- Submit Button -->
+            <?php /* Submit Button */ ?>
             <button type="submit" id="btnSubmitQna" class="qna-btn-submit">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
               <span>Kirim Pertanyaan</span>
             </button>
           </form>
 
-          <!-- Success State View (Revealed after submit) -->
+          <?php /* Success State View (Revealed after submit) */ ?>
           <div class="qna-success-box" id="qnaSuccessBox">
             <div class="qna-success-icon">
               <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>

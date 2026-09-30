@@ -3,7 +3,7 @@
   <?= view('partials/custom_placements', ['sectionKey' => 'gallery', 'customPlacements' => $customPlacements ?? []]) ?>
   <div class="container">
     
-    <!-- Section Header Centered -->
+    <?php /* Section Header Centered */ ?>
     <div class="section-header-center">
       <h2 class="section-title">GALLERY</h2>
     </div>
@@ -53,7 +53,7 @@
       $rightIdx = ($randomCenter + 1) % $totalCount;
     ?>
 
-    <!-- 3D Coverflow Carousel Container -->
+    <?php /* 3D Coverflow Carousel Container */ ?>
     <div class="gallery-coverflow-wrapper" id="galleryCoverflow" tabindex="0" aria-label="IDS Gallery Coverflow Carousel">
       <div class="gallery-coverflow-track">
         <?php foreach ($items as $idx => $item): 
@@ -69,16 +69,18 @@
               <img src="<?= esc($item['image_url']) ?>" 
                    alt="<?= esc($item['caption']) ?>" 
                    loading="lazy">
-              <!-- <div class="gallery-card-overlay">
+              <?php /* 
+              <div class="gallery-card-overlay">
                 <span class="gallery-card-badge">Click to enlarge</span>
-              </div> -->
+              </div>
+              */ ?>
             </div>
           </div>
         <?php endforeach; ?>
       </div>
     </div>
 
-    <!-- Navigation Arrows -->
+    <?php /* Navigation Arrows */ ?>
     <div class="gallery-nav-controls">
       <button type="button" class="gallery-nav-btn gallery-prev-btn" id="galleryPrevBtn" aria-label="Previous slide">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">

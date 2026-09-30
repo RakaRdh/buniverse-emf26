@@ -9,7 +9,6 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
 ?>
 <div class="schedule-row <?= !empty($item['is_break']) ? 'is-break' : '' ?> <?= $isMultiRoom ? 'is-multi-room-row' : '' ?> <?= $activeClass ?>">
   
-  <!-- Left Column: Time with clock icon -->
   <div class="schedule-meta-col">
     <div class="schedule-time">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -20,19 +19,15 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
     </div>
   </div>
 
-  <!-- Right Column: Room Pill, Session Title, Moderator, Speakers -->
   <div class="schedule-content-col">
     
     <?php if ($isMultiRoom): ?>
-      <!-- Multi-Room Parent Title (e.g. Special Session A) -->
       <h3 class="session-title"><?= esc($item['title']) ?></h3>
 
-      <!-- Multi-Room Container / Rooms Grid -->
       <div class="multi-room-container">
         <?php foreach ($item['rooms'] as $roomData): ?>
           <div class="multi-room-card">
             
-            <!-- Room Pill -->
             <?php if (!empty($roomData['room'])): ?>
               <div class="room-pill">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -43,7 +38,6 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
               </div>
             <?php endif; ?>
 
-            <!-- Sessions within this Room -->
             <div class="room-sessions-list">
               <?php foreach ($roomData['sessions'] as $subSession): ?>
                 <div class="room-subsession">
@@ -54,7 +48,6 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
                     </div>
                   <?php endif; ?>
 
-                  <!-- Moderator if any -->
                   <?php if (!empty($subSession['moderator'])): 
                     $subModPhoto = $subSession['moderator']['photo'] ?? 'placeholder.png';
                     if (empty($subModPhoto)) {
@@ -75,7 +68,6 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
                     </div>
                   <?php endif; ?>
 
-                  <!-- Speakers Grid -->
                   <?php 
                   $subSpeakersToRender = [];
                   if (!empty($subSession['speakers'])) {
@@ -105,7 +97,6 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
 
     <?php else: ?>
 
-      <!-- Standard Single Room / Plenary Session Item -->
       <?php if (!empty($item['room'])): ?>
         <div class="room-pill">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -138,10 +129,8 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
       ?>
 
       <?php if ($hasPengantar): ?>
-        <!-- Layout Khusus dengan Pengantar (Sesuai Gambar 3) -->
         <div class="session-speakers-pengantar-wrap">
           
-          <!-- MODERATOR (jika ada) -->
           <?php if (!empty($item['moderator'])): 
             $singleModPhoto = $item['moderator']['photo'] ?? 'placeholder.png';
             if (empty($singleModPhoto)) $singleModPhoto = 'placeholder.png';
@@ -162,7 +151,6 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
             </div>
           <?php endif; ?>
 
-          <!-- PENGANTAR -->
           <div class="schedule-group-section">
             <div class="schedule-group-label">Introductory Speech:</div>
             <div class="plenary-speaker-grid">
@@ -172,7 +160,6 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
             </div>
           </div>
 
-          <!-- SPEAKER -->
           <?php if (!empty($speakersToRender)): ?>
             <div class="schedule-group-section">
               <div class="schedule-group-label">Speaker:</div>
@@ -188,8 +175,6 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
 
       <?php else: ?>
 
-        <!-- Standard Layout (Tanpa Pengantar) -->
-        <!-- Optional Moderator -->
         <?php if (!empty($item['moderator'])): 
           $singleModPhoto = $item['moderator']['photo'] ?? 'placeholder.png';
           if (empty($singleModPhoto)) {
@@ -210,7 +195,6 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
           </div>
         <?php endif; ?>
 
-        <!-- Speakers List / Grid (Standardized width) -->
         <?php if (!empty($speakersToRender)): ?>
           <div class="plenary-speaker-grid">
             <?php foreach ($speakersToRender as $spkItem): ?>

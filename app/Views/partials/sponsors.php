@@ -15,7 +15,7 @@
              loading="lazy">
       </div>
     <?php else: ?>
-      <!-- Placeholder Sponsors & Partnerships Empty State Box -->
+      <?php /* Placeholder Sponsors & Partnerships Empty State Box */ ?>
       <div class="news-empty-state sponsor-empty-state">
         <p class="news-empty-text">Belum ada sponsor saat ini</p>
       </div>

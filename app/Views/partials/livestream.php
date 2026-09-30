@@ -22,12 +22,12 @@
   <?= view('partials/custom_placements', ['sectionKey' => 'livestream', 'customPlacements' => $customPlacements ?? []]) ?>
   <div class="container">
     
-    <!-- Section Header Centered -->
+    <?php /* Section Header Centered */ ?>
     <div class="section-header-center">
       <h2 class="section-title"><?= esc($title) ?></h2>
     </div>
 
-    <!-- Live Stream Video Player Embed -->
+    <?php /* Live Stream Video Player Embed */ ?>
     <div class="livestream-player-wrapper">
       <div class="livestream-aspect-box">
         <iframe 
