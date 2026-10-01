@@ -22,7 +22,7 @@ class MediaController extends BaseController
             return $this->response->setStatusCode(400)->setBody('Invalid media path');
         }
 
-        $cacheDir  = WRITEPATH . 'cache/uploads/';
+        $cacheDir = WRITEPATH . 'cache/uploads/';
         $cacheFile = $cacheDir . $path;
 
         // 2. Check Local Disk Cache (Cache Hit)
@@ -80,20 +80,20 @@ class MediaController extends BaseController
         $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
         $mimeTypes = [
             'webp' => 'image/webp',
-            'png'  => 'image/png',
-            'jpg'  => 'image/jpeg',
+            'png' => 'image/png',
+            'jpg' => 'image/jpeg',
             'jpeg' => 'image/jpeg',
-            'svg'  => 'image/svg+xml',
-            'gif'  => 'image/gif',
-            'ico'  => 'image/x-icon',
-            'pdf'  => 'application/pdf',
-            'mp4'  => 'video/mp4',
+            'svg' => 'image/svg+xml',
+            'gif' => 'image/gif',
+            'ico' => 'image/x-icon',
+            'pdf' => 'application/pdf',
+            'mp4' => 'video/mp4',
         ];
 
         $mimeType = $mimeTypes[$ext] ?? mime_content_type($filePath) ?: 'application/octet-stream';
         $fileSize = filesize($filePath);
         $fileTime = filemtime($filePath);
-        $etag     = '"' . md5($fileTime . $fileSize) . '"';
+        $etag = '"' . md5($fileTime . $fileSize) . '"';
 
         // Check 304 Not Modified
         $ifNoneMatch = $this->request->getServer('HTTP_IF_NONE_MATCH');
@@ -104,7 +104,7 @@ class MediaController extends BaseController
         return $this->response
             ->setStatusCode(200)
             ->setContentType($mimeType)
-            ->setHeader('Content-Length', (string)$fileSize)
+            ->setHeader('Content-Length', (string) $fileSize)
             ->setHeader('Cache-Control', 'public, max-age=2592000, immutable')
             ->setHeader('ETag', $etag)
             ->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $fileTime) . ' GMT')

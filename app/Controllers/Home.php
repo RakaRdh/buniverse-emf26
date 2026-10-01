@@ -394,8 +394,8 @@ class Home extends BaseController
             'overview' => $overview,
             'economicModel' => $economicModel,
             'livestream' => $livestream ?? [
-                'title' => 'Investor Daily Summit Live Broadcast',
-                'youtube_url' => 'https://www.youtube.com/watch?v=rFZHOHl-L8A',
+                'title' => 'Live Stream',
+                'youtube_url' => 'https://www.youtube.com/watch?v=g_uK5W9-_Zc',
                 'is_active' => true,
             ],
             'newsPortals' => $newsPortals ?? [
@@ -626,8 +626,8 @@ class Home extends BaseController
         }
 
         return $this->response->setJSON([
-            'success'   => true,
-            'message'   => 'Frontend cache cleared successfully.',
+            'success' => true,
+            'message' => 'Frontend cache cleared successfully.',
             'timestamp' => date('Y-m-d H:i:s'),
         ]);
     }
