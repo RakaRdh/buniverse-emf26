@@ -5,12 +5,12 @@
       return; // Do not render section if disabled in CMS
   }
 
-  $rawUrl = $liveData['youtube_url'] ?? 'https://www.youtube.com/watch?v=rFZHOHl-L8A';
+  $rawUrl = $liveData['youtube_url'] ?? 'https://www.youtube.com/live/mKr5aNganlc';
   $title = $liveData['title'] ?? 'Live Stream';
 
-  // Extract YouTube ID if full URL provided
-  $videoId = 'rFZHOHl-L8A';
-  if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $rawUrl, $match)) {
+  // Extract YouTube ID if full URL provided (supports watch?v=, youtu.be/, embed/, v/, live/)
+  $videoId = 'mKr5aNganlc';
+  if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?|live)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $rawUrl, $match)) {
       $videoId = $match[1];
   } elseif (strlen(trim($rawUrl)) === 11 && !str_contains($rawUrl, '/')) {
       $videoId = trim($rawUrl);

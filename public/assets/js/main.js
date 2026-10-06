@@ -116,9 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    try {
-      sessionStorage.setItem('active_ids_day', targetDay);
-    } catch (e) {}
+    // No sessionStorage needed: let server date dictate the default on load/refresh,
+    // and click handler handles runtime switching smoothly.
   };
 
   dayBtns.forEach(btn => {
@@ -128,14 +127,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Restore Day state if available
-  let savedDay = null;
+  // Clean up any stale sessionStorage from previous tests/sessions
   try {
-    savedDay = sessionStorage.getItem('active_ids_day');
+    sessionStorage.removeItem('active_ids_day');
   } catch (e) {}
-  if (savedDay) {
-    switchDay(savedDay);
-  }
 
   // 3. 3D Coverflow Carousel & Modal Lightbox
   const galleryWrapper = document.getElementById('galleryCoverflow');

@@ -157,7 +157,7 @@ class Home extends BaseController
             // Sync livestream settings from live API
             $livestream = $live['livestream'] ?? [
                 'title' => 'Investor Daily Summit Live Broadcast',
-                'youtube_url' => 'https://www.youtube.com/watch?v=rFZHOHl-L8A',
+                'youtube_url' => 'https://www.youtube.com/live/mKr5aNganlc',
                 'is_active' => true,
             ];
 
@@ -395,7 +395,7 @@ class Home extends BaseController
             'economicModel' => $economicModel,
             'livestream' => $livestream ?? [
                 'title' => 'Live Stream',
-                'youtube_url' => 'https://www.youtube.com/watch?v=g_uK5W9-_Zc',
+                'youtube_url' => 'https://www.youtube.com/live/mKr5aNganlc',
                 'is_active' => true,
             ],
             'newsPortals' => $newsPortals ?? [

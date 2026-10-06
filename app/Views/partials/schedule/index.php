@@ -27,13 +27,24 @@
         }
         return $fallback;
       };
+
+      // Determine default active day based on current date in Indonesia (WIB)
+      $nowWib = (new \DateTime('now', new \DateTimeZone('Asia/Jakarta')))->format('Y-m-d');
+      $day2DateRaw = $schedule['day_2']['date'] ?? '';
+      $day2Ts = !empty($day2DateRaw) ? strtotime($day2DateRaw) : strtotime('2026-10-08');
+      $day2Date = ($day2Ts !== false) ? date('Y-m-d', $day2Ts) : '2026-10-08';
+
+      $defaultActiveDay = ($nowWib >= $day2Date) ? 'day_2' : 'day_1';
+      $activeHeading = ($defaultActiveDay === 'day_2') 
+        ? strtoupper($schedule['day_2']['label'] ?? 'DAY 2')
+        : strtoupper($schedule['day_1']['label'] ?? 'DAY 1');
     ?>
     <div class="day-selector-wrapper" id="daySelectorWrapper">
       <div class="day-selector" role="tablist">
-        <button class="day-btn active" data-day="day_1" data-heading="<?= esc(strtoupper($schedule['day_1']['label'] ?? 'DAY 1')) ?>" role="tab">
+        <button class="day-btn <?= ($defaultActiveDay === 'day_1') ? 'active' : '' ?>" data-day="day_1" data-heading="<?= esc(strtoupper($schedule['day_1']['label'] ?? 'DAY 1')) ?>" role="tab">
           <?= esc($formatScheduleDate($schedule['day_1']['date'] ?? '', $schedule['day_1']['label'] ?? 'October 7, 2026')) ?>
         </button>
-        <button class="day-btn" data-day="day_2" data-heading="<?= esc(strtoupper($schedule['day_2']['label'] ?? 'DAY 2')) ?>" role="tab">
+        <button class="day-btn <?= ($defaultActiveDay === 'day_2') ? 'active' : '' ?>" data-day="day_2" data-heading="<?= esc(strtoupper($schedule['day_2']['label'] ?? 'DAY 2')) ?>" role="tab">
           <?= esc($formatScheduleDate($schedule['day_2']['date'] ?? '', $schedule['day_2']['label'] ?? 'October 8, 2026')) ?>
         </button>
       </div>
@@ -41,14 +52,14 @@
 
     <!-- Active Day Title between tab pill and schedule content -->
     <div class="schedule-day-title-wrap" id="scheduleDayTitleWrap">
-      <h3 class="schedule-day-heading" id="scheduleDayHeading"><?= esc(strtoupper($schedule['day_1']['label'] ?? 'DAY 1')) ?></h3>
+      <h3 class="schedule-day-heading" id="scheduleDayHeading"><?= esc($activeHeading) ?></h3>
     </div>
 
     <!-- 3. Schedule Tab Content (Day 1 & Day 2 lists) -->
     <div class="schedule-list-view" id="scheduleListView">
       
       <!-- Day 1 Schedule -->
-      <div class="day-schedule-content" data-day="day_1" style="display: block;">
+      <div class="day-schedule-content" data-day="day_1" style="display: <?= ($defaultActiveDay === 'day_1') ? 'block' : 'none' ?>;">
         <div class="schedule-list">
           <?php 
           $hasOpenedSpeakerCard = false;
@@ -70,7 +81,7 @@
       </div>
 
       <!-- Day 2 Schedule -->
-      <div class="day-schedule-content" data-day="day_2" style="display: none;">
+      <div class="day-schedule-content" data-day="day_2" style="display: <?= ($defaultActiveDay === 'day_2') ? 'block' : 'none' ?>;">
         <div class="schedule-list">
           <?php 
           $hasOpenedSpeakerCard2 = false;
