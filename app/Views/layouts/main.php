@@ -25,9 +25,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
   
   <?php /* Core Vanilla CSS */ ?>
-  <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
+  <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>?v=<?= file_exists(FCPATH . 'assets/css/style.css') ? filemtime(FCPATH . 'assets/css/style.css') : time() ?>">
   <?php /* Tailwind Perintilan CSS */ ?>
-  <link rel="stylesheet" href="<?= base_url('assets/css/tailwind.css') ?>">
+  <link rel="stylesheet" href="<?= base_url('assets/css/tailwind.css') ?>?v=<?= file_exists(FCPATH . 'assets/css/tailwind.css') ? filemtime(FCPATH . 'assets/css/tailwind.css') : time() ?>">
 
   <?php if (!empty($themeProperties)): ?>
     <?php /* Live Dynamic Theme CSS Custom Properties from BackendCMS */ ?>
@@ -59,16 +59,19 @@
     <?php /* 5. Schedule & Speakers Section */ ?>
     <?= $this->include('partials/schedule/index') ?>
 
-    <?php /* 6. Gallery Section */ ?>
-    <?= $this->include('partials/gallery') ?>
-
-    <?php /* 7. Related News Section */ ?>
-    <?= $this->include('partials/related_news') ?>
-
-    <?php /* 7.1 Highlights (YouTube) Section */ ?>
+    <?php /* 5.1 Highlights (YouTube) Section */ ?>
     <?php if (!empty($highlights['is_active']) && !empty($highlights['items'])): ?>
       <?= $this->include('partials/highlights') ?>
     <?php endif; ?>
+
+    <?php /* 6. Gallery Section */ ?>
+    <?= $this->include('partials/gallery') ?>
+
+    <?php /* 6.1 Overview (Summary Cards) Section */ ?>
+    <?= $this->include('partials/summary') ?>
+
+    <?php /* 7. Related News Section */ ?>
+    <?= $this->include('partials/related_news') ?>
 
     <?php /* 8. Sponsor & Partners Section */ ?>
     <?= $this->include('partials/sponsors') ?>
@@ -98,6 +101,6 @@
   </button>
 
   <?php /* Interactive JavaScript */ ?>
-  <script src="<?= base_url('assets/js/main.js') ?>"></script>
+  <script src="<?= base_url('assets/js/main.js') ?>?v=<?= file_exists(FCPATH . 'assets/js/main.js') ? filemtime(FCPATH . 'assets/js/main.js') : time() ?>"></script>
 </body>
 </html>

@@ -20,6 +20,7 @@ class Home extends BaseController
         $relatedNewsBeritaSatu = $this->fetchNewsFromPortal('beritasatu', 4) ?: [];
         $relatedNewsJakartaGlobe = $this->fetchNewsFromPortal('jakartaglobe', 4) ?: [];
         $relatedNewsDatasatu = $this->fetchNewsFromPortal('datasatu', 4) ?: [];
+        $summaryNews = $this->fetchNewsFromPortal('overview', 100) ?: [];
         $relatedNews = $relatedNewsInvestor;
         $sponsors = $mock->sponsors;
 
@@ -160,6 +161,11 @@ class Home extends BaseController
                 'youtube_url' => 'https://www.youtube.com/live/mKr5aNganlc',
                 'is_active' => true,
             ];
+            $livestreams = $live['livestreams'] ?? (
+                !empty($livestream['is_active']) && !empty($livestream['youtube_url'])
+                ? [$livestream]
+                : []
+            );
 
             // Sync news portals from live API
             $newsPortals = $live['news_portals'] ?? [
@@ -398,6 +404,7 @@ class Home extends BaseController
                 'youtube_url' => 'https://www.youtube.com/live/mKr5aNganlc',
                 'is_active' => true,
             ],
+            'livestreams' => $livestreams ?? [],
             'newsPortals' => $newsPortals ?? [
                 'investor-daily' => ['name' => 'investor.id', 'url' => 'https://investor.id', 'is_active' => true],
                 'beritasatu' => ['name' => 'beritasatu.com', 'url' => 'https://www.beritasatu.com', 'is_active' => true],
@@ -416,6 +423,7 @@ class Home extends BaseController
             'relatedNewsBeritaSatu' => $relatedNewsBeritaSatu,
             'relatedNewsJakartaGlobe' => $relatedNewsJakartaGlobe,
             'relatedNewsDatasatu' => $relatedNewsDatasatu,
+            'summaryNews' => $summaryNews,
             'sponsors' => $sponsors,
             'sponsorPartnership' => $sponsorPartnership,
             'sectionDecorations' => $sectionDecorations,
@@ -433,17 +441,18 @@ class Home extends BaseController
      */
     private function fetchNewsFromPortal(string $portal, int $limit = 4): ?array
     {
-        $cacheKey = 'ids_news_' . $portal . '_limit' . $limit . '_v6';
+        $cacheKey = 'ids_news_' . $portal . '_limit' . $limit . '_v8';
         $cached = cache($cacheKey);
         if ($cached !== null) {
             return !empty($cached) ? $cached : null;
         }
 
         $portalUrls = [
-            'investor' => "https://api.investor.id/article/type=latest&num={$limit}&tag=investor-daily-summit&page=1",
+            'investor' => "https://api.investor.id/article/type=latest&num={$limit}&tag=investor-daily-summit-2026&page=1",
             'beritasatu' => "https://api.beritasatu.com/v4/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
             'jakartaglobe' => "https://api.jakartaglobe.id/apiweb-v2/search/keyword=investor-daily-summit&num={$limit}&page=0",
             'datasatu' => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
+            'overview' => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
         ];
 
         $targetUrl = $portalUrls[$portal] ?? null;
@@ -526,7 +535,7 @@ class Home extends BaseController
 
                 $filename = $item['media'][0]['filename'] ?? '';
                 $image = !empty($filename) ? 'https://img2.beritasatu.com/cache/jakartaglobe/960x620-3/' . $filename : ($item['image'] ?? 'image1.webp');
-            } elseif ($portal === 'datasatu') {
+            } elseif ($portal === 'datasatu' || $portal === 'overview') {
                 if (!empty($item['canonical'])) {
                     $url = 'https://datasatu.com/' . ltrim($item['canonical'], '/');
                 } elseif (!empty($item['categoryName']) && !empty($item['articleID']) && !empty($item['slug'])) {

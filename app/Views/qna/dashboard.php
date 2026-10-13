@@ -717,18 +717,30 @@
               <?php foreach ($days as $d): ?>
                 <?php if (!empty($d['sessions'])): ?>
                   <?php 
-                    $optGroupLabel = 'Day ' . esc($d['day_number']) . (!empty($d['formatted_date']) ? ' (' . esc($d['formatted_date']) . ')' : '');
+                    // Group sessions within this day by room_name (from database)
+                    $roomGroupedSessions = [];
+                    foreach ($d['sessions'] as $s) {
+                        $roomKey = !empty(trim($s['room_name'] ?? '')) ? trim($s['room_name']) : '';
+                        $roomGroupedSessions[$roomKey][] = $s;
+                    }
+
+                    $dayPrefix = 'Day ' . esc($d['day_number']) . (!empty($d['formatted_date']) ? ' (' . esc($d['formatted_date']) . ')' : '');
                   ?>
-                  <optgroup label="<?= $optGroupLabel ?>">
-                    <?php foreach ($d['sessions'] as $s): ?>
-                      <?php 
-                        $optVal = $s['id'] . (!empty($s['item_id']) ? ':' . $s['item_id'] : '');
-                      ?>
-                      <option value="<?= $optVal ?>" <?= (!empty($filterSession) && $filterSession == $optVal) ? 'selected' : '' ?>>
-                        [<?= esc($s['start_time']) ?>] <?= esc($s['title']) ?><?= !empty($s['subtitle']) ? ' — ' . esc($s['subtitle']) : '' ?>
-                      </option>
-                    <?php endforeach; ?>
-                  </optgroup>
+                  <?php foreach ($roomGroupedSessions as $rName => $sessList): ?>
+                    <?php 
+                      $optGroupLabel = !empty($rName) ? ($dayPrefix . ' — ' . esc($rName)) : $dayPrefix;
+                    ?>
+                    <optgroup label="<?= $optGroupLabel ?>">
+                      <?php foreach ($sessList as $s): ?>
+                        <?php 
+                          $optVal = $s['id'] . (!empty($s['item_id']) ? ':' . $s['item_id'] : '');
+                        ?>
+                        <option value="<?= $optVal ?>" <?= (!empty($filterSession) && $filterSession == $optVal) ? 'selected' : '' ?>>
+                          [<?= esc($s['start_time']) ?>] <?= esc($s['title']) ?><?= !empty($s['subtitle']) ? ' — ' . esc($s['subtitle']) : '' ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </optgroup>
+                  <?php endforeach; ?>
                 <?php endif; ?>
               <?php endforeach; ?>
             <?php endif; ?>

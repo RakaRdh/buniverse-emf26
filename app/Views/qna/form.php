@@ -70,32 +70,32 @@
       gap: 6px;
       padding: 6px 14px;
       border-radius: 999px;
-      background: rgba(201, 148, 0, 0.12);
-      border: 1px solid var(--primary-2-5);
-      color: var(--primary-2-4);
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      margin-bottom: 10px;
     }
 
     .qna-session-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #5e9cbf;
+      line-height: 1.4;
+      margin: 0 0 6px 0;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+
+    .qna-session-subtitle {
       font-size: 20px;
       font-weight: 800;
       color: #ffffff;
       line-height: 1.35;
-      margin: 0 0 4px 0;
+      margin: 4px 0 10px 0;
       text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    }
-
-    .qna-session-subtitle {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: #5e9cbf;
-      line-height: 1.4;
-      margin: 4px 0 8px 0;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
     }
 
     .qna-session-time {
@@ -312,9 +312,11 @@
           <span class="qna-session-badge">
             <?= !empty($roomName) ? esc($roomName) : (!empty($dayNumber) ? 'Day ' . esc($dayNumber) : esc($dayLabel ?? 'Q&A Session')) ?>
           </span>
-          <h1 class="qna-session-title"><?= esc($sessionTitle) ?></h1>
           <?php if (!empty($sessionSubtitle)): ?>
-            <div class="qna-session-subtitle"><?= esc($sessionSubtitle) ?></div>
+            <div class="qna-session-title"><?= esc($sessionTitle) ?></div>
+            <h1 class="qna-session-subtitle"><?= esc($sessionSubtitle) ?></h1>
+          <?php else: ?>
+            <h1 class="qna-session-subtitle"><?= esc($sessionTitle) ?></h1>
           <?php endif; ?>
           <?php if (!empty($sessionTime)): ?>
             <div class="qna-session-time"><?= esc($sessionTime) ?></div>
@@ -376,13 +378,26 @@
                   <?php if (!empty($allDays)): ?>
                     <?php foreach ($allDays as $d): ?>
                       <?php if (!empty($d['sessions'])): ?>
-                        <optgroup label="Day <?= esc($d['day_number']) ?><?= !empty($d['formatted_date']) ? ' (' . esc($d['formatted_date']) . ')' : (!empty($d['event_date']) ? ' (' . date('F j, Y', strtotime($d['event_date'])) . ')' : '') ?>">
-                          <?php foreach ($d['sessions'] as $s): ?>
-                            <option value="<?= $s['id'] ?><?= !empty($s['item_id']) ? ':' . $s['item_id'] : '' ?>">
-                              [<?= esc($s['start_time']) ?>] <?= esc($s['title']) ?><?= !empty($s['subtitle']) ? ' — ' . esc($s['subtitle']) : '' ?>
-                            </option>
-                          <?php endforeach; ?>
-                        </optgroup>
+                        <?php 
+                          $roomGrouped = [];
+                          foreach ($d['sessions'] as $s) {
+                              $rKey = !empty(trim($s['room_name'] ?? '')) ? trim($s['room_name']) : '';
+                              $roomGrouped[$rKey][] = $s;
+                          }
+                          $dayPrefix = 'Day ' . esc($d['day_number']) . (!empty($d['formatted_date']) ? ' (' . esc($d['formatted_date']) . ')' : (!empty($d['event_date']) ? ' (' . date('F j, Y', strtotime($d['event_date'])) . ')' : ''));
+                        ?>
+                        <?php foreach ($roomGrouped as $rName => $sessList): ?>
+                          <?php 
+                            $optGroupLabel = !empty($rName) ? ($dayPrefix . ' — ' . esc($rName)) : $dayPrefix;
+                          ?>
+                          <optgroup label="<?= $optGroupLabel ?>">
+                            <?php foreach ($sessList as $s): ?>
+                              <option value="<?= $s['id'] ?><?= !empty($s['item_id']) ? ':' . $s['item_id'] : '' ?>">
+                                [<?= esc($s['start_time']) ?>] <?= esc($s['title']) ?><?= !empty($s['subtitle']) ? ' — ' . esc($s['subtitle']) : '' ?>
+                              </option>
+                            <?php endforeach; ?>
+                          </optgroup>
+                        <?php endforeach; ?>
                       <?php endif; ?>
                     <?php endforeach; ?>
                   <?php endif; ?>
@@ -390,9 +405,9 @@
               </div>
             <?php endif; ?>
 
-            <?php /* Nama Penanya */ ?>
+            <?php /* Nama Lengkap */ ?>
             <div class="qna-field-group">
-              <label class="qna-field-label" for="askerName">Nama Penanya <span>*</span></label>
+              <label class="qna-field-label" for="askerName">Nama Lengkap <span>*</span></label>
               <input 
                 type="text" 
                 id="askerName" 
@@ -400,6 +415,7 @@
                 class="qna-input" 
                 placeholder="Ketik nama lengkap Anda..." 
                 required 
+                minlength="5"
                 maxlength="150"
                 autocomplete="name"
               >
@@ -414,10 +430,11 @@
                 class="qna-textarea" 
                 placeholder="Tuliskan pertanyaan Anda untuk pembicara sesi ini..." 
                 required 
+                minlength="5"
                 maxlength="2000"
               ></textarea>
               <div class="qna-char-counter">
-                <span id="charCount">0</span> / 2000 karakter
+                <span id="charCount">0</span> / 2000 karakter (min. 5 karakter)
               </div>
             </div>
 
@@ -480,8 +497,22 @@
           const questionVal = questionText.value.trim();
 
           if (!askerNameVal || !questionVal) {
-            errorNotice.textContent = 'Mohon isi nama dan pertanyaan Anda.';
+            errorNotice.textContent = 'Mohon isi nama lengkap dan pertanyaan Anda.';
             errorNotice.style.display = 'block';
+            return;
+          }
+
+          if (askerNameVal.length < 5) {
+            errorNotice.textContent = 'Nama lengkap minimal 5 karakter.';
+            errorNotice.style.display = 'block';
+            document.getElementById('askerName').focus();
+            return;
+          }
+
+          if (questionVal.length < 5) {
+            errorNotice.textContent = 'Pertanyaan minimal 5 karakter.';
+            errorNotice.style.display = 'block';
+            questionText.focus();
             return;
           }
 

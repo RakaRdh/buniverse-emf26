@@ -34,7 +34,8 @@
       $day2Ts = !empty($day2DateRaw) ? strtotime($day2DateRaw) : strtotime('2026-10-08');
       $day2Date = ($day2Ts !== false) ? date('Y-m-d', $day2Ts) : '2026-10-08';
 
-      $defaultActiveDay = ($nowWib >= $day2Date) ? 'day_2' : 'day_1';
+      // Only activate Day 2 if today is exactly Day 2. If before or already passed, default to Day 1.
+      $defaultActiveDay = ($nowWib === $day2Date) ? 'day_2' : 'day_1';
       $activeHeading = ($defaultActiveDay === 'day_2') 
         ? strtoupper($schedule['day_2']['label'] ?? 'DAY 2')
         : strtoupper($schedule['day_1']['label'] ?? 'DAY 1');

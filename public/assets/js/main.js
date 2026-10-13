@@ -1059,7 +1059,53 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 13. Highlights Section: Rendered Server-Side (Zero Quota Database Pattern)
+  // 13. Highlights Section: Mobile Swipe / Drag Support
+  const highlightsGrid = document.getElementById('highlightsGrid');
+  if (highlightsGrid) {
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+    let hasMoved = false;
+
+    highlightsGrid.addEventListener('mousedown', (e) => {
+      if (window.innerWidth > 768) return;
+      isDown = true;
+      startX = e.pageX - highlightsGrid.offsetLeft;
+      scrollLeft = highlightsGrid.scrollLeft;
+      hasMoved = false;
+      highlightsGrid.style.cursor = 'grabbing';
+      highlightsGrid.style.scrollSnapType = 'none';
+    });
+
+    const stopDrag = () => {
+      if (!isDown) return;
+      isDown = false;
+      highlightsGrid.style.cursor = '';
+      highlightsGrid.style.scrollSnapType = '';
+    };
+
+    highlightsGrid.addEventListener('mouseleave', stopDrag);
+    highlightsGrid.addEventListener('mouseup', stopDrag);
+
+    highlightsGrid.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      const x = e.pageX - highlightsGrid.offsetLeft;
+      const walk = (x - startX);
+      if (Math.abs(walk) > 6) {
+        hasMoved = true;
+      }
+      highlightsGrid.scrollLeft = scrollLeft - walk;
+    });
+
+    highlightsGrid.querySelectorAll('.highlights-card-inner').forEach(link => {
+      link.addEventListener('click', (e) => {
+        if (hasMoved) {
+          e.preventDefault();
+          hasMoved = false;
+        }
+      });
+    });
+  }
 
   // 10. Ticket Click Telemetry Tracking
   const trackTicketClick = () => {
