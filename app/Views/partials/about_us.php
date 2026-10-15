@@ -2,41 +2,41 @@
 $overviewData = $overview ?? $economicModel ?? [];
 $paragraphs = $overviewData['paragraphs'] ?? [];
 ?>
-<section class="editorial-section" id="about-us">
+<section class="about-us-section editorial-section" id="about-us">
   <?= view('partials/section_decorations', ['sectionKey' => 'about-us', 'decorations' => $sectionDecorations ?? []]) ?>
   <?= view('partials/custom_placements', ['sectionKey' => 'about-us', 'customPlacements' => $customPlacements ?? []]) ?>
   <div class="container">
-    <div class="editorial-grid">
+    <div class="about-us-grid editorial-grid">
       
-      <?php /* Left Column: Editorial Logo & Intro */ ?>
-      <div class="editorial-left">
-        <div class="editorial-logo">
+      <?php /* Left Column: About Us Logo & Intro */ ?>
+      <div class="about-us-left editorial-left">
+        <div class="about-us-logo editorial-logo">
           <?php 
             $overviewSlot = $site['logo_placements']['overview'] ?? null;
             $overviewSlotActive = !isset($overviewSlot['is_active']) || !empty($overviewSlot['is_active']);
             $overviewVariant = $overviewSlot['variant'] ?? 'auto';
 
             if ($overviewVariant === 'white') {
-                $aboutLogo = !empty($site['logo_a_white']) ? $site['logo_a_white'] : base_url('assets/img/logo_ids26_white.webp');
+                $aboutLogo = !empty($site['logo_a_white']) ? $site['logo_a_white'] : base_url('assets/img/logo_green_emf26.webp');
             } else {
-                $aboutLogo = !empty($site['logo_overview']) ? $site['logo_overview'] : (!empty($site['logo_a_color']) ? $site['logo_a_color'] : base_url('assets/img/logo_ids26_color.webp')); 
+                $aboutLogo = !empty($site['logo_overview']) ? $site['logo_overview'] : (!empty($site['logo_a_color']) ? $site['logo_a_color'] : base_url('assets/img/logo_green_emf26.webp')); 
             }
             $aboutLogoTarget = !empty($site['logo_overview_target_url']) ? $site['logo_overview_target_url'] : null;
           ?>
           <?php if ($overviewSlotActive): ?>
-            <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title']) ?>" class="editorial-brand-logo">
+            <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title']) ?>" class="about-us-brand-logo editorial-brand-logo">
           <?php endif; ?>
         </div>
 
-        <p class="editorial-intro">
-          <?= esc($overviewData['intro'] ?? '') ?>
+        <p class="about-us-intro editorial-intro">
+          <?= esc(!empty($overviewData['intro']) ? $overviewData['intro'] : "Energi & Mineral Festival 2026 merupakan forum strategis nasional yang mempertemukan para pemangku kepentingan di sektor energi dan sumber daya mineral untuk mendorong terwujudnya swasembada energi berkelanjutan di Indonesia.") ?>
         </p>
       </div>
 
-      <?php /* Right Column: Topic Badge & Editorial Paragraphs */ ?>
-      <div class="editorial-right">
+      <?php /* Right Column: Topic Badge & Paragraphs */ ?>
+      <div class="about-us-right editorial-right">
         <div class="topic-badge">
-          <?= esc($overviewData['badge'] ?? "INDONESIA'S ECONOMIC MODEL") ?>
+          <?= esc(!empty($overviewData['badge']) && $overviewData['badge'] !== "INDONESIA'S ECONOMIC MODEL" ? $overviewData['badge'] : "ABOUT US") ?>
         </div>
 
         <div class="editorial-paragraphs">

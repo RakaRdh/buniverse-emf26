@@ -8,7 +8,7 @@
   <div class="hero-deco-wrap" aria-hidden="true">
     <?php /* Deco A: Top Left Subtle Accent */ ?>
     <div class="hero-deco-item hero-deco-topleft">
-      <img src="<?= base_url('assets/img/decoration.png') ?>" alt="" class="hero-deco-img">
+      <img src="<?= base_url('assets/img/ribbon.png') ?>" alt="" class="hero-deco-img">
     </div>
 
     <?php /* Deco B: Center-Right Perspective 3D Spinning Disc */ ?>
@@ -16,7 +16,7 @@
       <div class="hero-deco-item hero-deco-main-perspective">
         <div class="hero-deco-tilt">
           <div class="hero-deco-spin">
-            <img src="<?= base_url('assets/img/decoration.png') ?>" alt="" class="hero-deco-img">
+            <img src="<?= base_url('assets/img/ribbon.png') ?>" alt="" class="hero-deco-img">
           </div>
         </div>
       </div>
@@ -27,7 +27,7 @@
   <div class="container hero-container">
     <div class="hero-content hero-content-centered">
       <div class="hero-bundle-wrap">
-        <img src="<?= base_url('assets/img/hero.webp') ?>" alt="<?= esc($site['title'] ?? 'Investor Daily Summit 2026') ?>" class="hero-bundle-img">
+        <img src="<?= base_url('assets/img/logo_green_emf26.webp') ?>" alt="<?= esc($site['title'] ?? 'Investor Daily Summit 2026') ?>" class="hero-bundle-img">
       </div>
     </div>
   </div>

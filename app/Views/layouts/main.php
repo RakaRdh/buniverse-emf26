@@ -50,8 +50,8 @@
     <?php /* 2. Hero Section */ ?>
     <?= $this->include('partials/hero') ?>
 
-    <?php /* 3. Overview (Indonesia's Economic Model Editorial) */ ?>
-    <?= $this->include('partials/overview') ?>
+    <?php /* 3. About Us Section (Energi & Mineral Festival) */ ?>
+    <?= $this->include('partials/about_us') ?>
 
     <?php /* 4. Live Streaming (YouTube Embed) Section */ ?>
     <?= $this->include('partials/livestream') ?>

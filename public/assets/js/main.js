@@ -104,8 +104,14 @@ document.addEventListener('DOMContentLoaded', () => {
     dayBtns.forEach(b => b.classList.remove('active'));
     activeBtn.classList.add('active');
 
-    if (scheduleDayHeading) {
-      scheduleDayHeading.textContent = activeBtn.getAttribute('data-heading') || ((targetDay === 'day_2') ? 'DAY 2' : 'DAY 1');
+    const scheduleDayBadge = document.getElementById('scheduleDayBadge');
+    const scheduleDayDate = document.getElementById('scheduleDayDate');
+
+    if (scheduleDayBadge) {
+      scheduleDayBadge.textContent = activeBtn.getAttribute('data-heading-label') || ((targetDay === 'day_2') ? 'Day 2' : 'Day 1');
+    }
+    if (scheduleDayDate) {
+      scheduleDayDate.textContent = activeBtn.getAttribute('data-heading-detail') || '';
     }
 
     daySchedules.forEach(schedule => {

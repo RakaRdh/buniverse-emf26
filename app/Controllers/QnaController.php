@@ -6,17 +6,29 @@ use App\Config\MockData;
 
 class QnaController extends BaseController
 {
+    protected string $eventSlug = 'investor-daily-summit-2026';
+    
     protected function fetchApi(string $endpoint, string $method = 'GET', array $data = [])
     {
+        if (!isset($data['event_slug'])) {
+            $data['event_slug'] = $this->eventSlug;
+        }
+
         $apiUrls = [
             'http://localhost:8081/api/v1/' . ltrim($endpoint, '/'),
             'http://127.0.0.1:8081/api/v1/' . ltrim($endpoint, '/'),
             'http://[::1]:8081/api/v1/' . ltrim($endpoint, '/'),
+            //'https://dev.investordailysummit.com/backend/api/v1/' . ltrim($endpoint, '/'),
+            base_url('backend/api/v1/'. ltrim($endpoint, '/')),
         ];
 
         foreach ($apiUrls as $apiUrl) {
             try {
-                $client = \Config\Services::curlrequest(['timeout' => 3.0]);
+                //$client = \Config\Services::curlrequest(['timeout' => 3.0]);
+                $client = \Config\Services::curlrequest([
+                    'timeout' => 8.0,
+                    'verify'  => false,
+                ]);
                 if (strtoupper($method) === 'POST') {
                     $response = $client->post($apiUrl, [
                         'form_params' => $data,
@@ -24,7 +36,7 @@ class QnaController extends BaseController
                     ]);
                 } else {
                     $response = $client->get($apiUrl, [
-                        'query' => $data,
+                        'query'       => $data,
                         'http_errors' => false,
                     ]);
                 }
@@ -45,11 +57,11 @@ class QnaController extends BaseController
         $mock = config(MockData::class);
         $site = $mock->site;
 
-        // Try getting site info from cached active event
-        $cacheKey = 'cms_live_event_active';
+        // Try getting site info from cached investor-daily-summit-2026 event
+        $cacheKey = 'cms_live_event_' . $this->eventSlug;
         $live = cache($cacheKey);
         if ($live === null) {
-            $liveResp = $this->fetchApi('event/active');
+            $liveResp = $this->fetchApi('event/' . $this->eventSlug);
             if (!empty($liveResp['data'])) {
                 $live = $liveResp['data'];
                 cache()->save($cacheKey, $live, 120);
@@ -63,7 +75,7 @@ class QnaController extends BaseController
         }
 
         return [
-            'site' => $site,
+            'site'            => $site,
             'themeProperties' => $live['theme_properties'] ?? [],
         ];
     }

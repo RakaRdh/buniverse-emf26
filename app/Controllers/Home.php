@@ -33,33 +33,54 @@ class Home extends BaseController
         $seo = [];
         $locations = null;
 
-        // Attempt live synchronization with BackendCMS REST API (cached for optimal performance)
-        $cacheKey = 'cms_live_event_active';
+        // Attempt live synchronization with BackendCMS REST API for EMF Event
+        $cacheKey = 'cms_live_event_emf-2026';
+        $backupKey = 'cms_live_event_emf-2026_bak';
         $noCache = $this->request->getGet('nocache') !== null || $this->request->getGet('refresh') !== null;
         $live = $noCache ? null : cache($cacheKey);
 
         if ($live === null) {
             $apiUrls = [
-                'http://[::1]:8081/api/v1/event/active',
-                'http://127.0.0.1:8081/api/v1/event/active',
-                'http://localhost:8081/api/v1/event/active',
+                'http://[::1]:8081/api/v1/event/emf-2026',
+                'http://127.0.0.1:8081/api/v1/event/emf-2026',
+                'http://localhost:8081/api/v1/event/emf-2026',
+                base_url('backend/api/v1/event/emf-2026'),
             ];
 
+            $fetched = null;
             foreach ($apiUrls as $apiUrl) {
                 try {
-                    $client = \Config\Services::curlrequest(['timeout' => 2.0]);
+                    $client = \Config\Services::curlrequest([
+                        'timeout' => 5.0,
+                        'verify'  => false,
+                    ]);
                     $response = $client->get($apiUrl, ['http_errors' => false]);
                     if ($response->getStatusCode() === 200) {
                         $json = json_decode($response->getBody(), true);
                         if (!empty($json['data'])) {
-                            $live = $json['data'];
-                            $cacheTtl = (ENVIRONMENT === 'development') ? 5 : 120;
-                            cache()->save($cacheKey, $live, $cacheTtl);
+                            $fetched = $json['data'];
+                            log_message('info', "[EMF Sync] Fetched successfully from: {$apiUrl}");
                             break;
                         }
                     }
                 } catch (\Throwable $e) {
                     // Try next URL fallback
+                }
+            }
+
+            if (!empty($fetched)) {
+                $live = $fetched;
+                $cacheTtl = (ENVIRONMENT === 'development') ? 5 : 60;
+                cache()->save($cacheKey, $live, $cacheTtl);
+                // Save long-term snapshot backup (30 days)
+                cache()->save($backupKey, $live, 86400 * 30);
+                log_message('info', "[EMF Sync] Saved active cache & snapshot backup cache.");
+            } else {
+                // Fallback to snapshot backup cache if API failed
+                $backupData = cache($backupKey);
+                if (!empty($backupData)) {
+                    $live = $backupData;
+                    log_message('warning', "[EMF Sync] API failed. Using snapshot backup cache ({$backupKey}).");
                 }
             }
         }
@@ -119,9 +140,60 @@ class Home extends BaseController
                 $site['socials'] = $live['site']['socials'] ?? [];
             }
 
-            // Sync theme CSS properties
-            if (!empty($live['theme_properties'])) {
-                $themeProperties = $live['theme_properties'];
+            // Define EMF Green & Yellow Palette Theme Properties
+            $emfThemeTokens = [
+                '--yellow-1' => '#fefbed',
+                '--yellow-2' => '#fcf6d3',
+                '--yellow-3' => '#faeeb1',
+                '--yellow-4' => '#f8e68c',
+                '--yellow-5' => '#f6df6a',
+                '--yellow-6' => '#f4d849',
+                '--yellow-7' => '#cfb83e',
+                '--yellow-8' => '#ad9934',
+                '--yellow-9' => '#8b7b2a',
+                '--yellow-10' => '#6e6121',
+                '--green-1' => '#edf5ea',
+                '--green-2' => '#d3e6cd',
+                '--green-3' => '#b1d3a5',
+                '--green-4' => '#8cbe7b',
+                '--green-5' => '#6aab54',
+                '--green-6' => '#49982e',
+                '--green-7' => '#3e8127',
+                '--green-8' => '#346c21',
+                '--green-9' => '#2a571a',
+                '--green-10' => '#214415',
+                // Semantic Tokens: BASE ADALAH KUNING (yellow-6: #f4d849)
+                '--bg-page' => '#f4d849',
+                '--bg-section-alt' => '#fefbed',
+                '--bg-card' => '#fcf6d3',
+                '--text-primary' => '#49982e',
+                '--text-secondary' => '#3e8127',
+                '--text-dark' => '#49982e',
+                '--accent-cyan' => '#49982e',
+                '--accent-blue' => '#49982e',
+                '--accent-light' => '#8cbe7b',
+                '--navbar-cta-bg' => '#49982e',
+                '--navbar-cta-text' => '#ffffff',
+                '--navbar-cta-hover-bg' => '#3e8127',
+                '--navbar-cta-hover-text' => '#ffffff',
+                '--navbar-cta-hover-outline' => '#49982e',
+                '--footer-bg' => '#f4d849',
+                '--footer-social-bg' => '#49982e',
+            ];
+
+            // If BackendCMS returned live theme_properties, merge them so DB values take effect
+            if (!empty($live['theme_properties']) && is_array($live['theme_properties'])) {
+                foreach ($live['theme_properties'] as $tp) {
+                    if (!empty($tp['property']) && isset($tp['value'])) {
+                        $emfThemeTokens[$tp['property']] = $tp['value'];
+                    }
+                }
+            }
+
+            // Convert to array of ['property' => ..., 'value' => ...]
+            $themeProperties = [];
+            foreach ($emfThemeTokens as $prop => $val) {
+                $themeProperties[] = ['property' => $prop, 'value' => $val];
             }
 
             // Sync hero carousel
@@ -193,7 +265,7 @@ class Home extends BaseController
                         'slug' => $slug,
                         'name' => $sp['name'],
                         'role' => $sp['role'],
-                        'photo' => $sp['photo'] ?: 'placeholder.png',
+                        'photo' => 'placeholder.png',
                         'bio' => $sp['bio'] ?? '',
                         'featured' => ($idx < 4),
                     ];
@@ -452,7 +524,7 @@ class Home extends BaseController
             'beritasatu' => "https://api.beritasatu.com/v4/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
             'jakartaglobe' => "https://api.jakartaglobe.id/apiweb-v2/search/keyword=investor-daily-summit&num={$limit}&page=0",
             'datasatu' => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
-            'overview' => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
+            'overview' => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:100",
         ];
 
         $targetUrl = $portalUrls[$portal] ?? null;
@@ -618,7 +690,7 @@ class Home extends BaseController
      */
     public function clearCache()
     {
-        cache()->delete('cms_live_event_active');
+        cache()->delete('cms_live_event_emf-2026');
 
         // Optional: clear file uploads disk cache if needed
         $cacheDir = WRITEPATH . 'cache/uploads/';

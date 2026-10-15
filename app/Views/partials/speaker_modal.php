@@ -2,9 +2,13 @@
 <div class="speaker-modal-backdrop" id="speakerModal" aria-hidden="true" role="dialog" aria-modal="true">
   <div class="speaker-modal-dialog">
     
+    <!-- Decorative Corner Ribbons (Gambar 5: kiri atas & kanan bawah, 1/4 visible) -->
+    <img src="<?= base_url('assets/img/ribbon.png') ?>" alt="" class="modal-ribbon modal-ribbon-tl" aria-hidden="true">
+    <img src="<?= base_url('assets/img/ribbon.png') ?>" alt="" class="modal-ribbon modal-ribbon-br" aria-hidden="true">
+
     <!-- Close Button -->
     <button class="speaker-modal-close" id="speakerModalClose" aria-label="Tutup popup">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line>
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
@@ -29,3 +33,4 @@
 
   </div>
 </div>
+

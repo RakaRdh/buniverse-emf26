@@ -22,52 +22,84 @@
   --neutral-12: #141414;
   --neutral-13: #000000;
 
-  /* Primary 1 Palette */
-  --primary-1-1: #e6e7ea;
-  --primary-1-2: #c2c4cd;
-  --primary-1-3: #9296a5;
-  --primary-1-4: #5f657b;
-  --primary-1-5: #2f3653;
-  --primary-1-6: #010a2d;
-  --primary-1-7: #010926;
-  --primary-1-8: #010720;
-  --primary-1-9: #01061a;
-  --primary-1-10: #000514;
+  /* Primary 1 Palette (Yellow Token System) */
+  --yellow-1: #fefbed;
+  --yellow-2: #fcf6d3;
+  --yellow-3: #faeeb1;
+  --yellow-4: #f8e68c;
+  --yellow-5: #f6df6a;
+  --yellow-6: #f4d849;
+  --yellow-7: #cfb83e;
+  --yellow-8: #ad9934;
+  --yellow-9: #8b7b2a;
+  --yellow-10: #6e6121;
 
-  /* Primary 2 Palette */
-  --primary-2-1: #e6eff5;
-  --primary-2-2: #c2d9e7;
-  --primary-2-3: #91bbd4;
-  --primary-2-4: #5e9cbf;
-  --primary-2-5: #2e7eac;
-  --primary-2-6: #00629a;
-  --primary-2-7: #005383;
-  --primary-2-8: #00466d;
-  --primary-2-9: #003858;
-  --primary-2-10: #002c45;
+  --primary-1-1: var(--yellow-1);
+  --primary-1-2: var(--yellow-2);
+  --primary-1-3: var(--yellow-3);
+  --primary-1-4: var(--yellow-4);
+  --primary-1-5: var(--yellow-5);
+  --primary-1-6: var(--yellow-6); /* Dominant Yellow #fff100 */
+  --primary-1-7: var(--yellow-7);
+  --primary-1-8: var(--yellow-8);
+  --primary-1-9: var(--yellow-9);
+  --primary-1-10: var(--yellow-10);
 
-  /* Semantic Theme Variables Mapped to Palette */
-  --bg-page: var(--primary-1-9);
-  /* #062e3e */
-  --bg-section-alt: var(--primary-1-10);
-  /* #052431 */
-  --bg-card: var(--primary-1-8);
-  /* #083a4d */
-  --bg-card-gradient: linear-gradient(135deg, var(--primary-1-7) 0%, var(--primary-1-9) 100%);
-  --bg-pill: var(--primary-1-8);
-  --bg-pill-active: var(--neutral-1);
+  /* Primary 2 Palette (Green Token System) */
+  --green-1: #edf5ea;
+  --green-2: #d3e6cd;
+  --green-3: #b1d3a5;
+  --green-4: #8cbe7b;
+  --green-5: #6aab54;
+  --green-6: #49982e;
+  --green-7: #3e8127;
+  --green-8: #346c21;
+  --green-9: #2a571a;
+  --green-10: #214415;
 
-  --text-primary: var(--neutral-1);
-  --text-secondary: rgba(255, 255, 255, 0.82);
-  --text-muted: var(--neutral-6);
-  --text-dark: var(--primary-1-10);
+  --primary-2-1: var(--green-1);
+  --primary-2-2: var(--green-2);
+  --primary-2-3: var(--green-3);
+  --primary-2-4: var(--green-4);
+  --primary-2-5: var(--green-5);
+  --primary-2-6: var(--green-6); /* Dominant Green #49982e */
+  --primary-2-7: var(--green-7);
+  --primary-2-8: var(--green-8);
+  --primary-2-9: var(--green-9);
+  --primary-2-10: var(--green-10);
 
-  --accent-cyan: var(--primary-1-6);
-  --accent-light: var(--primary-2-3);
-  --accent-blue: var(--primary-2-6);
-  --accent-glow: rgba(91, 166, 214, 0.35);
-  --border-divider: rgba(255, 255, 255, 0.12);
-  --border-subtle: rgba(255, 255, 255, 0.20);
+  /* Semantic Theme Variables Mapped to Palette - Base Yellow-6 */
+  --bg-page: var(--yellow-6); /* Base: Yellow-6 #fff100 */
+  --bg-section-alt: var(--yellow-1); /* Soft contrast tint #fffee6 */
+  --bg-card: var(--yellow-2); /* Card container #fffcc2 */
+  --bg-card-gradient: linear-gradient(135deg, var(--yellow-5) 0%, var(--yellow-6) 100%);
+  --bg-pill: var(--green-6);
+  --bg-pill-active: var(--green-6);
+
+  --text-primary: var(--green-6); /* Tulisan di area yellow-6 menggunakan green-6 */
+  --text-secondary: var(--green-7); /* Subjudul / text sekunder menggunakan green-7 */
+  --text-muted: var(--green-8);
+  --text-dark: var(--green-10);
+
+  --accent-cyan: var(--green-6);
+  --accent-light: var(--green-4);
+  --accent-blue: var(--green-6);
+  --accent-glow: rgba(73, 152, 46, 0.35);
+  --border-divider: rgba(73, 152, 46, 0.22);
+  --border-subtle: rgba(73, 152, 46, 0.35);
+
+  /* Navbar & Footer Component Tokens */
+  --navbar-bg: var(--yellow-6);
+  --navbar-cta-bg: var(--green-6);
+  --navbar-cta-text: #ffffff;
+  --navbar-cta-hover-bg: var(--green-7);
+  --navbar-cta-hover-text: #ffffff;
+  --navbar-cta-hover-outline: var(--green-6);
+  --footer-bg: var(--yellow-6);
+  --footer-text-color: var(--green-8);
+  --footer-social-bg: var(--green-6);
+  --footer-social-color: #ffffff;
+  --footer-border-color: rgba(73, 152, 46, 0.25);
 
   --font-sans: 'Manrope', 'Montserrat', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-serif: 'Playfair Display', Georgia, Cambria, 'Times New Roman', Times, serif;
@@ -153,10 +185,10 @@ button {
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: rgba(1, 10, 45, 0.95);
+  background-color: var(--yellow-6, #fff100);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  /* border-bottom: 1px solid var(--border-divider); */
+  border-bottom: 1.5px solid rgba(73, 152, 46, 0.25);
   padding: 16px 0;
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease;
   will-change: transform;
@@ -166,14 +198,14 @@ button {
   transform: translateY(-100%) !important;
 }
 
-/* Desktop: Navbar transparent with blur at hero section, background color reveals when scrolled */
+/* Desktop: Navbar */
 @media (min-width: 769px) {
   .site-header.header-hero-transparent {
-    background-color: transparent !important;
+    background-color: var(--yellow-6, #fff100) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
-    box-shadow: none !important;
-    border-bottom: 1px solid transparent !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08) !important;
+    border-bottom: 1.5px solid rgba(73, 152, 46, 0.25) !important;
   }
 }
 
@@ -205,21 +237,21 @@ button {
 }
 
 .brand-logo-ids {
-  height: 38px;
+  height: 54px;
   width: auto;
   object-fit: contain;
   display: block;
 }
 
 .brand-divider {
-  width: 1.5px;
-  height: 28px;
-  background-color: rgba(255, 255, 255, 0.35);
-  margin: 0 2px;
+  width: 2px;
+  height: 38px;
+  background-color: var(--green-6, #49982e);
+  margin: 0 4px;
 }
 
 .brand-logo-id {
-  height: 28px;
+  height: 40px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -245,9 +277,9 @@ button {
 
 .nav-link {
   font-size: 16px;
-  font-weight: 500;
-  color: var(--text-primary);
-  opacity: 0.85;
+  font-weight: 700;
+  color: var(--green-6, #49982e);
+  opacity: 0.9;
   text-decoration: none;
   transition: color 0.25s ease, opacity 0.25s ease;
   white-space: nowrap;
@@ -256,8 +288,9 @@ button {
 .nav-link:hover,
 .nav-link.active {
   opacity: 1;
-  color: #38BDF8;
-  /* Cukup ganti warna aksen terang */
+  color: var(--green-9, #2a571a);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 /* Get Tickets CTA */
@@ -265,8 +298,8 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--navbar-cta-bg, var(--text-primary));
-  color: var(--navbar-cta-text, #052431);
+  background-color: var(--green-6, #49982e);
+  color: #ffffff;
   font-size: 16px;
   font-weight: 700;
   padding: 10px 24px;
@@ -275,9 +308,8 @@ button {
   cursor: pointer;
   white-space: nowrap;
   letter-spacing: 0.2px;
-  /* Outerline hover logic: outline + outline-offset */
-  transition: background-color 0.25s ease, color 0.25s ease, outline 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 15px rgba(73, 152, 46, 0.35);
 }
 
 .btn-ticket-mobile {
@@ -285,11 +317,10 @@ button {
 }
 
 .btn-ticket:hover {
-  background-color: var(--navbar-cta-hover-bg, #ffffff);
-  color: var(--navbar-cta-hover-text, #041a24);
-  outline: 3px solid var(--navbar-cta-hover-outline, #ffffff);
-  outline-offset: 4px;
-  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+  background-color: var(--green-7, #3e8127);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(73, 152, 46, 0.55), 0 0 0 2px rgba(255, 241, 0, 0.4);
 }
 
 .nav-toggle {
@@ -308,7 +339,7 @@ button {
   min-height: 100vh;
   min-height: 100dvh;
   overflow: hidden;
-  background-color: var(--primary-1-6, #010a2d);
+  background-color: var(--yellow-6, #fff100);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -337,7 +368,7 @@ button {
   inset: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(var(--glow-angle, 160deg), #002687 0, rgba(0, 38, 135, 0) var(--glow-len, 38vh)), var(--primary-1-6, #010a2d);
+  background: radial-gradient(circle at 50% 50%, var(--yellow-5, #fff42e) 0%, var(--yellow-6, #fff100) 100%);
   z-index: 1;
   pointer-events: none;
 }
@@ -415,9 +446,8 @@ button {
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--text-primary, #ffffff);
+  color: var(--green-6, #49982e);
   margin-bottom: 20px;
-  /* text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85); */
   box-sizing: border-box;
   animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: 0.32s;
@@ -430,16 +460,16 @@ button {
   width: auto;
   min-width: 380px;
   max-width: 100%;
-  background: var(--accent-cyan, #010a2d);
-  border: 1px solid rgba(145, 178, 202, 0.35);
-  color: var(--text-primary, #ffffff);
+  background: var(--green-6, #49982e);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
   font-size: 20px;
   font-weight: bold;
   letter-spacing: 1px;
   padding: 12px 36px;
   border-radius: var(--radius-pill);
   margin-bottom: 24px;
-  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 6px 20px rgba(73, 152, 46, 0.35);
   text-transform: uppercase;
   box-sizing: border-box;
 }
@@ -447,19 +477,17 @@ button {
 .hero-date {
   font-size: 28px;
   font-weight: 800;
-  color: var(--text-primary, #ffffff);
+  color: var(--green-6, #49982e);
   margin-bottom: 8px;
   letter-spacing: 0.5px;
-  /* text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8); */
   animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: 0.48s;
 }
 
 .hero-venue {
   font-size: 19px;
-  font-weight: 500;
-  color: var(--text-secondary, rgba(255, 255, 255, 0.92));
-  /* text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); */
+  font-weight: 600;
+  color: var(--green-7, #3e8127);
   animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: 0.62s;
 }
@@ -522,9 +550,10 @@ button {
 }
 
 /* --------------------------------------------------------------------------
-   5. Indonesia's Economic Model (Two-Column Editorial)
-   Alternating Section 2: Primary 2-6 (#004b84)
+   5. About Us (Energi & Mineral Festival) / Former Editorial Section
+   Alternating Section 2: Primary 2-6 / Green (#49982e) or Dark Neutral
    -------------------------------------------------------------------------- */
+.about-us-section,
 .editorial-section {
   position: relative;
   min-height: 640px;
@@ -532,11 +561,12 @@ button {
   display: flex;
   align-items: flex-start;
   padding: 60px 0 90px 0;
-  background-color: var(--primary-1-6, #004b84);
-  border-top: none;
+  background-color: var(--yellow-6, #fff100);
+  border-top: none; /* Hilangkan garis separator kecil antara hero dan about us */
   overflow: hidden;
 }
 
+.about-us-grid,
 .editorial-grid {
   position: relative;
   z-index: 2;
@@ -567,9 +597,10 @@ button {
 }
 
 .editorial-intro {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.75;
-  color: var(--text-secondary);
+  color: var(--green-7, #3e8127);
+  font-weight: 500;
   max-width: 480px;
   position: relative;
   z-index: 3;
@@ -626,11 +657,10 @@ button {
   width: 573px;
   max-width: 100%;
   margin-bottom: 30px;
-  background-color: var(--primary-2-6);
+  background-color: var(--green-6, #49982e);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
   box-shadow: none;
-  /* User request: drop shadow di badge pill tema overview dihapus */
 }
 
 .editorial-paragraphs {
@@ -644,33 +674,35 @@ button {
 }
 
 .editorial-paragraphs p {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.75;
-  color: #ffffff;
+  color: var(--green-8, #346c21);
+  font-weight: 500;
 }
 
 /* --------------------------------------------------------------------------
    6. Schedule & Speakers Section
-   Alternating Section 3: Primary 1-6 (#010a2d)
+   Alternating Section 3: Yellow 6 (#fff100)
    -------------------------------------------------------------------------- */
 .schedule-section {
   padding: 90px 0;
-  background-color: var(--primary-1-6, #010a2d);
+  background-color: var(--yellow-6, #fff100);
+  border-top: 1.5px solid rgba(73, 152, 46, 0.25);
 }
 
 /* Main Section Tabs: Segmented Pill (SCHEDULE vs SPEAKERS) */
 .tabs-container {
   display: flex;
   width: 100%;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .main-tabs {
   display: flex;
   align-items: stretch;
-  background-color: var(--primary-1-8);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  border-radius: 9999px;
+  background-color: #49982e; /* Base background 49982E */
+  border: none;
+  border-radius: 12px; /* Border radius dikurangin (Gambar 1 ref) */
   padding: 0;
   width: 100%;
   max-width: 100%;
@@ -680,7 +712,7 @@ button {
 .main-tab-btn {
   flex: 1;
   text-align: center;
-  padding: 15px 24px;
+  padding: 16px 24px;
   border-radius: 0;
   border: none;
   font-size: 16px;
@@ -688,23 +720,37 @@ button {
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: #ffffff;
-  background-color: var(--primary-1-8);
+  background-color: #49982e; /* Base background 49982E */
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  position: relative;
+}
+
+/* Separator di tengah berwarna kuning yellow-6 (#fff100) */
+.main-tab-btn:first-child::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--yellow-6, #fff100);
+  z-index: 2;
 }
 
 .main-tab-btn.active {
-  background-color: var(--primary-2-6);
+  background-color: #3f8227; /* Jika terpilih warnanya 3F8227 */
   color: #ffffff;
 }
 
-/* Day Selector (Matching TabDay.png) */
+/* Day Selector (Matching Gambar 1 & 3 Ref) */
 .day-selector-wrapper {
   display: flex;
-  justify-content: flex-start;
-  margin-bottom: 36px;
-  padding-bottom: 12px;
+  justify-content: center; /* Align center per poin 4 / Gambar 2 */
+  margin-bottom: 24px;
+  padding-bottom: 0;
   transition: opacity 0.25s ease;
+  width: 100%;
 }
 
 .day-selector-wrapper.hidden {
@@ -713,40 +759,68 @@ button {
 
 .day-selector {
   display: inline-flex;
-  background-color: var(--primary-1-8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-pill);
-  padding: 4px;
+  background-color: transparent;
+  border: 1.5px solid #49982e;
+  border-radius: 10px; /* Radius dikurangin */
+  padding: 0; /* Padding 0 agar active tab tidak ngambang */
+  overflow: hidden;
 }
 
 .day-btn {
-  padding: 8px 26px;
-  border-radius: var(--radius-pill);
-  font-size: 20px;
+  padding: 8px 22px;
+  border-radius: 0; /* Flat flush inside container */
+  font-size: 14.5px; /* Dikecilin sedikit per poin 4 */
   font-weight: 700;
-  color: var(--text-secondary);
-  transition: all var(--transition-normal);
+  color: #49982e;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  box-shadow: none !important;
 }
 
 .day-btn.active {
-  background-color: var(--neutral-1);
-  color: var(--primary-1-9);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  background-color: #49982e;
+  color: #ffffff;
+  box-shadow: none !important; /* Tidak ngambang */
 }
 
-/* Day Title between tab pill and schedule list (Matching Gambar 2 Reference) */
+/* Active Day Title Banner Bar (Matching Gambar 1 & Gambar 4 Ref) */
 .schedule-day-title-wrap {
-  margin-top: 6px;
+  margin-top: 4px;
   margin-bottom: 24px;
+  width: 100%;
 }
 
-.schedule-day-heading {
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--text-primary, #ffffff);
-  letter-spacing: 0.5px;
-  margin: 0;
-  text-transform: uppercase;
+.schedule-day-banner {
+  display: flex;
+  align-items: stretch;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.schedule-day-badge {
+  background-color: #49982e;
+  color: #ffffff;
+  font-size: 15px; /* Dikecilin fontnya per poin 4 */
+  font-weight: 700;
+  padding: 8px 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.schedule-day-date {
+  background-color: #ffffff; /* Putih kontras sesuai Gambar 2 */
+  color: #49982e; /* Teks hijau sesuai Gambar 1 */
+  font-size: 15px; /* Dikecilin font detail hari per poin 4 */
+  font-weight: 600;
+  padding: 8px 20px;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* Schedule Rows & Items */
@@ -760,7 +834,7 @@ button {
   grid-template-columns: 240px 1fr;
   gap: 28px;
   padding: 24px 0;
-  border-bottom: 1px solid var(--border-divider);
+  border-bottom: 1.5px solid rgba(73, 152, 46, 0.25);
 }
 
 .schedule-row:last-child {
@@ -786,14 +860,14 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: var(--primary-1-8);
+  background-color: var(--green-6, #49982e);
   border: none;
   border-radius: var(--radius-pill);
   padding: 6px 14px;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.2;
-  color: var(--text-primary);
+  color: #ffffff;
   letter-spacing: 0.3px;
   white-space: nowrap;
   box-sizing: border-box;
@@ -819,21 +893,21 @@ button {
   gap: 12px;
 }
 
-/* Room Pill (Sleeker & more compact with thin white outline) */
+/* Room Pill: transparan tanpa bg putih per poin 5 / Gambar 3 */
 .room-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   align-self: flex-start;
-  background-color: transparent;
-  border: 1.2px solid rgba(255, 255, 255, 0.85);
+  background-color: transparent !important; /* Ga perlu ada bg putihnya */
+  border: 1.5px solid var(--green-6, #49982e);
   border-radius: var(--radius-pill);
-  padding: 8px 18px;
-  font-size: 16px;
-  font-weight: 600;
+  padding: 7px 18px;
+  font-size: 15px;
+  font-weight: 700;
   line-height: 1;
-  color: var(--text-primary);
+  color: var(--green-6, #49982e);
 }
 
 .room-pill svg {
@@ -851,11 +925,34 @@ button {
 }
 
 .session-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   line-height: 1.4;
-  white-space: pre-line;
+}
+
+.session-title-main {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--green-6, #49982e);
+  line-height: 1.35;
+}
+
+.session-title-sub {
+  font-size: 16px;
+  font-weight: 500 !important;
+  color: var(--green-6, #49982e);
+  line-height: 1.45;
+}
+
+/* Subtitle event: dibuat font-weight medium (500) per instruksi user */
+.session-subtitle {
+  font-size: 16px;
+  font-weight: 500 !important;
+  color: var(--green-8, #346c21);
+  margin-top: 4px;
+  margin-bottom: 8px;
+  line-height: 1.45;
 }
 
 /* Moderator info row (Matching Image 2 spec: separate lines, larger photo, white background) */
@@ -872,14 +969,14 @@ button {
   height: 50px;
   border-radius: 50%;
   overflow: hidden;
-  background: linear-gradient(180deg, #014D79 0%, #010A2D 100%);
+  background: radial-gradient(circle at 50% 40%, var(--green-6, #49982e) 0%, var(--green-10, #214415) 100%);
   border: none;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 0 0 1.5px rgba(56, 189, 248, 0.45), 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 0 1.5px rgba(255, 241, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .moderator-photo img {
@@ -900,15 +997,15 @@ button {
 .moderator-label {
   font-size: 16px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--green-6, #49982e);
   letter-spacing: 0.5px;
   line-height: 1.2;
 }
 
 .moderator-name-role {
   font-size: 16px;
-  font-weight: 400;
-  color: #ffffff;
+  font-weight: 500;
+  color: var(--green-8, #346c21);
   line-height: 1.4;
   letter-spacing: 0.2px;
 }
@@ -923,7 +1020,7 @@ button {
 }
 
 /* ==========================================================================
-   Multi-Room Schedule Card Layout (Matching Image 1 Spec)
+   Multi-Room Schedule Card Layout: Container #FFF 50% opacity, tulisan green-6 (Poin 2)
    ========================================================================== */
 .multi-room-container {
   display: flex;
@@ -933,22 +1030,51 @@ button {
 }
 
 .multi-room-card {
-  background-color: var(--primary-2-10);
-  /* Deep slate teal outer card wrapping room session */
-  /* border: 1px solid rgba(255, 255, 255, 0.12); */
+  background-color: rgba(255, 255, 255, 0.5) !important; /* #FFF dengan opacity 50% */
+  border: none !important; /* Tidak perlu ada outline hijau */
   border-radius: 16px;
   padding: 28px 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  /* box-shadow: 0 8px 30px rgba(2, 20, 29, 0.35); */
   box-sizing: border-box;
 }
 
 .multi-room-card .room-pill {
-  border-color: rgba(255, 255, 255, 0.7);
-  background-color: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid var(--green-6, #49982e) !important;
+  background-color: transparent !important;
+  color: var(--green-6, #49982e) !important;
   padding: 6px 18px;
+}
+
+.multi-room-card .room-pill svg {
+  stroke: var(--green-6, #49982e) !important;
+}
+
+.multi-room-card .subsession-title {
+  color: var(--green-6, #49982e) !important;
+}
+
+.multi-room-card .subsession-title-main {
+  color: var(--green-6, #49982e) !important;
+}
+
+.multi-room-card .subsession-title-sub {
+  color: var(--green-6, #49982e) !important;
+}
+
+.multi-room-card .subsession-subtitle {
+  color: var(--green-8, #346c21) !important;
+  font-size: 15px;
+  font-weight: 500 !important;
+}
+
+.multi-room-card .moderator-label {
+  color: var(--green-6, #49982e) !important;
+}
+
+.multi-room-card .moderator-name-role {
+  color: var(--green-8, #346c21) !important;
 }
 
 .room-sessions-list {
@@ -964,12 +1090,24 @@ button {
 }
 
 .subsession-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  line-height: 1.45;
+}
+
+.subsession-title-main {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.35;
+}
+
+.subsession-title-sub {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500 !important;
   color: #ffffff;
   line-height: 1.45;
-  white-space: pre-line;
-  letter-spacing: 0.1px;
 }
 
 .room-subsession .moderator-row {
@@ -977,7 +1115,7 @@ button {
   margin-bottom: 8px;
 }
 
-/* Speaker Inline Card (inside schedule) */
+/* Speaker Inline Card (inside schedule): Idle green-6, Hover green-8, teks neutral (Poin 1) */
 @keyframes slideUpFadeIn {
   from {
     opacity: 0;
@@ -997,11 +1135,10 @@ button {
   gap: 18px;
   width: 100%;
   min-width: 0;
-  min-height: 124px;
-  background-color: var(--primary-2-7);
-  /* Polos primary 2-5 (#5ba6d6) */
+  min-height: 110px;
+  background-color: var(--green-6, #49982e) !important; /* Warna ganti dari yellow-7 menjadi green-6 */
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-md, 16px);
   padding: 16px 20px;
   margin-top: 0;
   overflow: hidden;
@@ -1009,7 +1146,19 @@ button {
   box-sizing: border-box;
   opacity: 1;
   transform: translateY(0);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: none !important;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+/* Hover state: linear gradient atas green-6 ke bawah green-7 */
+.speaker-card:hover {
+  background: linear-gradient(180deg, var(--green-6, #49982e) 0%, var(--green-7, #3e8127) 100%) !important;
+  box-shadow: none !important;
+}
+
+/* Pseudo element disabled */
+.speaker-card::after {
+  display: none !important;
 }
 
 /* Muncul/animasi saat melewati atau masuk viewport schedule section */
@@ -1018,28 +1167,7 @@ button {
   transform: translateY(0);
 }
 
-/* Hover: muncul gradient berwarna primary1-10 dari bawah ke atas */
-.speaker-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, #021F31 0%, rgba(5, 36, 49, 0.4) 65%, transparent 100%);
-  opacity: 0;
-  transition: opacity 300ms ease-out;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.speaker-card:hover::before {
-  opacity: 1;
-}
-
-/* .speaker-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
-} */
-
-/* Speaker photo: clean fit without outer circle border */
+/* Speaker photo in schedule: circular frame */
 .speaker-photo-wrap {
   position: relative;
   z-index: 2;
@@ -1049,14 +1177,13 @@ button {
   overflow: hidden;
   flex-shrink: 0;
   border: none;
-  background: linear-gradient(180deg, #014D79 0%, #010A2D 100%);
+  background: radial-gradient(circle at 50% 50%, #D9CD00 0%, #3F8228 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: none;
   box-sizing: border-box;
   -webkit-mask-image: -webkit-radial-gradient(white, black);
-  /* Crisp round mask clipping for WebKit */
   mask-image: radial-gradient(circle, #000 99%, transparent 100%);
 }
 
@@ -1077,10 +1204,11 @@ button {
   flex: 1;
 }
 
+/* Teks speaker neutral (putih / neutral-1) di atas green-6 */
 .speaker-name {
   font-size: 16px;
-  font-weight: 700;
-  color: var(--neutral-1);
+  font-weight: 800;
+  color: var(--neutral-1, #ffffff) !important; /* Neutral white */
   line-height: 1.35;
   margin-bottom: 4px;
   white-space: normal;
@@ -1088,8 +1216,8 @@ button {
 
 .speaker-role {
   font-size: 12px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85) !important; /* Neutral muted white */
   line-height: 1.4;
   white-space: pre-line;
 }
@@ -1102,10 +1230,10 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(3, 17, 24, 0.82);
+  background-color: rgba(3, 17, 24, 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  padding: 20px;
+  padding: 24px;
   opacity: 0;
   visibility: hidden;
   transition: opacity 280ms ease, visibility 280ms ease;
@@ -1117,17 +1245,18 @@ button {
   visibility: visible;
 }
 
+/* Kotak modal digedein (clamp 420px s/d 980px, min-height 420px) */
 .speaker-modal-dialog,
 .speaker-modal-container {
   position: relative;
   z-index: 1;
-  width: 100%;
-  max-width: 680px;
-  background: radial-gradient(circle at 50% 50%, var(--primary-2-5, #056D95) 0%, var(--primary-1-6, #010a2d) 100%);
-  border: 1px solid rgba(91, 166, 214, 0.35);
-  border-radius: 20px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
-  overflow: hidden;
+  width: clamp(420px, 94vw, 980px);
+  min-height: 420px;
+  background: linear-gradient(180deg, #FFF100 0%, #49982E 100%);
+  border: none;
+  border-radius: 36px;
+  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.45);
+  overflow: hidden; /* Memotong ribbon agar hanya 1/4 bagian yang visible */
   transform: scale(0.94) translateY(12px);
   transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1139,64 +1268,88 @@ button {
   transform: scale(1) translateY(0);
 }
 
+/* Corner Ribbons on Modal: Kiri Atas dan Kanan Bawah, visible hanya ~1/4 bagian */
+.modal-ribbon {
+  position: absolute;
+  width: clamp(180px, 22vw, 250px);
+  height: auto;
+  pointer-events: none;
+  z-index: 2;
+  user-select: none;
+}
+
+.modal-ribbon-tl {
+  top: -110px;
+  left: -110px;
+  transform: rotate(0deg);
+}
+
+.modal-ribbon-br {
+  bottom: -110px;
+  right: -110px;
+  transform: rotate(0deg);
+}
+
 .speaker-modal-close {
   position: absolute;
-  top: 18px;
-  right: 18px;
-  width: 36px;
-  height: 36px;
+  top: 28px;
+  right: 28px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 20%, var(--primary-2-5, #2e6b9a) 0%, var(--primary-1-6, #010a2d) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  color: #214415;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 10;
   transition: background-color 200ms ease, transform 200ms ease;
-
+  backdrop-filter: blur(4px);
 }
 
 .speaker-modal-close:hover {
-  background: rgba(255, 255, 255, 0.2);
-  /* transform: rotate(90deg); - Commented out per user request */
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
 }
 
 .speaker-modal-close svg {
-  width: 20px;
-  height: 20px;
+  width: 26px;
+  height: 26px;
 }
 
 .speaker-modal-body {
+  position: relative;
+  z-index: 3;
   display: flex;
   align-items: center;
-  padding: 40px 44px;
-  gap: 36px;
-  min-height: 290px;
+  padding: 72px 80px;
+  gap: 52px;
+  min-height: 380px;
 }
 
 .speaker-modal-photo-col {
   flex-shrink: 0;
-  width: 170px;
-  height: 170px;
+  width: 230px;
+  height: 230px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .speaker-modal-photo-wrap {
-  width: 160px;
-  height: 160px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 50% 40%, #014D79 0%, #010A2D 100%);
+  background: radial-gradient(circle at 50% 50%, #D9CD00 0%, #3F8228 100%);
   border: none;
   box-sizing: border-box;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
 }
 
 .speaker-modal-img {
@@ -1211,25 +1364,26 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  color: #ffffff;
+  color: var(--green-6, #49982e);
 }
 
 .speaker-modal-name {
-  font-size: 24px;
+  font-size: 38px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--green-6, #49982e);
   line-height: 1.25;
-  margin-bottom: 12px;
-  letter-spacing: 0.3px;
+  margin-bottom: 14px;
+  letter-spacing: 0.2px;
 }
 
 .speaker-modal-role {
-  font-size: 16px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.95);
-  line-height: 1.4;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--green-7, #3e8127);
+  line-height: 1.45;
   white-space: pre-line;
 }
+
 
 /* --------------------------------------------------------------------------
    7. Standalone SPEAKERS Tab View (4-Card Grid, Masked Frame, 32 Speakers)
@@ -1287,15 +1441,15 @@ button {
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
 }
 
-/* Bingkai portrait outline tipis dengan radial gradient di tengah.
-   Terselesaikan: Fotonya sekarang di-mask masuk ke dalam rectangle (overflow: hidden & border-radius: 24px) */
+/* Bingkai portrait outline tipis dengan radial gradient di tengah (Gambar 1).
+   Di tengah warna #D9CD00 dan di luarnya #3F8228 */
 .speaker-tile-frame {
   position: relative;
   width: 100%;
   aspect-ratio: 2 / 2.35;
-  border: 1.5px solid rgba(55, 146, 205, 0.4);
+  border: 1.5px solid rgba(73, 152, 46, 0.4);
   border-radius: 24px;
-  background: radial-gradient(circle at 50% 40%, var(--primary-2-6, #004b84) 0%, var(--primary-1-6, #010a2d) 100%);
+  background: radial-gradient(circle at 50% 50%, #D9CD00 0%, #3F8228 100%);
   overflow: hidden;
   transition: border-color 300ms ease-out, box-shadow 300ms ease-out;
 }
@@ -1334,18 +1488,17 @@ button {
 .speaker-tile-name {
   font-size: 16px;
   font-weight: 800;
-  color: var(--neutral-1);
+  color: var(--green-6, #49982e);
   line-height: 1.3;
   margin-bottom: 6px;
   letter-spacing: 0.2px;
 }
 
-/* Blok 2 - Subjudul/Keterangan: semi-bold, line-height 1.6x, biru aksen */
+/* Blok 2 - Subjudul/Keterangan: semi-bold, green tone */
 .speaker-tile-role {
   font-size: 12px;
   font-weight: 600;
-  color: var(--neutral-1);
-  /* #5ba6d6 */
+  color: var(--green-8, #346c21);
   line-height: 1.4;
   max-width: 94%;
   white-space: pre-line;
@@ -1364,8 +1517,8 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: rgba(15, 111, 151, 0.25);
-  border: 1.5px solid rgba(91, 166, 214, 0.5);
+  background: var(--green-6, #49982e);
+  border: 1.5px solid var(--green-6, #49982e);
   color: #ffffff;
   padding: 12px 32px;
   border-radius: 9999px;
@@ -1373,18 +1526,16 @@ button {
   font-weight: 700;
   letter-spacing: 0.3px;
   cursor: pointer;
-  /* Outerline hover logic dari repo reference: outline + outline-offset */
-  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 15px rgba(73, 152, 46, 0.35);
 }
 
 .btn-load-more-speakers:hover {
-  background: var(--primary-2-5);
-  border-color: var(--primary-2-5);
+  background: var(--green-7, #3e8127);
+  border-color: var(--green-7, #3e8127);
   color: #ffffff;
-  outline: 2px solid #38bdf8;
-  outline-offset: 4px;
-  box-shadow: 0 6px 22px rgba(56, 189, 248, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(73, 152, 46, 0.55), 0 0 0 2px rgba(255, 241, 0, 0.45);
 }
 
 .btn-load-more-speakers svg {
@@ -1399,12 +1550,12 @@ button {
 
 /* --------------------------------------------------------------------------
    8. Gallery Section (Accordion Gallery matching user screenshot)
-   Alternating Section 4: Primary 2-6 (#004b84)
+   Alternating Section 4: Green 6 (#49982e) per user requirement
    -------------------------------------------------------------------------- */
 .gallery-section {
   position: relative;
   padding: 48px 0;
-  background-color: var(--primary-2-6, #004b84);
+  background-color: var(--green-6, #49982e);
 }
 
 /* Border top matching exact width & horizontal alignment of footer-inner */
@@ -1432,8 +1583,13 @@ button {
   font-size: 32px;
   font-weight: 800;
   letter-spacing: 1px;
-  color: var(--text-primary);
+  color: var(--text-primary, #49982e);
   text-transform: uppercase;
+}
+
+.gallery-section .section-title,
+.livestream-section .section-title {
+  color: #ffffff !important;
 }
 
 /* 3D Coverflow Carousel Container */
@@ -1485,7 +1641,7 @@ button {
 }
 
 .gallery-card:focus-visible {
-  border-color: #38bdf8;
+  border-color: var(--yellow-6, #fff100);
   box-shadow: none;
 }
 
@@ -1723,12 +1879,12 @@ button {
 
 /* --------------------------------------------------------------------------
    9. Related News Section
-   Alternating Section 5: Primary 1-6 (#010a2d)
+   Alternating Section 5: Green 10 (#214415)
    -------------------------------------------------------------------------- */
 .news-section {
   padding: 90px 0;
-  background-color: var(--primary-1-6, #010a2d);
-  border-top: 1px solid var(--border-divider);
+  background-color: var(--yellow-6, #fff100);
+  border-top: 1.5px solid rgba(73, 152, 46, 0.25);
 }
 
 .news-source-block {
@@ -1748,15 +1904,15 @@ button {
 
 .news-source-title {
   font-size: 22px;
-  font-weight: 700;
-  color: var(--text-primary, #ffffff);
+  font-weight: 800;
+  color: var(--green-6, #49982e);
   letter-spacing: 0.2px;
 }
 
 .news-source-more-link {
   font-size: 15px;
-  font-weight: 600;
-  /* color: #38bdf8; */
+  font-weight: 700;
+  color: var(--green-6, #49982e);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -1765,30 +1921,10 @@ button {
 }
 
 .news-source-more-link:hover {
-  color: #7dd3fc;
-  /* transform: translateX(3px); */
+  color: var(--green-8, #346c21);
 }
 
 /* Related news on Desktop: 4-column static grid (no slider/arrows). Mobile retains swipeable slider. */
-/* === DESKTOP SLIDER STYLES COMMENTED OUT PER USER REQUEST ===
-.news-slider-wrapper {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-.news-slider-container {
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding: 10px 4px 20px 4px;
-}
-=== END DESKTOP SLIDER STYLES COMMENTED OUT === */
-
 .news-slider-wrapper {
   position: relative;
   width: 100%;
@@ -1863,11 +1999,11 @@ button {
   height: 38px;
   padding: 0 12px;
   border-radius: 8px;
-  border: 1px solid rgba(56, 189, 248, 0.25);
-  background: rgba(14, 116, 144, 0.15);
-  color: #e0f2fe;
+  border: 1.5px solid var(--green-6, #49982e);
+  background: var(--yellow-1, #fffee6);
+  color: var(--green-6, #49982e);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -1876,25 +2012,38 @@ button {
 }
 
 .summary-page-btn:hover:not(:disabled):not(.active) {
-  background: rgba(56, 189, 248, 0.25);
-  border-color: #38bdf8;
+  background: var(--green-6, #49982e);
+  border-color: var(--green-6, #49982e);
   color: #ffffff;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+  box-shadow: 0 0 12px rgba(73, 152, 46, 0.4);
 }
 
 .summary-page-btn.active {
-  background: #0284c7;
-  border-color: #38bdf8;
+  background: var(--green-6, #49982e);
+  border-color: var(--green-6, #49982e);
   color: #ffffff;
   font-weight: 700;
-  
 }
 
 .summary-page-btn:disabled {
-  opacity: 0.3;
+  opacity: 0.35;
   cursor: not-allowed;
-  border-color: rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(73, 152, 46, 0.2);
+  background: rgba(73, 152, 46, 0.05);
+}
+
+@media (max-width: 640px) {
+  .summary-pagination {
+    gap: 6px;
+    margin-top: 24px;
+  }
+  .summary-page-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    font-size: 13px;
+    border-radius: 6px;
+  }
 }
 
 /* Arrows hidden on desktop */
@@ -1916,8 +2065,8 @@ button {
 .news-empty-state {
   width: 100%;
   padding: 32px 20px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: rgba(73, 152, 46, 0.08);
+  border: 1.5px dashed var(--green-6, #49982e);
   border-radius: 14px;
   text-align: center;
   margin: 8px 0 16px 0;
@@ -1925,9 +2074,9 @@ button {
 
 .news-empty-text {
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--green-8, #346c21);
   margin: 0;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.2px;
 }
 
@@ -1947,10 +2096,6 @@ button {
   color: inherit;
 }
 
-/* .news-card:hover {
-  transform: translateY(-4px);
-} */
-
 .news-image-wrap {
   position: relative;
   width: 100%;
@@ -1959,8 +2104,8 @@ button {
   border-radius: var(--radius-md);
   overflow: hidden;
   margin-bottom: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border: 1.5px solid rgba(73, 152, 46, 0.3);
 }
 
 /* Specific ratio helper if 300x170 (16:9 approx) or datasatu ratio is preferred */
@@ -1984,12 +2129,12 @@ button {
   font-size: 16px;
   font-weight: 700;
   line-height: 1.45;
-  color: var(--text-primary);
+  color: var(--green-6, #49982e);
   transition: color var(--transition-normal);
 }
 
 .news-card:hover .news-title {
-  color: #38BDF8;
+  color: var(--green-9, #2a571a);
 }
 
 /* Navigation Arrow Buttons with outerline hover logic */
@@ -2023,12 +2168,12 @@ button {
 }
 
 .news-arrow-btn:hover:not(:disabled) {
-  background-color: var(--primary-2-5);
-  border-color: var(--primary-2-5);
+  background-color: var(--green-7, #3e8127);
+  border-color: var(--green-7, #3e8127);
   color: #ffffff;
-  outline: 2px solid #38bdf8;
+  outline: 2px solid var(--yellow-6, #fff100);
   outline-offset: 4px;
-  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.45);
+  box-shadow: 0 8px 24px rgba(255, 241, 0, 0.45);
   transform: translateY(-50%) scale(1.05);
 }
 
@@ -2075,8 +2220,8 @@ button {
    -------------------------------------------------------------------------- */
 .highlights-section {
   padding: 90px 0;
-  background-color: var(--primary-1-6, #010a2d);
-  border-top: 1px solid var(--border-divider);
+  background-color: var(--yellow-6, #fff100);
+  border-top: 1.5px solid rgba(73, 152, 46, 0.25);
   position: relative;
 }
 
@@ -2097,9 +2242,9 @@ button {
   gap: 8px;
   padding: 9px 22px;
   border-radius: var(--radius-pill, 9999px);
-  background-color: var(--primary-1-8, #010720);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  background-color: var(--yellow-1, #fffee6);
+  border: 1.5px solid var(--green-6, #49982e);
+  color: var(--green-6, #49982e);
   font-family: inherit;
   font-size: 14.5px;
   font-weight: 700;
@@ -2117,23 +2262,22 @@ button {
 }
 
 .highlights-platform-pill:hover {
-  background-color: var(--primary-1-7, #010926);
-  border-color: rgba(255, 255, 255, 0.4);
-  outline: 2px solid rgba(255, 255, 255, 0.3);
+  background-color: var(--green-6, #49982e);
+  border-color: var(--green-6, #49982e);
   color: #ffffff;
 }
 
 .highlights-platform-pill.active {
-  background-color: var(--neutral-1, #ffffff);
-  border-color: var(--neutral-1, #ffffff);
-  color: var(--primary-1-9, #01061a);
-  outline: 2px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  background-color: var(--green-6, #49982e);
+  border-color: var(--green-6, #49982e);
+  color: #ffffff;
+  outline: 2px solid var(--green-6, #49982e);
+  box-shadow: 0 4px 14px rgba(73, 152, 46, 0.35);
 }
 
 .highlights-platform-pill.active:hover {
-  background-color: #ffffff;
-  outline: 2px solid #ffffff;
+  background-color: var(--green-7, #3e8127);
+  outline: 2px solid var(--green-7, #3e8127);
 }
 
 .highlights-grid {
@@ -2189,7 +2333,7 @@ button {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: #010a2d;
+  background: var(--green-10, #214415);
   overflow: hidden;
 }
 
@@ -2555,17 +2699,17 @@ button {
 }
 
 .social-circle-btn:hover {
-  background-color: #12688b;
-  color: #38bdf8;
+  background-color: var(--green-6, #49982e);
+  color: var(--yellow-6, #fff100);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .footer-copy {
   flex: 1.5;
   text-align: center;
-  color: var(--footer-text-color, rgba(255, 255, 255, 0.85));
+  color: var(--green-8, #346c21);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.2px;
 }
 
@@ -2581,7 +2725,7 @@ button {
 .footer-contact-title {
   font-size: 16px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--green-6, #49982e);
   letter-spacing: 0.3px;
   width: 100%;
   max-width: 220px;
@@ -2612,7 +2756,7 @@ button {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background-color: #1e3347;
+  background-color: var(--green-6, #49982e);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -2635,15 +2779,15 @@ button {
 
 .footer-phone-label {
   font-size: 14px;
-  font-weight: 500;
-  color: #ffffff;
+  font-weight: 600;
+  color: var(--green-7, #3e8127);
   line-height: 1.2;
 }
 
 .footer-phone-number {
   font-size: 15px;
-  font-weight: 700;
-  color: #ffffff;
+  font-weight: 800;
+  color: var(--green-6, #49982e);
   letter-spacing: 0.3px;
   line-height: 1.3;
 }
@@ -2701,7 +2845,7 @@ button {
   .social-circle-btn {
     width: 36px;
     height: 36px;
-    background-color: #0e4b68;
+    background-color: var(--green-6, #49982e);
     border-color: rgba(255, 255, 255, 0.18);
   }
 
@@ -2725,7 +2869,7 @@ button {
     text-align: center;
     font-size: 14px;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--green-6, #49982e);
     letter-spacing: 0.3px;
     width: auto;
     max-width: 100%;
@@ -2755,14 +2899,14 @@ button {
   .footer-phone-label {
     font-size: 12px;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--green-7, #3e8127);
     text-align: center;
   }
 
   .footer-phone-number {
     font-size: 15px;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--green-6, #49982e);
     letter-spacing: 0.3px;
     text-align: center;
   }
@@ -2771,7 +2915,7 @@ button {
     order: 3;
     text-align: center;
     font-size: 11.5px;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--green-8, #346c21);
     margin-top: 4px;
     padding-top: 2px;
     line-height: 1.4;
@@ -2936,7 +3080,7 @@ button {
     max-width: 82vw;
     height: 100vh;
     height: 100dvh;
-    background-color: rgba(1, 10, 45, 0.98);
+    background-color: rgba(21, 40, 15, 0.98);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     flex-direction: column;
@@ -3011,7 +3155,7 @@ button {
     align-items: center;
     justify-content: center;
     padding: 60px 16px;
-    background-color: #01061a;
+    background-color: var(--green-10, #214415);
     box-sizing: border-box;
   }
 
@@ -3194,7 +3338,7 @@ button {
   .editorial-paragraphs p {
     font-size: 14.5px;
     line-height: 1.65;
-    color: rgba(255, 255, 255, 0.88);
+    color: var(--green-8, #346c21);
     text-align: left;
     position: relative;
     z-index: 3;
@@ -3560,7 +3704,7 @@ button {
     width: 38px;
     height: 38px;
     border: 1.5px solid rgba(255, 255, 255, 0.35);
-    background: radial-gradient(circle at 30% 20%, var(--primary-2-5, #2e6b9a) 0%, var(--primary-1-6, #010a2d) 100%);
+    background: radial-gradient(circle at 30% 20%, var(--green-7, #3e8127) 0%, var(--green-10, #214415) 100%);
   }
 
   /* Footer responsive */
@@ -3840,7 +3984,8 @@ button {
 }
 
 .sponsors-section {
-  background-color: var(--primary-1-6, #010a2d);
+  background-color: var(--yellow-6, #fff100);
+  border-top: 1.5px solid rgba(73, 152, 46, 0.25);
   padding: 60px 0;
 }
 
@@ -4074,12 +4219,12 @@ button {
 
 /* ==========================================================================
    Live Streaming Section
-   Alternating Section 6: Primary 2-6 (#004b84)
+   Alternating Section 6: Green 6 (#49982e) per user requirement
    ========================================================================== */
 .livestream-section {
   position: relative;
   padding: 48px 0;
-  background-color: var(--primary-2-6, #004b84);
+  background-color: var(--green-6, #49982e);
   overflow: hidden;
 }
 
@@ -4138,7 +4283,7 @@ button {
   justify-content: center;
   padding: 10px 24px;
   border-radius: var(--radius-pill, 9999px);
-  background-color: var(--primary-1-8, #010720);
+  background-color: var(--green-10, #214415);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
   font-family: inherit;
@@ -4152,7 +4297,7 @@ button {
 }
 
 .livestream-room-pill:hover {
-  background-color: var(--primary-1-7, #010926);
+  background-color: var(--green-8, #346c21);
   border-color: rgba(255, 255, 255, 0.4);
   outline: 2px solid rgba(255, 255, 255, 0.3);
   color: #ffffff;
@@ -4162,7 +4307,7 @@ button {
 .livestream-room-pill.active {
   background-color: var(--neutral-1, #ffffff);
   border-color: var(--neutral-1, #ffffff);
-  color: var(--primary-1-9, #01061a);
+  color: var(--green-10, #214415);
   outline: 2px solid rgba(255, 255, 255, 0.6);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 }
@@ -4292,7 +4437,7 @@ button {
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: #252e46;
+  background: var(--green-8, #346c21);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.15);
   display: flex;
@@ -4314,7 +4459,7 @@ button {
 }
 
 .back-to-top-btn:hover {
-  background: #333e5c;
+  background: var(--green-7, #3e8127);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.35);
   transform: translateY(-3px);
@@ -4378,7 +4523,7 @@ button {
   width: 820px;
   max-width: 100%;
   height: 74px;
-  background-color: var(--primary-1-10);
+  background-color: var(--green-6, #49982e);
   border-radius: 20px;
   padding: 14px 22px;
   display: flex;
@@ -4386,8 +4531,8 @@ button {
   justify-content: space-between;
   gap: 20px;
   box-sizing: border-box;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 24px rgba(0, 38, 135, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 0 24px rgba(73, 152, 46, 0.45);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
 }
 
 .floating-bottom-brand {
@@ -4409,7 +4554,7 @@ button {
   text-align: left;
   margin-left: 67px;
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 700;
   color: #ffffff;
   letter-spacing: 0.3px;
   display: flex;
@@ -4448,26 +4593,25 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--navbar-cta-bg, #ffffff);
-  color: #052431;
+  background-color: var(--yellow-6, #fff100);
+  color: #141414;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 800;
   padding: 10px 24px;
   border-radius: 10px;
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
   letter-spacing: 0.2px;
-  transition: background-color 0.25s ease, color 0.25s ease, outline 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .btn-floating-ticket:hover {
-  background-color: var(--navbar-cta-hover-bg, #ffffff);
-  color: var(--navbar-cta-hover-text, #041a24);
-  outline: 3px solid var(--navbar-cta-hover-outline, #ffffff);
-  outline-offset: 4px;
-  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+  background-color: var(--yellow-4, #fff65e);
+  color: #141414;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(73, 152, 46, 0.4);
 }
 
 @media (max-width: 768px) {
@@ -4546,7 +4690,8 @@ button {
 .locations-section {
   position: relative;
   padding: 60px 0 80px 0;
-  background-color: var(--primary-1-6, #010a2d);
+  background-color: var(--yellow-6, #fff100);
+  border-top: 1.5px solid rgba(73, 152, 46, 0.25);
   overflow: hidden;
 }
 
@@ -4563,7 +4708,7 @@ button {
 .locations-hotel-name {
   font-size: 34px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--green-6, #49982e);
   margin-bottom: 12px;
   line-height: 1.25;
   text-align: center;
@@ -4572,7 +4717,8 @@ button {
 .locations-address {
   font-size: 15.5px;
   line-height: 1.65;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--green-8, #346c21);
+  font-weight: 500;
   max-width: 580px;
   /* Constrained width so address flows into 2-3 lines naturally */
   margin: 0 auto;

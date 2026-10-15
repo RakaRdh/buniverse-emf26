@@ -3,7 +3,7 @@
 use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
-$routes->get('/', 'Home::index');
+$routes->match(['get', 'head'], '/', 'Home::index');
 $routes->post('api/track-ticket', 'Home::trackTicket');
 $routes->match(['get', 'post'], 'api/clear-cache', 'Home::clearCache');
 

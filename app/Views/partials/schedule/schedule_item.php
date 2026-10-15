@@ -41,9 +41,20 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
             <div class="room-sessions-list">
               <?php foreach ($roomData['sessions'] as $subSession): ?>
                 <div class="room-subsession">
-                  <h4 class="subsession-title"><?= esc($subSession['title']) ?></h4>
+                  <?php
+                    $rawSubTitle = $subSession['title'] ?? '';
+                    $subTitleParts = explode("\n", $rawSubTitle, 2);
+                    $mainSubTitle = $subTitleParts[0];
+                    $inlineSubSubtitle = $subTitleParts[1] ?? null;
+                  ?>
+                  <h4 class="subsession-title">
+                    <span class="subsession-title-main"><?= esc($mainSubTitle) ?></span>
+                    <?php if (!empty($inlineSubSubtitle)): ?>
+                      <span class="subsession-title-sub"><?= esc($inlineSubSubtitle) ?></span>
+                    <?php endif; ?>
+                  </h4>
                   <?php if (!empty($subSession['subtitle'])): ?>
-                    <div class="subsession-subtitle" style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.82); margin-top: 3px; line-height: 1.4;">
+                    <div class="subsession-subtitle">
                       <?= esc($subSession['subtitle']) ?>
                     </div>
                   <?php endif; ?>
@@ -107,9 +118,20 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
         </div>
       <?php endif; ?>
 
-      <h3 class="session-title"><?= esc($item['title']) ?></h3>
+      <?php
+        $rawTitle = $item['title'] ?? '';
+        $titleParts = explode("\n", $rawTitle, 2);
+        $mainTitle = $titleParts[0];
+        $inlineSubtitle = $titleParts[1] ?? null;
+      ?>
+      <h3 class="session-title">
+        <span class="session-title-main"><?= esc($mainTitle) ?></span>
+        <?php if (!empty($inlineSubtitle)): ?>
+          <span class="session-title-sub"><?= esc($inlineSubtitle) ?></span>
+        <?php endif; ?>
+      </h3>
       <?php if (!empty($item['subtitle'])): ?>
-        <div class="session-subtitle" style="font-size: 15px; font-weight: 500; color: rgba(255, 255, 255, 0.85); margin-top: 4px; margin-bottom: 8px; line-height: 1.4;">
+        <div class="session-subtitle">
           <?= esc($item['subtitle']) ?>
         </div>
       <?php endif; ?>

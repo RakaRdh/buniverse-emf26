@@ -17,11 +17,22 @@
 
     <!-- 2. Day Selector: Auto-hidden when SPEAKERS tab is selected -->
     <?php
-      $formatScheduleDate = function($dateVal, $fallback) {
+      $formatDayButton = function($dateVal, $fallback) {
         if (!empty($dateVal)) {
           $ts = strtotime($dateVal);
           if ($ts !== false) {
-            return date('F j, Y', $ts);
+            return date('F jS', $ts);
+          }
+          return $dateVal;
+        }
+        return $fallback;
+      };
+
+      $formatDayDetail = function($dateVal, $fallback) {
+        if (!empty($dateVal)) {
+          $ts = strtotime($dateVal);
+          if ($ts !== false) {
+            return date('l, F jS, Y', $ts);
           }
           return $dateVal;
         }
@@ -36,24 +47,40 @@
 
       // Only activate Day 2 if today is exactly Day 2. If before or already passed, default to Day 1.
       $defaultActiveDay = ($nowWib === $day2Date) ? 'day_2' : 'day_1';
-      $activeHeading = ($defaultActiveDay === 'day_2') 
-        ? strtoupper($schedule['day_2']['label'] ?? 'DAY 2')
-        : strtoupper($schedule['day_1']['label'] ?? 'DAY 1');
+      
+      $day1HeadingText = $formatDayDetail($schedule['day_1']['date'] ?? '', 'Tuesday, November 10th, 2026');
+      $day2HeadingText = $formatDayDetail($schedule['day_2']['date'] ?? '', 'Wednesday, November 11th, 2026');
+
+      $activeDayNum = ($defaultActiveDay === 'day_2') 
+        ? ($schedule['day_2']['label'] ?? 'Day 2') 
+        : ($schedule['day_1']['label'] ?? 'Day 1');
+      $activeDayDetail = ($defaultActiveDay === 'day_2') ? $day2HeadingText : $day1HeadingText;
     ?>
     <div class="day-selector-wrapper" id="daySelectorWrapper">
       <div class="day-selector" role="tablist">
-        <button class="day-btn <?= ($defaultActiveDay === 'day_1') ? 'active' : '' ?>" data-day="day_1" data-heading="<?= esc(strtoupper($schedule['day_1']['label'] ?? 'DAY 1')) ?>" role="tab">
-          <?= esc($formatScheduleDate($schedule['day_1']['date'] ?? '', $schedule['day_1']['label'] ?? 'October 7, 2026')) ?>
+        <button class="day-btn <?= ($defaultActiveDay === 'day_1') ? 'active' : '' ?>" 
+                data-day="day_1" 
+                data-heading-label="<?= esc($schedule['day_1']['label'] ?? 'Day 1') ?>" 
+                data-heading-detail="<?= esc($day1HeadingText) ?>" 
+                role="tab">
+          <?= esc($formatDayButton($schedule['day_1']['date'] ?? '', 'November 10th')) ?>
         </button>
-        <button class="day-btn <?= ($defaultActiveDay === 'day_2') ? 'active' : '' ?>" data-day="day_2" data-heading="<?= esc(strtoupper($schedule['day_2']['label'] ?? 'DAY 2')) ?>" role="tab">
-          <?= esc($formatScheduleDate($schedule['day_2']['date'] ?? '', $schedule['day_2']['label'] ?? 'October 8, 2026')) ?>
+        <button class="day-btn <?= ($defaultActiveDay === 'day_2') ? 'active' : '' ?>" 
+                data-day="day_2" 
+                data-heading-label="<?= esc($schedule['day_2']['label'] ?? 'Day 2') ?>" 
+                data-heading-detail="<?= esc($day2HeadingText) ?>" 
+                role="tab">
+          <?= esc($formatDayButton($schedule['day_2']['date'] ?? '', 'November 11th')) ?>
         </button>
       </div>
     </div>
 
-    <!-- Active Day Title between tab pill and schedule content -->
+    <!-- Active Day Banner Bar (Matching Gambar 1 & Gambar 4 Ref) -->
     <div class="schedule-day-title-wrap" id="scheduleDayTitleWrap">
-      <h3 class="schedule-day-heading" id="scheduleDayHeading"><?= esc($activeHeading) ?></h3>
+      <div class="schedule-day-banner">
+        <span class="schedule-day-badge" id="scheduleDayBadge"><?= esc($activeDayNum) ?></span>
+        <span class="schedule-day-date" id="scheduleDayDate"><?= esc($activeDayDetail) ?></span>
+      </div>
     </div>
 
     <!-- 3. Schedule Tab Content (Day 1 & Day 2 lists) -->

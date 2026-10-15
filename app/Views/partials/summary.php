@@ -5,7 +5,7 @@
     
     <!-- Section Header Centered -->
     <div class="section-header-center">
-      <h2 class="section-title">Overview</h2>
+      <h2 class="section-title">Berita & Sorotan</h2>
     </div>
 
     <?php
@@ -61,19 +61,51 @@
         <?php if ($totalPages > 1): ?>
           <!-- Pagination Controls -->
           <div class="summary-pagination" id="summaryPagination">
-            <button type="button" class="summary-page-btn summary-btn-prev" onclick="changeSummaryPage(-1)" disabled aria-label="Previous Page">&laquo;</button>
+            <button type="button" class="summary-page-btn summary-btn-prev" onclick="changeSummaryPage(-1)" disabled aria-label="Previous Page" title="Halaman Sebelumnya">&lsaquo;</button>
             <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-              <button type="button" class="summary-page-btn summary-btn-num <?= $p === 1 ? 'active' : '' ?>" onclick="goToSummaryPage(<?= $p ?>)">
+              <button type="button" class="summary-page-btn summary-btn-num <?= $p === 1 ? 'active' : '' ?>" data-page="<?= $p ?>" onclick="goToSummaryPage(<?= $p ?>)">
                 <?= $p ?>
               </button>
             <?php endfor; ?>
-            <button type="button" class="summary-page-btn summary-btn-next" onclick="changeSummaryPage(1)" aria-label="Next Page">&raquo;</button>
+            <button type="button" class="summary-page-btn summary-btn-next" onclick="changeSummaryPage(1)" aria-label="Next Page" title="Halaman Selanjutnya">&rsaquo;</button>
           </div>
 
           <script>
             (function() {
               let currentSummaryPage = 1;
               const maxSummaryPages = <?= (int)$totalPages ?>;
+
+              function updatePaginationVisibility(page) {
+                const isMobile = window.innerWidth <= 640;
+                const buttons = document.querySelectorAll('.summary-btn-num');
+                
+                if (!isMobile) {
+                  // Desktop: tampilkan semua nomor
+                  buttons.forEach(btn => btn.style.display = 'inline-flex');
+                  return;
+                }
+
+                // Mobile: max 3 tombol nomor halaman yang aktif di sekitar current page
+                let start = page - 1;
+                let end = page + 1;
+
+                if (page === 1) {
+                  start = 1;
+                  end = Math.min(3, maxSummaryPages);
+                } else if (page === maxSummaryPages) {
+                  start = Math.max(1, maxSummaryPages - 2);
+                  end = maxSummaryPages;
+                }
+
+                buttons.forEach(btn => {
+                  const pNum = parseInt(btn.getAttribute('data-page'));
+                  if (pNum >= start && pNum <= end) {
+                    btn.style.display = 'inline-flex';
+                  } else {
+                    btn.style.display = 'none';
+                  }
+                });
+              }
 
               window.goToSummaryPage = function(page) {
                 if (page < 1 || page > maxSummaryPages) return;
@@ -90,9 +122,10 @@
                   }
                 });
 
-                // Update pagination buttons
-                document.querySelectorAll('.summary-btn-num').forEach(function(btn, idx) {
-                  if (idx + 1 === page) {
+                // Update pagination buttons active class
+                document.querySelectorAll('.summary-btn-num').forEach(function(btn) {
+                  const pNum = parseInt(btn.getAttribute('data-page'));
+                  if (pNum === page) {
                     btn.classList.add('active');
                   } else {
                     btn.classList.remove('active');
@@ -103,11 +136,19 @@
                 const nextBtn = document.querySelector('.summary-btn-next');
                 if (prevBtn) prevBtn.disabled = (page === 1);
                 if (nextBtn) nextBtn.disabled = (page === maxSummaryPages);
+
+                updatePaginationVisibility(page);
               };
 
               window.changeSummaryPage = function(delta) {
                 goToSummaryPage(currentSummaryPage + delta);
               };
+
+              // Inisialisasi tampilan awal
+              updatePaginationVisibility(1);
+              window.addEventListener('resize', function() {
+                updatePaginationVisibility(currentSummaryPage);
+              });
             })();
           </script>
         <?php endif; ?>
