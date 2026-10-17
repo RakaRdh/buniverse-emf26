@@ -21,7 +21,7 @@ if (!str_starts_with($photoUrl, 'http')) {
   
   <div class="speaker-tile-frame">
     <div class="speaker-tile-photo-wrap">
-      <img src="<?= esc($photoUrl) ?>" alt="<?= esc($speaker['name']) ?>" loading="lazy">
+      <img src="<?= esc($photoUrl) ?>" alt="<?= esc($speaker['name']) ?>" loading="lazy" onerror="this.onerror=null;this.src='<?= base_url('assets/img/placeholder.png') ?>';">
     </div>
   </div>
 

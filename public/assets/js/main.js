@@ -1039,31 +1039,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 12. Schedule Row Accordion (Gambar 5: Maksimal 1 Card Aktif)
-  const scheduleRows = document.querySelectorAll('.schedule-row');
-  scheduleRows.forEach(row => {
-    // Make sure rows with speakers can be toggled
-    const speakerGrid = row.querySelector('.plenary-speaker-grid');
-    if (!speakerGrid) return;
-
-    row.addEventListener('click', (e) => {
-      // Don't toggle if clicking directly on a speaker card to open modal
-      if (e.target.closest('.speaker-card')) return;
-
-      const isMobile = window.innerWidth <= 768;
-      if (!isMobile) return;
-
-      const isActive = row.classList.contains('active');
-
-      // Close ALL open schedule rows first (Ensures max 1 card is open)
-      scheduleRows.forEach(r => r.classList.remove('active'));
-
-      // If it wasn't active before, open this one
-      if (!isActive) {
-        row.classList.add('active');
-      }
-    });
-  });
+  // 12. Schedule Row Accordion: Disabled per user request (seluruh card speaker tampil langsung dan row tidak clickable)
+  // Hanya .speaker-card yang clickable untuk membuka popup modal bio.
 
   // 13. Highlights Section: Mobile Swipe / Drag Support
   const highlightsGrid = document.getElementById('highlightsGrid');

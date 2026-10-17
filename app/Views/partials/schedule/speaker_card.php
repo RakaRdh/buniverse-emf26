@@ -18,7 +18,7 @@ if (!str_starts_with($photoUrl, 'http')) {
      data-speaker-photo="<?= esc($photoUrl) ?>"
      data-speaker-bio="<?= esc($speaker['bio'] ?? '') ?>">
   <div class="speaker-photo-wrap">
-    <img src="<?= esc($photoUrl) ?>" alt="<?= esc($speaker['name']) ?>" loading="lazy">
+    <img src="<?= esc($photoUrl) ?>" alt="<?= esc($speaker['name']) ?>" loading="lazy" onerror="this.onerror=null;this.src='<?= base_url('assets/img/placeholder.png') ?>';">
   </div>
   <div class="speaker-info">
     <div class="speaker-name"><?= esc($speaker['name']) ?></div>

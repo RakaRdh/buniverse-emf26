@@ -39,7 +39,8 @@
   --primary-1-3: var(--yellow-3);
   --primary-1-4: var(--yellow-4);
   --primary-1-5: var(--yellow-5);
-  --primary-1-6: var(--yellow-6); /* Dominant Yellow #fff100 */
+  --primary-1-6: var(--yellow-6);
+  /* Dominant Yellow #fff100 */
   --primary-1-7: var(--yellow-7);
   --primary-1-8: var(--yellow-8);
   --primary-1-9: var(--yellow-9);
@@ -62,22 +63,28 @@
   --primary-2-3: var(--green-3);
   --primary-2-4: var(--green-4);
   --primary-2-5: var(--green-5);
-  --primary-2-6: var(--green-6); /* Dominant Green #49982e */
+  --primary-2-6: var(--green-6);
+  /* Dominant Green #49982e */
   --primary-2-7: var(--green-7);
   --primary-2-8: var(--green-8);
   --primary-2-9: var(--green-9);
   --primary-2-10: var(--green-10);
 
   /* Semantic Theme Variables Mapped to Palette - Base Yellow-6 */
-  --bg-page: var(--yellow-6); /* Base: Yellow-6 #fff100 */
-  --bg-section-alt: var(--yellow-1); /* Soft contrast tint #fffee6 */
-  --bg-card: var(--yellow-2); /* Card container #fffcc2 */
+  --bg-page: var(--yellow-6);
+  /* Base: Yellow-6 #fff100 */
+  --bg-section-alt: var(--yellow-1);
+  /* Soft contrast tint #fffee6 */
+  --bg-card: var(--yellow-2);
+  /* Card container #fffcc2 */
   --bg-card-gradient: linear-gradient(135deg, var(--yellow-5) 0%, var(--yellow-6) 100%);
   --bg-pill: var(--green-6);
   --bg-pill-active: var(--green-6);
 
-  --text-primary: var(--green-6); /* Tulisan di area yellow-6 menggunakan green-6 */
-  --text-secondary: var(--green-7); /* Subjudul / text sekunder menggunakan green-7 */
+  --text-primary: var(--green-6);
+  /* Tulisan di area yellow-6 menggunakan green-6 */
+  --text-secondary: var(--green-7);
+  /* Subjudul / text sekunder menggunakan green-7 */
   --text-muted: var(--green-8);
   --text-dark: var(--green-10);
 
@@ -198,14 +205,14 @@ button {
   transform: translateY(-100%) !important;
 }
 
-/* Desktop: Navbar */
+/* Desktop: Navbar transparent with blur at hero section, background color reveals when scrolled */
 @media (min-width: 769px) {
   .site-header.header-hero-transparent {
-    background-color: var(--yellow-6, #fff100) !important;
+    background-color: transparent !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08) !important;
-    border-bottom: 1.5px solid rgba(73, 152, 46, 0.25) !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid transparent !important;
   }
 }
 
@@ -303,12 +310,15 @@ button {
   font-size: 16px;
   font-weight: 700;
   padding: 10px 24px;
-  border-radius: var(--radius-pill);
+  border-radius: 10px;
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
   letter-spacing: 0.2px;
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  outline: 3px solid transparent;
+  outline-offset: 4px;
+  /* Outerline hover logic dari IDS: outline-color + background-color + box-shadow tanpa translateY */
+  transition: background-color 0.25s ease, color 0.25s ease, outline-color 0.25s ease, box-shadow 0.25s ease;
   box-shadow: 0 4px 15px rgba(73, 152, 46, 0.35);
 }
 
@@ -319,8 +329,9 @@ button {
 .btn-ticket:hover {
   background-color: var(--green-7, #3e8127);
   color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(73, 152, 46, 0.55), 0 0 0 2px rgba(255, 241, 0, 0.4);
+  transform: none !important;
+  outline-color: var(--green-6, #49982e);
+  box-shadow: 0 6px 20px rgba(73, 152, 46, 0.45);
 }
 
 .nav-toggle {
@@ -467,7 +478,7 @@ button {
   font-weight: bold;
   letter-spacing: 1px;
   padding: 12px 36px;
-  border-radius: var(--radius-pill);
+  border-radius: 10px;
   margin-bottom: 24px;
   box-shadow: 0 6px 20px rgba(73, 152, 46, 0.35);
   text-transform: uppercase;
@@ -562,7 +573,8 @@ button {
   align-items: flex-start;
   padding: 60px 0 90px 0;
   background-color: var(--yellow-6, #fff100);
-  border-top: none; /* Hilangkan garis separator kecil antara hero dan about us */
+  border-top: none;
+  /* Hilangkan garis separator kecil antara hero dan about us */
   overflow: hidden;
 }
 
@@ -700,9 +712,11 @@ button {
 .main-tabs {
   display: flex;
   align-items: stretch;
-  background-color: #49982e; /* Base background 49982E */
+  background-color: #49982e;
+  /* Base background 49982E */
   border: none;
-  border-radius: 12px; /* Border radius dikurangin (Gambar 1 ref) */
+  border-radius: 12px;
+  /* Border radius dikurangin (Gambar 1 ref) */
   padding: 0;
   width: 100%;
   max-width: 100%;
@@ -720,7 +734,8 @@ button {
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: #ffffff;
-  background-color: #49982e; /* Base background 49982E */
+  background-color: #49982e;
+  /* Base background 49982E */
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
   position: relative;
@@ -739,14 +754,16 @@ button {
 }
 
 .main-tab-btn.active {
-  background-color: #3f8227; /* Jika terpilih warnanya 3F8227 */
+  background-color: #3f8227;
+  /* Jika terpilih warnanya 3F8227 */
   color: #ffffff;
 }
 
 /* Day Selector (Matching Gambar 1 & 3 Ref) */
 .day-selector-wrapper {
   display: flex;
-  justify-content: center; /* Align center per poin 4 / Gambar 2 */
+  justify-content: flex-start;
+  /* Default desktop: align dari kiri */
   margin-bottom: 24px;
   padding-bottom: 0;
   transition: opacity 0.25s ease;
@@ -761,15 +778,19 @@ button {
   display: inline-flex;
   background-color: transparent;
   border: 1.5px solid #49982e;
-  border-radius: 10px; /* Radius dikurangin */
-  padding: 0; /* Padding 0 agar active tab tidak ngambang */
+  border-radius: 10px;
+  /* Radius dikurangin */
+  padding: 0;
+  /* Padding 0 agar active tab tidak ngambang */
   overflow: hidden;
 }
 
 .day-btn {
   padding: 8px 22px;
-  border-radius: 0; /* Flat flush inside container */
-  font-size: 14.5px; /* Dikecilin sedikit per poin 4 */
+  border-radius: 0;
+  /* Flat flush inside container */
+  font-size: 14.5px;
+  /* Dikecilin sedikit per poin 4 */
   font-weight: 700;
   color: #49982e;
   background-color: transparent;
@@ -782,7 +803,8 @@ button {
 .day-btn.active {
   background-color: #49982e;
   color: #ffffff;
-  box-shadow: none !important; /* Tidak ngambang */
+  box-shadow: none !important;
+  /* Tidak ngambang */
 }
 
 /* Active Day Title Banner Bar (Matching Gambar 1 & Gambar 4 Ref) */
@@ -803,7 +825,8 @@ button {
 .schedule-day-badge {
   background-color: #49982e;
   color: #ffffff;
-  font-size: 15px; /* Dikecilin fontnya per poin 4 */
+  font-size: 15px;
+  /* Dikecilin fontnya per poin 4 */
   font-weight: 700;
   padding: 8px 22px;
   display: inline-flex;
@@ -813,9 +836,13 @@ button {
 }
 
 .schedule-day-date {
-  background-color: #ffffff; /* Putih kontras sesuai Gambar 2 */
-  color: #49982e; /* Teks hijau sesuai Gambar 1 */
-  font-size: 15px; /* Dikecilin font detail hari per poin 4 */
+  background-color: #ffffff;
+  opacity: 60%;
+  /* Putih kontras sesuai Gambar 2 */
+  color: #49982e;
+  /* Teks hijau sesuai Gambar 1 */
+  font-size: 15px;
+  /* Dikecilin font detail hari per poin 4 */
   font-weight: 600;
   padding: 8px 20px;
   flex: 1;
@@ -900,7 +927,8 @@ button {
   justify-content: center;
   gap: 8px;
   align-self: flex-start;
-  background-color: transparent !important; /* Ga perlu ada bg putihnya */
+  background-color: transparent !important;
+  /* Ga perlu ada bg putihnya */
   border: 1.5px solid var(--green-6, #49982e);
   border-radius: var(--radius-pill);
   padding: 7px 18px;
@@ -969,7 +997,7 @@ button {
   height: 50px;
   border-radius: 50%;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 40%, var(--green-6, #49982e) 0%, var(--green-10, #214415) 100%);
+  background: linear-gradient(180deg, var(--green-6, #49982e) 0%, #D9CD00 100%);
   border: none;
   box-sizing: border-box;
   display: flex;
@@ -1030,8 +1058,10 @@ button {
 }
 
 .multi-room-card {
-  background-color: rgba(255, 255, 255, 0.5) !important; /* #FFF dengan opacity 50% */
-  border: none !important; /* Tidak perlu ada outline hijau */
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  /* #FFF dengan opacity 30% */
+  border: none !important;
+  /* Tidak perlu ada outline hijau */
   border-radius: 16px;
   padding: 28px 32px;
   display: flex;
@@ -1135,8 +1165,8 @@ button {
   gap: 18px;
   width: 100%;
   min-width: 0;
-  min-height: 110px;
-  background-color: var(--green-6, #49982e) !important; /* Warna ganti dari yellow-7 menjadi green-6 */
+  min-height: 124px;
+  background-color: var(--green-6, #49982e);
   border: none;
   border-radius: var(--radius-md, 16px);
   padding: 16px 20px;
@@ -1146,19 +1176,7 @@ button {
   box-sizing: border-box;
   opacity: 1;
   transform: translateY(0);
-  box-shadow: none !important;
-  transition: transform 0.25s ease, background 0.25s ease;
-}
-
-/* Hover state: linear gradient atas green-6 ke bawah green-7 */
-.speaker-card:hover {
-  background: linear-gradient(180deg, var(--green-6, #49982e) 0%, var(--green-7, #3e8127) 100%) !important;
-  box-shadow: none !important;
-}
-
-/* Pseudo element disabled */
-.speaker-card::after {
-  display: none !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 /* Muncul/animasi saat melewati atau masuk viewport schedule section */
@@ -1167,7 +1185,23 @@ button {
   transform: translateY(0);
 }
 
-/* Speaker photo in schedule: circular frame */
+/* Hover: muncul gradient berwarna green-8 ke green-6 dari bawah ke atas / linear */
+.speaker-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--green-6, #49982e) 0%, var(--green-8, #346c21) 100%);
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.speaker-card:hover::before {
+  opacity: 1;
+}
+
+/* Speaker photo: clean fit without outer circle border */
 .speaker-photo-wrap {
   position: relative;
   z-index: 2;
@@ -1177,13 +1211,14 @@ button {
   overflow: hidden;
   flex-shrink: 0;
   border: none;
-  background: radial-gradient(circle at 50% 50%, #D9CD00 0%, #3F8228 100%);
+  background: linear-gradient(180deg, var(--green-6, #49982e) 0%, #D9CD00 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: none;
   box-sizing: border-box;
   -webkit-mask-image: -webkit-radial-gradient(white, black);
+  /* Crisp round mask clipping for WebKit */
   mask-image: radial-gradient(circle, #000 99%, transparent 100%);
 }
 
@@ -1208,7 +1243,8 @@ button {
 .speaker-name {
   font-size: 16px;
   font-weight: 800;
-  color: var(--neutral-1, #ffffff) !important; /* Neutral white */
+  color: var(--neutral-1, #ffffff) !important;
+  /* Neutral white */
   line-height: 1.35;
   margin-bottom: 4px;
   white-space: normal;
@@ -1217,7 +1253,8 @@ button {
 .speaker-role {
   font-size: 12px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.85) !important; /* Neutral muted white */
+  color: rgba(255, 255, 255, 0.85) !important;
+  /* Neutral muted white */
   line-height: 1.4;
   white-space: pre-line;
 }
@@ -1256,7 +1293,8 @@ button {
   border: none;
   border-radius: 36px;
   box-shadow: 0 35px 90px rgba(0, 0, 0, 0.45);
-  overflow: hidden; /* Memotong ribbon agar hanya 1/4 bagian yang visible */
+  overflow: hidden;
+  /* Memotong ribbon agar hanya 1/4 bagian yang visible */
   transform: scale(0.94) translateY(12px);
   transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1319,69 +1357,103 @@ button {
   height: 26px;
 }
 
-.speaker-modal-body {
+/* Speaker Modal Body V2: Center Photo + Glass Card Bottom (Figma Spec) */
+.speaker-modal-body-v2 {
   position: relative;
   z-index: 3;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 72px 80px;
-  gap: 52px;
-  min-height: 380px;
-}
-
-.speaker-modal-photo-col {
-  flex-shrink: 0;
-  width: 230px;
-  height: 230px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.speaker-modal-photo-wrap {
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 50% 50%, #D9CD00 0%, #3F8228 100%);
-  border: none;
-  box-sizing: border-box;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
-}
-
-.speaker-modal-img {
+  justify-content: flex-end;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  display: block;
+  margin: 0 auto;
+  min-height: 480px;
+  padding: 40px 24px 32px 24px;
+  box-sizing: border-box;
+  text-align: center;
 }
 
-.speaker-modal-info-col {
+/* Foto speaker tanpa background lingkaran, berdiri persis di tengah */
+.speaker-modal-photo-center {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 380px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: -56px; /* Bagian badan speaker turun masuk ke belakang kartu glass */
+  z-index: 1; /* Di belakang glass card (z-index: 2) */
+  pointer-events: none;
+}
+
+.speaker-modal-cutout-img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  display: block;
+  margin: 0 auto;
+  /* Drop shadow HANYA di bagian bawah gambar speaker saja agar terlihat tembus melalui glass */
+  filter: drop-shadow(0 24px 18px rgba(0, 0, 0, 0.7));
+}
+
+/* Glass Card Pembungkus Nama & Jabatan (Konfigurasi Figma Glass):
+   - Tanpa drop shadow luar pada glass card
+   - Glass transparan murni, memperlihatkan bayangan/kontur hitam speaker yang ada di baliknya */
+.speaker-modal-glass-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 560px;
+  background: rgba(255, 255, 255, 0.16); /* Transparan netral putih tanpa hijau */
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  border-radius: 20px;
+  border: none !important;
+  outline: none !important;
+  box-shadow: 
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.1); /* HANYA inner highlight & edge refraction Figma, TIDAK ADA drop shadow luar */
+  padding: 16px 28px 18px 28px;
+  text-align: center;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
-  color: var(--green-6, #49982e);
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.speaker-modal-name {
-  font-size: 38px;
-  font-weight: 800;
-  color: var(--green-6, #49982e);
+/* Nama Speaker: 32px Bold, warna Putih Bersih (Neutral White) */
+.speaker-modal-name-v2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
   line-height: 1.25;
-  margin-bottom: 14px;
+  margin: 0 0 4px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   letter-spacing: 0.2px;
+  text-align: center;
+  width: 100%;
 }
 
-.speaker-modal-role {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--green-7, #3e8127);
-  line-height: 1.45;
+/* Jabatan Speaker: 20px Regular (400), warna Putih Bersih */
+.speaker-modal-role-v2 {
+  font-size: 16px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.35;
+  margin: 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
   white-space: pre-line;
+  text-align: center;
+  width: 100%;
 }
 
 
@@ -1437,12 +1509,12 @@ button {
 }
 
 .speaker-tile:hover .speaker-tile-frame {
-  border-color: rgba(91, 166, 214, 0.9);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+  border-color: rgba(73, 152, 46, 0.95);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
 }
 
-/* Bingkai portrait outline tipis dengan radial gradient di tengah (Gambar 1).
-   Di tengah warna #D9CD00 dan di luarnya #3F8228 */
+/* Bingkai portrait outline tipis dengan radial gradient di tengah:
+   Di tengah kuning #D9CD00 dan di luarnya hijau #3F8228 */
 .speaker-tile-frame {
   position: relative;
   width: 100%;
@@ -1521,12 +1593,15 @@ button {
   border: 1.5px solid var(--green-6, #49982e);
   color: #ffffff;
   padding: 12px 32px;
-  border-radius: 9999px;
+  border-radius: 10px;
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.3px;
   cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  outline: 2px solid transparent;
+  outline-offset: 4px;
+  /* Outerline hover logic dari repo reference IDS tanpa translateY */
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, outline-color 0.25s ease, box-shadow 0.25s ease;
   box-shadow: 0 4px 15px rgba(73, 152, 46, 0.35);
 }
 
@@ -1534,8 +1609,9 @@ button {
   background: var(--green-7, #3e8127);
   border-color: var(--green-7, #3e8127);
   color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(73, 152, 46, 0.55), 0 0 0 2px rgba(255, 241, 0, 0.45);
+  transform: none !important;
+  outline-color: var(--green-6, #49982e);
+  box-shadow: 0 6px 22px rgba(73, 152, 46, 0.45);
 }
 
 .btn-load-more-speakers svg {
@@ -1748,27 +1824,29 @@ button {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--yellow-6, #f4d849);
+  color: var(--green-9, #214415);
   border: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: none;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
   outline: none;
 }
 
 .gallery-nav-btn svg {
   width: 20px;
   height: 20px;
+  stroke: currentColor;
+  stroke-width: 2.5;
 }
 
 .gallery-nav-btn:hover {
-  background: #f8fafc;
+  background: var(--yellow-5, #f6df6a);
   transform: scale(1.08);
-  box-shadow: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
 
 .gallery-nav-btn:active {
@@ -1956,20 +2034,25 @@ button {
   display: flex;
   justify-content: center;
 }
+
 .summary-grid-track.is-col-1 .news-card {
   max-width: 280px;
 }
+
 .summary-grid-track.is-col-2 {
   display: flex;
   justify-content: center;
 }
+
 .summary-grid-track.is-col-2 .news-card {
   max-width: 280px;
 }
+
 .summary-grid-track.is-col-3 {
   display: flex;
   justify-content: center;
 }
+
 .summary-grid-track.is-col-3 .news-card {
   max-width: 280px;
 }
@@ -2037,6 +2120,7 @@ button {
     gap: 6px;
     margin-top: 24px;
   }
+
   .summary-page-btn {
     min-width: 34px;
     height: 34px;
@@ -2299,7 +2383,8 @@ button {
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: none; /* Removed drop shadow per user request */
+  box-shadow: none;
+  /* Removed drop shadow per user request */
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -2372,7 +2457,8 @@ button {
   justify-content: center;
   pointer-events: none;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  filter: none; /* Removed drop shadow per user request */
+  filter: none;
+  /* Removed drop shadow per user request */
 }
 
 .highlights-card:hover .highlights-play-badge {
@@ -2426,6 +2512,7 @@ button {
 
 /* Responsive: Mobile & Tablet */
 @media (max-width: 1199px) and (min-width: 992px) {
+
   .highlights-grid.is-portrait .highlights-card,
   .highlights-card.is-portrait {
     flex: 0 1 calc((100% - 48px) / 3);
@@ -2434,6 +2521,7 @@ button {
 }
 
 @media (max-width: 991px) and (min-width: 769px) {
+
   .highlights-grid.is-landscape .highlights-card,
   .highlights-card.is-landscape {
     flex: 0 1 calc((100% - 28px) / 2);
@@ -2630,10 +2718,10 @@ button {
   margin-bottom: 0;
 }
 
-/* Footer bottom */
+/* Footer bottom: Kuning hangat EMF (#f4d849), elemen hijau (#49982e) */
 .site-footer {
   padding: 0 0 40px 0;
-  background-color: var(--footer-bg, var(--bg-section-alt));
+  background-color: var(--yellow-6, #f4d849) !important;
   border-top: none;
   font-size: 12px;
 }
@@ -2643,7 +2731,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  border-top: 1px solid var(--footer-border-color, rgba(255, 255, 255, 0.12));
+  border-top: 1.5px solid rgba(73, 152, 46, 0.25) !important;
   padding-top: 28px;
 }
 
@@ -2682,14 +2770,14 @@ button {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background-color: var(--footer-social-bg, #0b516c);
-  color: var(--footer-social-color, #ffffff);
+  background-color: var(--green-6, #49982e) !important;
+  color: #ffffff !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: all var(--transition-normal);
   text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1.5px solid rgba(73, 152, 46, 0.35) !important;
 }
 
 .social-circle-btn svg {
@@ -2699,15 +2787,16 @@ button {
 }
 
 .social-circle-btn:hover {
-  background-color: var(--green-6, #49982e);
-  color: var(--yellow-6, #fff100);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background-color: var(--green-7, #3e8127) !important;
+  color: #ffffff !important;
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(33, 68, 21, 0.3) !important;
 }
 
 .footer-copy {
   flex: 1.5;
   text-align: center;
-  color: var(--green-8, #346c21);
+  color: var(--green-8, #346c21) !important;
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.2px;
@@ -2810,7 +2899,7 @@ button {
     text-align: center;
     gap: 16px;
     padding-top: 22px;
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1.5px solid rgba(73, 152, 46, 0.25) !important;
   }
 
   .footer-left {
@@ -3417,7 +3506,7 @@ button {
   }
 
   .day-selector-wrapper {
-    justify-content: flex-start !important;
+    justify-content: center !important;
     width: 100%;
     margin-bottom: 28px;
     border-bottom: none;
@@ -3425,7 +3514,7 @@ button {
   }
 
   .day-selector {
-    margin: 0 !important;
+    margin: 0 auto !important;
   }
 
   .day-btn {
@@ -3440,7 +3529,7 @@ button {
     grid-template-columns: 1fr;
     gap: 10px;
     padding: 18px 0;
-    cursor: pointer;
+    cursor: default;
   }
 
   .schedule-meta-col {
@@ -3632,6 +3721,7 @@ button {
     -ms-overflow-style: none;
     padding: 10px 4px 20px 4px;
   }
+
   .summary-grid-container::-webkit-scrollbar {
     display: none;
   }
@@ -3646,65 +3736,66 @@ button {
     height: auto;
   }
 
-  /* Speaker Modal Mobile (Gambar 2 Reference): Foto di atas, nama & jabatan di bawah terpusat */
+  /* Speaker Modal Mobile (V2: Center Photo + Glass Card) */
   .speaker-modal-backdrop {
     padding: 16px;
   }
 
   .speaker-modal-dialog,
   .speaker-modal-container {
-    max-width: 380px;
+    max-width: 92vw;
     width: 100%;
-    border-radius: 28px;
-  }
-
-  .speaker-modal-body {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 44px 24px 36px 24px;
-    gap: 24px;
     min-height: auto;
-  }
-
-  .speaker-modal-photo-col {
-    width: 150px;
-    height: 150px;
+    border-radius: 28px;
     margin: 0 auto;
   }
 
-  .speaker-modal-photo-wrap {
-    width: 150px;
-    height: 150px;
-  }
-
-  .speaker-modal-info-col {
+  /* Modal V2 Mobile Layout */
+  .speaker-modal-body-v2 {
+    min-height: auto;
+    padding: 40px 16px 20px 16px;
     align-items: center;
     text-align: center;
+  }
+
+  .speaker-modal-photo-center {
+    max-width: 260px;
+    height: 220px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0;
+    /* Mentok nempel di atas glass card tanpa overlap */
+  }
+
+  .speaker-modal-glass-card {
     width: 100%;
+    max-width: 100%;
+    border-radius: 16px;
+    border: none;
+    outline: none;
+    padding: 12px 16px 14px 16px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  .speaker-modal-name {
-    font-size: 22px;
-    font-weight: 800;
-    margin-bottom: 8px;
-    line-height: 1.3;
+  .speaker-modal-name-v2 {
+    font-size: 20px;
+    line-height: 1.25;
+    margin-bottom: 4px;
+    text-align: center;
   }
 
-  .speaker-modal-role {
-    font-size: 15px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
-    line-height: 1.45;
+  .speaker-modal-role-v2 {
+    font-size: 13px;
+    line-height: 1.35;
+    text-align: center;
   }
 
   .speaker-modal-close {
-    top: 16px;
-    right: 16px;
+    top: 14px;
+    right: 14px;
     width: 38px;
     height: 38px;
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
-    background: radial-gradient(circle at 30% 20%, var(--green-7, #3e8127) 0%, var(--green-10, #214415) 100%);
   }
 
   /* Footer responsive */
@@ -4239,7 +4330,7 @@ button {
   font-weight: 700;
   letter-spacing: 1.5px;
   padding: 5px 14px;
-  border-radius: var(--radius-pill);
+  border-radius: 10px;
   margin-bottom: 12px;
   text-transform: uppercase;
 }
@@ -4301,7 +4392,8 @@ button {
   border-color: rgba(255, 255, 255, 0.4);
   outline: 2px solid rgba(255, 255, 255, 0.3);
   color: #ffffff;
-  transform: none; /* No translate per user request */
+  transform: none;
+  /* No translate per user request */
 }
 
 .livestream-room-pill.active {
@@ -4371,7 +4463,7 @@ button {
 
 .livestream-yt-btn:hover {
   background: #cc0000;
-  transform: translateY(-2px);
+  transform: none !important;
   box-shadow: 0 8px 24px rgba(255, 0, 0, 0.5);
   color: #ffffff;
 }
@@ -4462,7 +4554,7 @@ button {
   background: var(--green-7, #3e8127);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.35);
-  transform: translateY(-3px);
+  transform: none !important;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
 }
 
@@ -4471,7 +4563,7 @@ button {
 }
 
 .back-to-top-btn:hover svg {
-  transform: translateY(-2px);
+  transform: none !important;
 }
 
 @media (max-width: 768px) {
@@ -4593,7 +4685,7 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--yellow-6, #fff100);
+  background-color: var(--yellow-6, #f4d849);
   color: #141414;
   font-size: 16px;
   font-weight: 800;
@@ -4603,15 +4695,18 @@ button {
   cursor: pointer;
   white-space: nowrap;
   letter-spacing: 0.2px;
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  outline: 3px solid transparent;
+  outline-offset: 4px;
+  transition: background-color 0.25s ease, color 0.25s ease, outline-color 0.25s ease, box-shadow 0.25s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .btn-floating-ticket:hover {
-  background-color: var(--yellow-4, #fff65e);
+  background-color: var(--yellow-5, #f6df6a);
   color: #141414;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(73, 152, 46, 0.4);
+  transform: none !important;
+  outline-color: var(--yellow-6, #f4d849);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
 @media (max-width: 768px) {

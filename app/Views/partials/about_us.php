@@ -12,20 +12,9 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
       <div class="about-us-left editorial-left">
         <div class="about-us-logo editorial-logo">
           <?php 
-            $overviewSlot = $site['logo_placements']['overview'] ?? null;
-            $overviewSlotActive = !isset($overviewSlot['is_active']) || !empty($overviewSlot['is_active']);
-            $overviewVariant = $overviewSlot['variant'] ?? 'auto';
-
-            if ($overviewVariant === 'white') {
-                $aboutLogo = !empty($site['logo_a_white']) ? $site['logo_a_white'] : base_url('assets/img/logo_green_emf26.webp');
-            } else {
-                $aboutLogo = !empty($site['logo_overview']) ? $site['logo_overview'] : (!empty($site['logo_a_color']) ? $site['logo_a_color'] : base_url('assets/img/logo_green_emf26.webp')); 
-            }
-            $aboutLogoTarget = !empty($site['logo_overview_target_url']) ? $site['logo_overview_target_url'] : null;
+            $aboutLogo = base_url('assets/img/logo_green_emf26.webp');
           ?>
-          <?php if ($overviewSlotActive): ?>
-            <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title']) ?>" class="about-us-brand-logo editorial-brand-logo">
-          <?php endif; ?>
+          <img src="<?= esc($aboutLogo) ?>" alt="Energi & Mineral Festival 2026" class="about-us-brand-logo editorial-brand-logo">
         </div>
 
         <p class="about-us-intro editorial-intro">

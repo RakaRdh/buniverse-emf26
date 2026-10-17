@@ -179,13 +179,40 @@ class Home extends BaseController
                 '--navbar-cta-hover-outline' => '#49982e',
                 '--footer-bg' => '#f4d849',
                 '--footer-social-bg' => '#49982e',
+                '--footer-social-color' => '#ffffff',
+                '--footer-text-color' => '#346c21',
+                '--footer-border-color' => 'rgba(73, 152, 46, 0.25)',
             ];
 
-            // If BackendCMS returned live theme_properties, merge them so DB values take effect
+            // If BackendCMS returned live theme_properties, merge them EXCEPT for protected EMF theme tokens
+            $protectedEmfTokens = [
+                '--footer-bg',
+                '--footer-social-bg',
+                '--footer-social-color',
+                '--footer-text-color',
+                '--footer-border-color',
+                '--bg-page',
+                '--bg-section-alt',
+                '--bg-card',
+                '--text-primary',
+                '--text-secondary',
+                '--text-dark',
+                '--accent-cyan',
+                '--accent-blue',
+                '--accent-light',
+                '--navbar-cta-bg',
+                '--navbar-cta-text',
+                '--navbar-cta-hover-bg',
+                '--navbar-cta-hover-text',
+                '--navbar-cta-hover-outline',
+            ];
+
             if (!empty($live['theme_properties']) && is_array($live['theme_properties'])) {
                 foreach ($live['theme_properties'] as $tp) {
                     if (!empty($tp['property']) && isset($tp['value'])) {
-                        $emfThemeTokens[$tp['property']] = $tp['value'];
+                        if (!in_array($tp['property'], $protectedEmfTokens, true)) {
+                            $emfThemeTokens[$tp['property']] = $tp['value'];
+                        }
                     }
                 }
             }
@@ -305,36 +332,94 @@ class Home extends BaseController
             }
             === END LEGACY SPONSORS SYNC === */
 
-            // Sync live schedule if available
+            // Sync live schedule if available from current event
+            $hasLiveSessions = false;
             if (!empty($live['schedule'])) {
-                if (!empty($live['schedule']['day_1'])) {
-                    $schedule['day_1']['label'] = $live['schedule']['day_1']['label'] ?? ($schedule['day_1']['label'] ?? 'Day 1');
-                    $schedule['day_1']['date'] = $live['schedule']['day_1']['date'] ?? ($schedule['day_1']['date'] ?? '');
-                    if (!empty($live['schedule']['day_1']['sessions'])) {
-                        $schedule['day_1']['items'] = $live['schedule']['day_1']['sessions'];
+                if (!empty($live['schedule']['days'])) {
+                    foreach ($live['schedule']['days'] as $ld) {
+                        if (!empty($ld['sessions'])) {
+                            $hasLiveSessions = true;
+                            break;
+                        }
                     }
+                } elseif (!empty($live['schedule']['day_1']['sessions']) || !empty($live['schedule']['day_2']['sessions'])) {
+                    $hasLiveSessions = true;
                 }
-                if (!empty($live['schedule']['day_2'])) {
-                    $schedule['day_2']['label'] = $live['schedule']['day_2']['label'] ?? ($schedule['day_2']['label'] ?? 'Day 2');
-                    $schedule['day_2']['date'] = $live['schedule']['day_2']['date'] ?? ($schedule['day_2']['date'] ?? '');
-                    if (!empty($live['schedule']['day_2']['sessions'])) {
-                        $schedule['day_2']['items'] = $live['schedule']['day_2']['sessions'];
-                    }
-                }
+            }
+
+            if ($hasLiveSessions) {
                 if (!empty($live['schedule']['days'])) {
                     $daysData = $live['schedule']['days'];
                     if (isset($daysData[0])) {
-                        $schedule['day_1']['label'] = $daysData[0]['label'] ?? $schedule['day_1']['label'];
+                        $schedule['day_1']['label'] = $daysData[0]['label'] ?? ($schedule['day_1']['label'] ?? 'Day 1');
                         $schedule['day_1']['date'] = $daysData[0]['date'] ?? ($schedule['day_1']['date'] ?? '');
                         if (!empty($daysData[0]['sessions'])) {
                             $schedule['day_1']['items'] = $daysData[0]['sessions'];
                         }
                     }
                     if (isset($daysData[1])) {
-                        $schedule['day_2']['label'] = $daysData[1]['label'] ?? $schedule['day_2']['label'];
+                        $schedule['day_2']['label'] = $daysData[1]['label'] ?? ($schedule['day_2']['label'] ?? 'Day 2');
                         $schedule['day_2']['date'] = $daysData[1]['date'] ?? ($schedule['day_2']['date'] ?? '');
                         if (!empty($daysData[1]['sessions'])) {
                             $schedule['day_2']['items'] = $daysData[1]['sessions'];
+                        }
+                    }
+                } elseif (!empty($live['schedule']['day_1']) || !empty($live['schedule']['day_2'])) {
+                    if (!empty($live['schedule']['day_1'])) {
+                        $schedule['day_1']['label'] = $live['schedule']['day_1']['label'] ?? ($schedule['day_1']['label'] ?? 'Day 1');
+                        $schedule['day_1']['date'] = $live['schedule']['day_1']['date'] ?? ($schedule['day_1']['date'] ?? '');
+                        if (!empty($live['schedule']['day_1']['sessions'])) {
+                            $schedule['day_1']['items'] = $live['schedule']['day_1']['sessions'];
+                        }
+                    }
+                    if (!empty($live['schedule']['day_2'])) {
+                        $schedule['day_2']['label'] = $live['schedule']['day_2']['label'] ?? ($schedule['day_2']['label'] ?? 'Day 2');
+                        $schedule['day_2']['date'] = $live['schedule']['day_2']['date'] ?? ($schedule['day_2']['date'] ?? '');
+                        if (!empty($live['schedule']['day_2']['sessions'])) {
+                            $schedule['day_2']['items'] = $live['schedule']['day_2']['sessions'];
+                        }
+                    }
+                }
+            } else {
+                // Fallback data sementara: Ambil dari API production investordailysummit.com
+                $prodScheduleCacheKey = 'cms_temp_schedule_ids_prod';
+                $prodSchedule = cache($prodScheduleCacheKey);
+                if (empty($prodSchedule)) {
+                    try {
+                        $client = \Config\Services::curlrequest(['timeout' => 4.0, 'verify' => false]);
+                        $resp = $client->get('https://investordailysummit.com/backend/api/v1/event/investor-daily-summit-2026', ['http_errors' => false]);
+                        if ($resp->getStatusCode() === 200) {
+                            $pJson = json_decode($resp->getBody(), true);
+                            if (!empty($pJson['data']['schedule'])) {
+                                $prodSchedule = $pJson['data']['schedule'];
+                                cache()->save($prodScheduleCacheKey, $prodSchedule, 86400);
+                            }
+                        }
+                    } catch (\Throwable $e) {}
+                }
+
+                if (!empty($prodSchedule)) {
+                    if (!empty($prodSchedule['days'])) {
+                        if (isset($prodSchedule['days'][0])) {
+                            $schedule['day_1']['label'] = $prodSchedule['days'][0]['label'] ?? 'Day 1';
+                            $schedule['day_1']['date'] = $prodSchedule['days'][0]['date'] ?? '';
+                            $schedule['day_1']['items'] = $prodSchedule['days'][0]['sessions'] ?? [];
+                        }
+                        if (isset($prodSchedule['days'][1])) {
+                            $schedule['day_2']['label'] = $prodSchedule['days'][1]['label'] ?? 'Day 2';
+                            $schedule['day_2']['date'] = $prodSchedule['days'][1]['date'] ?? '';
+                            $schedule['day_2']['items'] = $prodSchedule['days'][1]['sessions'] ?? [];
+                        }
+                    } elseif (!empty($prodSchedule['day_1']) || !empty($prodSchedule['day_2'])) {
+                        if (!empty($prodSchedule['day_1']['sessions'])) {
+                            $schedule['day_1']['label'] = $prodSchedule['day_1']['label'] ?? 'Day 1';
+                            $schedule['day_1']['date'] = $prodSchedule['day_1']['date'] ?? '';
+                            $schedule['day_1']['items'] = $prodSchedule['day_1']['sessions'];
+                        }
+                        if (!empty($prodSchedule['day_2']['sessions'])) {
+                            $schedule['day_2']['label'] = $prodSchedule['day_2']['label'] ?? 'Day 2';
+                            $schedule['day_2']['date'] = $prodSchedule['day_2']['date'] ?? '';
+                            $schedule['day_2']['items'] = $prodSchedule['day_2']['sessions'];
                         }
                     }
                 }
@@ -398,14 +483,26 @@ class Home extends BaseController
             unset($spk);
 
             foreach ($sectionDecorations as &$dec) {
-                if (!empty($dec['image_url']))
+                if (!empty($dec['image_url'])) {
                     $dec['image_url'] = $fixUrl($dec['image_url']);
+                }
+                // Jika dekorasi berada di section location, ganti aset cakram/disc lama menjadi ribbon.png
+                if (($dec['section_key'] ?? '') === 'location') {
+                    $dec['image_url'] = base_url('assets/img/ribbon.png');
+                    $dec['tint_color'] = null; // Tampilkan ribbon warna asli tanpa tint biru/hitam
+                }
             }
             unset($dec);
 
             foreach ($customPlacements as &$cp) {
-                if (!empty($cp['image_url']))
+                if (!empty($cp['image_url'])) {
                     $cp['image_url'] = $fixUrl($cp['image_url']);
+                }
+                // Jika custom placement berada di section location, ganti aset cakram/disc lama menjadi ribbon.png
+                if (($cp['section_key'] ?? '') === 'location') {
+                    $cp['image_url'] = base_url('assets/img/ribbon.png');
+                    $cp['tint_color'] = null; // Tampilkan ribbon warna asli tanpa tint biru/hitam
+                }
             }
             unset($cp);
 

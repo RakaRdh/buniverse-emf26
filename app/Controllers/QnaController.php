@@ -6,7 +6,7 @@ use App\Config\MockData;
 
 class QnaController extends BaseController
 {
-    protected string $eventSlug = 'investor-daily-summit-2026';
+    protected string $eventSlug = 'emf-2026';
     
     protected function fetchApi(string $endpoint, string $method = 'GET', array $data = [])
     {
