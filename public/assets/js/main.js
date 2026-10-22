@@ -143,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const galleryDataEl = document.getElementById('galleryData');
   const prevBtn = document.getElementById('galleryPrevBtn');
   const nextBtn = document.getElementById('galleryNextBtn');
+  const viewport = galleryCascadeWrapper ? galleryCascadeWrapper.querySelector('.gallery-cascade-viewport') : null;
 
   if (galleryCascadeWrapper && galleryDataEl) {
     let galleryItems = [];
@@ -156,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const totalItems = galleryItems.length;
       let currentIndex = 0;
       let autoSlideTimer = null;
-      const AUTO_SLIDE_DELAY = 4500; // 4.5 seconds
+      const AUTO_SLIDE_DELAY = 5000; // 6.5 seconds (relaxed autoscroll pace)
 
       // Cache elements
       const stage = document.getElementById('galleryCascadeStage');
@@ -175,94 +176,336 @@ document.addEventListener('DOMContentLoaded', () => {
       // Preload next and previous images for ultra-smooth transition
       const preloadedCache = new Set();
       const preloadImages = (centerIdx) => {
-        const indicesToPreload = [
-          getNormalizedIndex(centerIdx - 2),
-          getNormalizedIndex(centerIdx - 1),
-          getNormalizedIndex(centerIdx),
-          getNormalizedIndex(centerIdx + 1),
-          getNormalizedIndex(centerIdx + 2),
-          getNormalizedIndex(centerIdx + 3),
-        ];
-
-        indicesToPreload.forEach((idx) => {
-          const item = galleryItems[idx];
+        for (let offset = -4; offset <= 4; offset++) {
+          const targetIndex = getNormalizedIndex(centerIdx + offset);
+          const item = galleryItems[targetIndex];
           if (item && item.image_url && !preloadedCache.has(item.image_url)) {
             const img = new Image();
             img.src = item.image_url;
             preloadedCache.add(item.image_url);
           }
+        }
+      };
+
+      // Render the gallery with actual motion transitions:
+      // Lightbox Modal Handlers for Center Card
+      const galleryModal = document.getElementById('galleryModal');
+      const modalOverlay = document.getElementById('galleryModalOverlay');
+      const modalClose = document.getElementById('galleryModalClose');
+      const modalImg = document.getElementById('galleryModalImg');
+      const modalCaption = document.getElementById('galleryModalCaption');
+
+      const openModal = (item) => {
+        if (!item || !galleryModal) return;
+        if (modalImg) {
+          modalImg.src = item.image_url;
+          modalImg.alt = item.caption || '';
+        }
+        if (modalCaption) {
+          modalCaption.textContent = item.caption || '';
+        }
+        galleryModal.classList.add('is-open');
+        galleryModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      };
+
+      const closeModal = () => {
+        if (!galleryModal) return;
+        galleryModal.classList.remove('is-open');
+        galleryModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      };
+
+      if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
+      if (modalClose) modalClose.addEventListener('click', closeModal);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && galleryModal && galleryModal.classList.contains('is-open')) {
+          closeModal();
+        }
+      });
+
+      // 7-card rotating architecture (-3 to 3) for continuous 60fps CSS hardware-accelerated movement
+      const POSITIONS = [-3, -2, -1, 0, 1, 2, 3];
+      let cardList = stage ? Array.from(stage.querySelectorAll('.gallery-cascade-card')) : [];
+      const thumbListItems = thumbList ? Array.from(thumbList.querySelectorAll('.gallery-thumb-item')) : [];
+      let isAnimating = false;
+
+      // Update active state and sliding 5-slot window for thumbnails matching user specification:
+      // index 0 -> [1(ac), 2, 3, 4, 5] (active slot 0)
+      // index 1 -> [1, 2(ac), 3, 4, 5] (active slot 1)
+      // index 2 -> [1, 2, 3(ac), 4, 5] (active slot 2)
+      // index 3 -> [2, 3, 4(ac), 5, 6] (active slot 2)
+      // index 4 -> [3, 4, 5(ac), 6, 7] (active slot 2)
+      // Update active state and sliding window for thumbnails:
+      // Mobile (<= 768px, 3 visible slots):
+      // - index 0 -> [0(ac), 1, 2] (active slot 0)
+      // - index >= 1 -> [i-1, i(ac), i+1] (active slot 1)
+      // Desktop (> 768px, 5 visible slots):
+      // - index 0 -> [0(ac), 1, 2, 3, 4] (active slot 0)
+      // - index 1 -> [0, 1(ac), 2, 3, 4] (active slot 1)
+      // - index >= 2 -> [i-2, i-1, i(ac), i+1, i+2] (active slot 2)
+      const updateThumbnails = () => {
+        const isMobile = window.innerWidth <= 768;
+        let activeSlot = 0;
+        let slotIndices = [];
+
+        if (isMobile) {
+          if (currentIndex === 0) {
+            activeSlot = 0;
+            slotIndices = [0, 1, 2].map(idx => getNormalizedIndex(idx));
+          } else {
+            activeSlot = 1;
+            slotIndices = [-1, 0, 1].map(offset => getNormalizedIndex(currentIndex + offset));
+          }
+          // Pad remaining slots 3 and 4 so DOM elements stay safe
+          slotIndices.push(getNormalizedIndex(currentIndex + 2), getNormalizedIndex(currentIndex + 3));
+        } else {
+          if (currentIndex === 0) {
+            activeSlot = 0;
+            slotIndices = [0, 1, 2, 3, 4].map(idx => getNormalizedIndex(idx));
+          } else if (currentIndex === 1) {
+            activeSlot = 1;
+            slotIndices = [0, 1, 2, 3, 4].map(idx => getNormalizedIndex(idx));
+          } else {
+            activeSlot = 2;
+            slotIndices = [-2, -1, 0, 1, 2].map(offset => getNormalizedIndex(currentIndex + offset));
+          }
+        }
+
+        thumbListItems.forEach((thumb, slot) => {
+          const itemIdx = slotIndices[slot];
+          const item = galleryItems[itemIdx];
+          if (!item) return;
+
+          thumb.setAttribute('data-gallery-index', itemIdx);
+          thumb.setAttribute('aria-label', `Pindah ke foto ${itemIdx + 1}: ${item.caption || ''}`);
+
+          const img = thumb.querySelector('img');
+          if (img) {
+            if (img.getAttribute('src') !== item.image_url) {
+              img.src = item.image_url;
+            }
+            img.alt = item.caption || `Thumbnail ${itemIdx + 1}`;
+          }
+
+          if (slot === activeSlot) {
+            thumb.classList.add('is-active');
+            thumb.setAttribute('aria-selected', 'true');
+          } else {
+            thumb.classList.remove('is-active');
+            thumb.setAttribute('aria-selected', 'false');
+          }
         });
       };
 
-      // Render the 5 visible cascaded cards and 5 thumbnail navigation slots
-      const renderGallery = () => {
-        // Cards and thumbnails positions: -2, -1, 0, 1, 2
-        // Position 0 = Active item (frontmost in cascade, center in thumbnail strip)
-        for (let pos = -2; pos <= 2; pos++) {
-          const targetIndex = getNormalizedIndex(currentIndex + pos);
-          const item = galleryItems[targetIndex];
+      // Ensure thumbnails update if resizing between mobile and desktop
+      window.addEventListener('resize', () => {
+        updateThumbnails();
+      });
 
-          // 1. Update cascade card
-          const card = stage ? stage.querySelector(`.gallery-cascade-card[data-rel-pos="${pos}"]`) : null;
-          if (card && item) {
-            const img = card.querySelector('img');
-            if (img && img.src !== item.image_url) {
-              img.src = item.image_url;
-              img.alt = item.caption || `Gallery Foto ${targetIndex + 1}`;
-            }
-            card.setAttribute('aria-label', item.caption || `Gallery Foto ${targetIndex + 1}`);
-            if (pos === 0) {
+      // Initial layout setup: assign positions and initial images to all 7 cards
+      const initGallery = () => {
+        cardList.forEach((card, idx) => {
+          const relPos = POSITIONS[idx];
+          card.className = `gallery-cascade-card card-pos-${relPos}`;
+          card.setAttribute('data-rel-pos', relPos);
+
+          const targetIndex = getNormalizedIndex(currentIndex + relPos);
+          const item = galleryItems[targetIndex];
+          const img = card.querySelector('img');
+          if (img && item) {
+            img.src = item.image_url;
+            img.alt = item.caption || `Gallery Foto ${targetIndex + 1}`;
+          }
+          if (relPos === 0) {
+            card.setAttribute('aria-current', 'true');
+            card.style.cursor = 'pointer';
+          } else {
+            card.removeAttribute('aria-current');
+            card.style.cursor = 'pointer';
+          }
+        });
+        updateThumbnails();
+        preloadImages(currentIndex);
+      };
+
+      // Core Step Function: Rotates cards continuously with pure GPU CSS transforms
+      const stepGallery = (dir) => {
+        if (isAnimating || cardList.length < 7) return;
+        isAnimating = true;
+
+        currentIndex = getNormalizedIndex(currentIndex + dir);
+
+        if (dir === 1) {
+          // FORWARD / NEXT
+          // cardList[0] is currently offscreen at pos -3. Pop from start, push to end.
+          const exitingCard = cardList.shift();
+          cardList.push(exitingCard);
+
+          // Place exitingCard at pos 3 instantly without transition
+          exitingCard.style.transition = 'none';
+          exitingCard.className = 'gallery-cascade-card card-pos-3';
+          exitingCard.setAttribute('data-rel-pos', '3');
+          exitingCard.removeAttribute('aria-current');
+
+          const nextItem = galleryItems[getNormalizedIndex(currentIndex + 3)];
+          const nextImg = exitingCard.querySelector('img');
+          if (nextImg && nextItem) {
+            nextImg.src = nextItem.image_url;
+            nextImg.alt = nextItem.caption || '';
+          }
+          void exitingCard.offsetHeight; // Force browser layout flush
+          exitingCard.style.transition = '';
+
+          // Transition the other 6 cards smoothly to their new positions (-3, -2, -1, 0, 1, 2)
+          cardList.forEach((card, idx) => {
+            if (idx === 6) return; // already placed at pos 3
+            const newPos = idx - 3;
+            card.className = `gallery-cascade-card card-pos-${newPos}`;
+            card.setAttribute('data-rel-pos', newPos);
+            if (newPos === 0) {
               card.setAttribute('aria-current', 'true');
             } else {
               card.removeAttribute('aria-current');
             }
-          }
+          });
+        } else if (dir === -1) {
+          // BACKWARD / PREV
+          // cardList[6] is currently offscreen at pos 3. Pop from end, unshift to start.
+          const exitingCard = cardList.pop();
+          cardList.unshift(exitingCard);
 
-          // 2. Update thumbnail item
-          const thumb = thumbList ? thumbList.querySelector(`.gallery-thumb-item[data-rel-pos="${pos}"]`) : null;
-          if (thumb && item) {
-            const thumbImg = thumb.querySelector('img');
-            if (thumbImg && thumbImg.src !== item.image_url) {
-              thumbImg.src = item.image_url;
-              thumbImg.alt = item.caption || `Thumbnail Foto ${targetIndex + 1}`;
-            }
-            thumb.setAttribute('aria-label', `Pindah ke foto ${targetIndex + 1}: ${item.caption || ''}`);
-            if (pos === 0) {
-              thumb.classList.add('is-active');
-              thumb.setAttribute('aria-selected', 'true');
-            } else {
-              thumb.classList.remove('is-active');
-              thumb.setAttribute('aria-selected', 'false');
-            }
+          // Place exitingCard at pos -3 instantly without transition
+          exitingCard.style.transition = 'none';
+          exitingCard.className = 'gallery-cascade-card card-pos--3';
+          exitingCard.setAttribute('data-rel-pos', '-3');
+          exitingCard.removeAttribute('aria-current');
+
+          const prevItem = galleryItems[getNormalizedIndex(currentIndex - 3)];
+          const prevImg = exitingCard.querySelector('img');
+          if (prevImg && prevItem) {
+            prevImg.src = prevItem.image_url;
+            prevImg.alt = prevItem.caption || '';
           }
+          void exitingCard.offsetHeight; // Force browser layout flush
+          exitingCard.style.transition = '';
+
+          // Transition the other 6 cards smoothly to their new positions (-2, -1, 0, 1, 2, 3)
+          cardList.forEach((card, idx) => {
+            if (idx === 0) return; // already placed at pos -3
+            const newPos = idx - 3;
+            card.className = `gallery-cascade-card card-pos-${newPos}`;
+            card.setAttribute('data-rel-pos', newPos);
+            if (newPos === 0) {
+              card.setAttribute('aria-current', 'true');
+            } else {
+              card.removeAttribute('aria-current');
+            }
+          });
         }
 
-        // Trigger preload for upcoming slides
+        updateThumbnails();
         preloadImages(currentIndex);
-      };
 
-      // Navigation methods
-      const goToIndex = (newIndex) => {
-        currentIndex = getNormalizedIndex(newIndex);
-        renderGallery();
-        resetAutoSlideTimer();
+        setTimeout(() => {
+          isAnimating = false;
+        }, 500);
       };
 
       const goToPrev = () => {
-        goToIndex(currentIndex - 1);
+        stepGallery(-1);
+        resetAutoSlideTimer();
       };
 
       const goToNext = () => {
-        goToIndex(currentIndex + 1);
+        stepGallery(1);
+        resetAutoSlideTimer();
       };
 
-      // Auto scroll logic
+      const goToIndex = (targetIndex) => {
+        if (targetIndex === currentIndex || isAnimating) return;
+        const total = totalItems;
+        let diff = (targetIndex - currentIndex + total) % total;
+        if (diff > total / 2) diff -= total;
+
+        if (diff === 1) {
+          goToNext();
+        } else if (diff === -1) {
+          goToPrev();
+        } else if (diff > 0) {
+          stepGallery(1);
+          resetAutoSlideTimer();
+          setTimeout(() => {
+            if (currentIndex !== targetIndex) {
+              goToIndex(targetIndex);
+            }
+          }, 320);
+        } else {
+          stepGallery(-1);
+          resetAutoSlideTimer();
+          setTimeout(() => {
+            if (currentIndex !== targetIndex) {
+              goToIndex(targetIndex);
+            }
+          }, 320);
+        }
+      };
+
+      // Click on cards in stage:
+      // - Center card (relPos === 0): Open lightbox modal!
+      // - Below center (relPos > 0): Advance forward!
+      // - Above center (relPos < 0): Advance backward!
+      if (stage) {
+        stage.addEventListener('click', (e) => {
+          const card = e.target.closest('.gallery-cascade-card');
+          if (!card) return;
+          const relPos = parseInt(card.getAttribute('data-rel-pos'), 10);
+          if (relPos === 0) {
+            const activeItem = galleryItems[currentIndex];
+            openModal(activeItem);
+          } else if (relPos > 0) {
+            goToNext();
+          } else if (relPos < 0) {
+            goToPrev();
+          }
+        });
+      }
+
+      // Mobile touch swipe gesture support
+      if (viewport) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let hasSwiped = false;
+
+        viewport.addEventListener('touchstart', (e) => {
+          if (e.touches.length !== 1) return;
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          hasSwiped = false;
+        }, { passive: true });
+
+        viewport.addEventListener('touchmove', (e) => {
+          if (hasSwiped || e.touches.length !== 1) return;
+          const diffX = e.touches[0].clientX - touchStartX;
+          const diffY = e.touches[0].clientY - touchStartY;
+          if (Math.abs(diffX) > 42 && Math.abs(diffX) > Math.abs(diffY)) {
+            hasSwiped = true;
+            if (diffX < 0) {
+              goToNext();
+            } else {
+              goToPrev();
+            }
+          }
+        }, { passive: true });
+      }
+
+      // Auto scroll logic (runs the exact same stepGallery as button clicks!)
       const startAutoSlide = () => {
-        if (prefersReducedMotion) return; // Respect prefers-reduced-motion
+        if (prefersReducedMotion) return;
         stopAutoSlide();
         autoSlideTimer = setInterval(() => {
-          currentIndex = getNormalizedIndex(currentIndex + 1);
-          renderGallery();
+          if (galleryModal && galleryModal.classList.contains('is-open')) return;
+          stepGallery(1);
         }, AUTO_SLIDE_DELAY);
       };
 
@@ -278,7 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startAutoSlide();
       };
 
-      // Event Listeners
+      // Button Event Listeners
       if (prevBtn) {
         prevBtn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -293,18 +536,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // Thumbnail clicks: clicking any visible thumbnail directly shifts it to active center
+      // Thumbnail Clicks: directly navigate to clicked photo
       if (thumbList) {
         thumbList.addEventListener('click', (e) => {
           const thumbBtn = e.target.closest('.gallery-thumb-item');
           if (!thumbBtn) return;
-          const relPos = parseInt(thumbBtn.getAttribute('data-rel-pos'), 10);
-          if (!isNaN(relPos)) {
-            goToIndex(currentIndex + relPos);
+          const targetIdx = parseInt(thumbBtn.getAttribute('data-gallery-index'), 10);
+          if (!isNaN(targetIdx)) {
+            goToIndex(targetIdx);
           }
         });
 
-        // Keyboard navigation for thumbnails (Arrow Up/Down or Left/Right)
+        // Keyboard navigation for thumbnails
         thumbList.addEventListener('keydown', (e) => {
           if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
             e.preventDefault();
@@ -321,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
       galleryCascadeWrapper.addEventListener('mouseleave', startAutoSlide);
 
       // Initialize
-      renderGallery();
+      initGallery();
       startAutoSlide();
     }
   }

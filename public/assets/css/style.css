@@ -1856,8 +1856,9 @@ button {
    -------------------------------------------------------------------------- */
 .gallery-section {
   position: relative;
-  padding: 48px 0;
+  padding: 72px 0 84px 0;
   background-color: var(--green-6, #49982e);
+  overflow: hidden; /* Ensure gallery cards NEVER overflow outside this section */
 }
 
 /* Border top matching exact width & horizontal alignment of footer-inner */
@@ -1878,7 +1879,9 @@ button {
 
 .section-header-center {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 36px;
+  position: relative;
+  z-index: 10; /* Ensure title stays above any cards */
 }
 
 .section-title {
@@ -1901,8 +1904,9 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 40px;
-  max-width: 1240px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   position: relative;
   user-select: none;
   -webkit-user-select: none;
@@ -1910,15 +1914,13 @@ button {
 
 /* A. Main Slider (Cascading / Stacked Cards) */
 .gallery-cascade-viewport {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-width: 0;
-  height: 480px;
+  height: 630px;
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  overflow: visible;
-  /* Disable swipe / drag gestures as requested */
+  justify-content: flex-start;
   touch-action: pan-y;
   cursor: default;
 }
@@ -1929,21 +1931,24 @@ button {
   height: 100%;
 }
 
-/* Base Card */
 .gallery-cascade-card {
   position: absolute;
-  width: 72%;
+  top: 50%;
+  left: 0;
+  width: 58%;
+  max-width: 600px;
   aspect-ratio: 16 / 9;
-  border-radius: 20px;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-              filter 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-              z-index 0.5s step-end;
-  will-change: transform, opacity, filter;
-  pointer-events: none; /* No manual drag/click on slider itself */
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+  pointer-events: auto;
 }
 
 .gallery-cascade-card-inner {
@@ -1960,66 +1965,90 @@ button {
   display: block;
 }
 
-/* Cascade Stacking Positions:
-   Diagonal shift to right-bottom:
-   - pos -2: far top-left
-   - pos -1: mid top-left
-   - pos  0: frontmost active (largest, clearest, bottom-right of stack)
-   - pos +1, +2: pre-rendered buffer/transition states
+/* 7-Card Stack Layout with STRICTLY UNIFORM & SPACIOUS Spacing (Kerenggangan):
+   - Aligns flush to left container boundary (left: 0) matching news section below.
+   - Uniform horizontal delta (20% spread) for open, airy, non-cramped fanning.
+   - Uniform vertical delta (30%)
+   - Center card (pos 0): Dominant, large (scale 1.0), forward to the right.
+   - Non-center cards: Visibly smaller, evenly spaced fan matching reference.
+   - Pos -3 and Pos 3: Off-screen buffer slots for seamless hardware-accelerated entry/exit.
 */
+
+/* Card Off-Screen Top (pos -3) */
+.gallery-cascade-card.card-pos--3 {
+  transform: translate3d(-20%, -182%, 0) scale(0.45);
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Card 1: Top-most visible (pos -2, aligns flush with left container boundary) */
 .gallery-cascade-card.card-pos--2 {
-  transform: translate3d(2%, 0%, 0) scale(0.80);
+  transform: translate3d(0%, -138%, 0) scale(0.60);
   z-index: 1;
   opacity: 0.45;
-  filter: blur(4px) brightness(0.65);
+  cursor: pointer;
 }
 
+/* Card 2: Upper-mid visible (pos -1, separated from lower card, no overlap behind center) */
 .gallery-cascade-card.card-pos--1 {
-  transform: translate3d(14%, 12%, 0) scale(0.90);
-  z-index: 2;
-  opacity: 0.70;
-  filter: blur(2px) brightness(0.8);
+  transform: translate3d(20%, -94%, 0) scale(0.78);
+  z-index: 3;
+  opacity: 0.72;
+  cursor: pointer;
 }
 
+/* Card 3: CENTER ACTIVE (DOMINANT, LARGE, FRONTMOST) */
 .gallery-cascade-card.card-pos-0 {
-  transform: translate3d(28%, 24%, 0) scale(1.0);
+  transform: translate3d(40%, -50%, 0) scale(1.0);
   z-index: 5;
   opacity: 1;
-  filter: blur(0px) brightness(1);
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  pointer-events: auto;
+  cursor: pointer;
 }
 
-/* Pre-buffered cards for smooth circular loops */
+/* Card 4: Lower-mid visible (pos 1, separated from upper card, no overlap behind center) */
 .gallery-cascade-card.card-pos-1 {
-  transform: translate3d(36%, 32%, 0) scale(0.95);
-  z-index: 0;
-  opacity: 0;
-  filter: blur(6px) brightness(0.5);
+  transform: translate3d(20%, -6%, 0) scale(0.78);
+  z-index: 3;
+  opacity: 0.72;
+  cursor: pointer;
 }
 
+/* Card 5: Bottom-most visible (pos 2, aligns flush with left container boundary) */
 .gallery-cascade-card.card-pos-2 {
-  transform: translate3d(-6%, -10%, 0) scale(0.72);
-  z-index: 0;
-  opacity: 0;
-  filter: blur(8px) brightness(0.4);
+  transform: translate3d(0%, 38%, 0) scale(0.60);
+  z-index: 1;
+  opacity: 0.45;
+  cursor: pointer;
 }
 
-/* B. Thumbnail Navigation (Right on Desktop) */
+/* Card Off-Screen Bottom (pos 3) */
+.gallery-cascade-card.card-pos-3 {
+  transform: translate3d(-20%, 82%, 0) scale(0.45);
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* B. Thumbnail Navigation (Right on Desktop - enlarged to 185px, exactly 5 items visible) */
 .gallery-thumb-nav-area {
-  flex: 0 0 240px;
+  flex: 0 0 185px;
+  width: 185px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   position: relative;
   z-index: 10;
 }
 
 /* Desktop Arrow Buttons (Top and Bottom) */
 .gallery-thumb-nav-btn {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--yellow-6, #f4d849);
   color: var(--green-9, #214415);
@@ -2029,14 +2058,14 @@ button {
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
   outline: none;
   flex-shrink: 0;
 }
 
 .gallery-thumb-nav-btn svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   stroke: currentColor;
 }
 
@@ -2067,8 +2096,9 @@ button {
 .gallery-thumb-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
+  overflow: visible;
 }
 
 .gallery-thumb-item {
@@ -2077,17 +2107,18 @@ button {
   aspect-ratio: 16 / 9;
   border-radius: 12px;
   overflow: hidden;
-  border: none;
+  border: 2.5px solid transparent;
   padding: 0;
   margin: 0;
   background: transparent;
   cursor: pointer;
-  opacity: 0.45;
-  filter: blur(1px) brightness(0.7);
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              filter 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.42;
+  transition: opacity 0.35s ease,
+              transform 0.35s ease,
+              border-color 0.35s ease,
+              box-shadow 0.35s ease;
   outline: none;
+  flex-shrink: 0;
 }
 
 .gallery-thumb-item img {
@@ -2098,19 +2129,17 @@ button {
   pointer-events: none;
 }
 
-/* Active thumbnail is the center one (thumb-pos-0) */
+/* Active thumbnail */
 .gallery-thumb-item.is-active {
   opacity: 1;
-  filter: blur(0px) brightness(1);
-  transform: scale(1.02);
-  /* As requested: "Thumbnail aktif tampil normal, tanpa border atau penanda tambahan" */
-  border: none !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: scale(1.05);
+  border-color: var(--yellow-6, #f4d849);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 .gallery-thumb-item:hover:not(.is-active) {
-  opacity: 0.75;
-  filter: blur(0.5px) brightness(0.88);
+  opacity: 0.8;
+  transform: scale(1.02);
 }
 
 .gallery-thumb-item:focus-visible {
@@ -3889,90 +3918,223 @@ button {
   /* --------------------------------------------------------------------------
      F. GALLERY (Mobile / Tablet): Cascade Slider Top, Thumbnail Strip Bottom
      -------------------------------------------------------------------------- */
+  /* --------------------------------------------------------------------------
+     F. GALLERY (Mobile / Tablet <= 991px):
+     Layout per user specification:
+     ----------
+     GALLERY
+     < 1 2 3 >
+       *  
+      * *
+     ---------
+     1. Header: Centered "GALLERY"
+     2. Navigation: < 1 2 3 > (exactly 3 visible thumbnails flanked by < and >)
+     3. 3-Card Upward Chevron Stack (Center card menjorong ke atas, 2 side cards lower)
+     -------------------------------------------------------------------------- */
   .gallery-section {
-    padding: 50px 0 60px 0;
+    padding: 42px 0 0 0;
+    min-height: auto;
+    overflow: hidden;
+  }
+
+  .gallery-section .section-header-center {
+    margin-bottom: 38px !important;
   }
 
   .gallery-cascade-wrapper {
+    display: flex;
     flex-direction: column;
-    gap: 24px;
-    align-items: stretch;
-  }
-
-  .gallery-cascade-viewport {
-    height: 280px;
+    justify-content: flex-start !important;
+    align-items: center;
+    gap: 36px !important;
     width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
   }
 
-  .gallery-cascade-card {
-    width: 78%;
-    border-radius: 14px;
-  }
-
-  /* Tighter diagonal cascade arrangement for smaller screens */
-  .gallery-cascade-card.card-pos--2 {
-    transform: translate3d(2%, 0%, 0) scale(0.82);
-    opacity: 0.45;
-  }
-
-  .gallery-cascade-card.card-pos--1 {
-    transform: translate3d(12%, 10%, 0) scale(0.91);
-    opacity: 0.70;
-  }
-
-  .gallery-cascade-card.card-pos-0 {
-    transform: translate3d(22%, 20%, 0) scale(1.0);
-    opacity: 1;
-  }
-
-  .gallery-cascade-card.card-pos-1 {
-    transform: translate3d(30%, 28%, 0) scale(0.92);
-  }
-
-  .gallery-cascade-card.card-pos-2 {
-    transform: translate3d(-4%, -8%, 0) scale(0.74);
-  }
-
-  /* Mobile Strip: Horizontal thumbnail navigation */
+  /* 1. Thumbnail Strip on Mobile: Sits cleanly between GALLERY title and big card */
+  /* Structure: < [1] [2] [3] > */
   .gallery-thumb-nav-area {
-    flex: 0 0 auto;
+    order: 1;
+    flex: 0 0 auto !important;
     width: 100%;
+    max-width: 380px;
+    margin: 0 auto 36px auto !important;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    z-index: 10;
   }
 
   .gallery-thumb-nav-btn {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--yellow-6, #f4d849);
+    color: var(--green-9, #214415);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+
+  .gallery-thumb-nav-btn:active {
+    transform: scale(0.92);
   }
 
   .gallery-thumb-nav-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
   }
 
   .gallery-thumb-nav-btn .desktop-icon {
-    display: none;
+    display: none !important;
   }
 
   .gallery-thumb-nav-btn .mobile-icon {
-    display: block;
+    display: block !important;
   }
 
   .gallery-thumb-list {
+    display: flex;
     flex-direction: row;
-    flex: 1 1 auto;
-    gap: 8px;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: auto;
+    overflow: visible;
   }
 
+  /* Enlarged 3 Thumbnails visible on mobile: < 1 2 3 > */
   .gallery-thumb-item {
-    flex: 1 1 0;
-    min-width: 0;
-    border-radius: 8px;
+    width: clamp(80px, 23vw, 94px);
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 10px;
+    border: 2.5px solid transparent;
+    flex-shrink: 0;
+    opacity: 0.45;
+    background: rgba(0, 0, 0, 0.3);
+    transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .gallery-thumb-item.is-active {
+    opacity: 1;
+    transform: scale(1.05);
+    border-color: var(--yellow-6, #f4d849);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  }
+
+  /* Hide thumbnail slots 4 and 5 on mobile */
+  .gallery-thumb-item[data-slot="3"],
+  .gallery-thumb-item[data-slot="4"] {
+    display: none !important;
+  }
+
+  /* 2. Main Slider Viewport on Mobile: Flush with bottom edge */
+  .gallery-cascade-viewport {
+    order: 2;
+    flex: 0 0 205px !important;
+    width: 100%;
+    max-width: 100%;
+    height: 205px;
+    min-height: 205px;
+    position: relative;
+    display: block;
+    margin: 0 auto;
+    overflow: visible;
+  }
+
+  .gallery-cascade-stage {
+    position: relative;
+    width: 100%;
+    height: 205px;
+    overflow: visible;
+  }
+
+  .gallery-cascade-card {
+    width: 74%;
+    max-width: 315px;
+    aspect-ratio: 16 / 9;
+    border-radius: 14px;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform-origin: center center;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+  }
+
+  /* 3-Card Upward Chevron Stack on Mobile:
+     - Center Card (pos 0): Dominant (scale 1.0), in front (z-index: 5), menjorong ke atas (top: 0, Y: 0)
+     - Left Card (pos -1): Noticeably smaller (scale 0.62 per user request), behind (z-index: 2), nempel ke bawah (Y: 66px, X: -96%)
+     - Right Card (pos 1): Noticeably smaller (scale 0.62 per user request), behind (z-index: 2), nempel ke bawah (Y: 66px, X: -4%)
+     - Buffer cards: Offscreen to left/right with opacity 0
+  */
+
+  /* Center Active Card: Menjorong ke atas */
+  .gallery-cascade-card.card-pos-0 {
+    transform: translate3d(-50%, 0, 0) scale(1.0);
+    z-index: 5;
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.55);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Left Card: Diperkecil (scale 0.62) & nempel ke bawah */
+  .gallery-cascade-card.card-pos--1 {
+    transform: translate3d(-96%, 66px, 0) scale(0.62);
+    z-index: 2;
+    opacity: 0.60;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Right Card: Diperkecil (scale 0.62) & nempel ke bawah */
+  .gallery-cascade-card.card-pos-1 {
+    transform: translate3d(-4%, 66px, 0) scale(0.62);
+    z-index: 2;
+    opacity: 0.60;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Offscreen Buffer Cards on Mobile: completely hidden and untappable */
+  .gallery-cascade-card.card-pos--2 {
+    transform: translate3d(-145%, 75px, 0) scale(0.40);
+    z-index: 0;
+    opacity: 0 !important;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .gallery-cascade-card.card-pos--3 {
+    transform: translate3d(-180%, 90px, 0) scale(0.30);
+    z-index: 0;
+    opacity: 0 !important;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .gallery-cascade-card.card-pos-2 {
+    transform: translate3d(45%, 75px, 0) scale(0.40);
+    z-index: 0;
+    opacity: 0 !important;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .gallery-cascade-card.card-pos-3 {
+    transform: translate3d(80%, 90px, 0) scale(0.30);
+    z-index: 0;
+    opacity: 0 !important;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .gallery-modal {

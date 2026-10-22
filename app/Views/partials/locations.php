@@ -6,7 +6,7 @@
 $loc = $locations ?? [];
 $hotelName   = !empty($loc['hotel_name']) ? $loc['hotel_name'] : 'Raffles Hotel Jakarta';
 $address     = !empty($loc['address']) ? $loc['address'] : (!empty($loc['hotel_address']) ? $loc['hotel_address'] : "Ciputra World, Jl. Prof. DR. Satrio, Kuningan, Karet Kuningan, Kecamatan Setiabudi, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12940");
-$gmapsEmbed  = !empty($loc['gmaps_embed_url']) ? $loc['gmaps_embed_url'] : (!empty($loc['gmaps_iframe']) ? $loc['gmaps_iframe'] : 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.3075253818617!2d106.82115167570138!3d-6.223120660947683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3fb40954b83%3A0x6bfe76d05fca8764!2sRaffles%20Jakarta!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid');
+$gmapsEmbed  = !empty($loc['gmaps_embed_url']) ? $loc['gmaps_embed_url'] : (!empty($loc['gmaps_iframe']) ? $loc['gmaps_iframe'] : 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.3703110971405!2d106.8077869!3d-6.2147974999999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f6adbd77af01%3A0x23abed373d7987d2!2sJakarta%20International%20Convention%20Center%20(JICC)!5e0!3m2!1sid!2sid!4v1792653971500!5m2!1sid!2sid');
 $floorPlanImg = !empty($loc['floor_plan_image']) ? $loc['floor_plan_image'] : (!empty($loc['layout_image_url']) ? $loc['layout_image_url'] : base_url('assets/img/denah.png'));
 $isActive    = !isset($loc['is_active']) || !empty($loc['is_active']);
 
