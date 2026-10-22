@@ -30,7 +30,6 @@
           base_url('assets/img/image1.webp'),
       ];
 
-      // If empty or less than 5 items, provide minimum defaults
       $placeholderCaptions = [
           'Investor Daily Summit Opening Ceremony',
           'Keynote Address: Strategic Economic Outlook',
@@ -46,52 +45,68 @@
               'caption'   => $placeholderCaptions[$idx] ?? ('Investor Daily Summit Highlight ' . ($idx + 1)),
           ];
       }
-
-      $totalCount = count($items);
-      $randomCenter = array_rand($items);
-      $leftIdx = ($randomCenter - 1 + $totalCount) % $totalCount;
-      $rightIdx = ($randomCenter + 1) % $totalCount;
     ?>
 
-    <?php /* 3D Coverflow Carousel Container */ ?>
-    <div class="gallery-coverflow-wrapper" id="galleryCoverflow" tabindex="0" aria-label="IDS Gallery Coverflow Carousel">
-      <div class="gallery-coverflow-track">
-        <?php foreach ($items as $idx => $item): 
-          $initialClass = ($idx === $randomCenter) ? 'is-center' : (($idx === $leftIdx) ? 'is-left' : (($idx === $rightIdx) ? 'is-right' : 'is-hidden'));
-        ?>
-          <div class="gallery-card <?= $initialClass ?>" 
-               data-index="<?= $idx ?>" 
-               data-caption="<?= esc($item['caption']) ?>"
-               tabindex="0"
-               role="button"
-               aria-label="<?= esc($item['caption']) ?>">
-            <div class="gallery-card-inner">
-              <img src="<?= esc($item['image_url']) ?>" 
-                   alt="<?= esc($item['caption']) ?>" 
-                   loading="lazy">
-              <?php /* 
-              <div class="gallery-card-overlay">
-                <span class="gallery-card-badge">Click to enlarge</span>
+    <!-- Gallery Component Wrapper -->
+    <div class="gallery-cascade-wrapper" id="galleryCascade">
+      
+      <!-- Hidden Data Script for Seamless Infinite Cycling -->
+      <script type="application/json" id="galleryData">
+        <?= json_encode($items, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES) ?>
+      </script>
+
+      <!-- A. Main Slider (Cascading / Stacked Cards) -->
+      <div class="gallery-cascade-viewport" aria-label="Gallery Foto Bertumpuk" role="region">
+        <div class="gallery-cascade-stage" id="galleryCascadeStage">
+          <?php for ($pos = -2; $pos <= 2; $pos++): ?>
+            <div class="gallery-cascade-card card-pos-<?= $pos ?>" data-rel-pos="<?= $pos ?>" role="img" aria-label="Gallery Foto">
+              <div class="gallery-cascade-card-inner">
+                <img src="" alt="" loading="lazy">
               </div>
-              */ ?>
             </div>
-          </div>
-        <?php endforeach; ?>
+          <?php endfor; ?>
+        </div>
       </div>
+
+      <!-- B. Thumbnail Navigation Strip -->
+      <div class="gallery-thumb-nav-area">
+        <!-- Prev Button (Up on Desktop, Left on Mobile) -->
+        <button type="button" class="gallery-thumb-nav-btn btn-prev" id="galleryPrevBtn" aria-label="Foto Sebelumnya">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="desktop-icon">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mobile-icon">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+
+        <!-- Thumbnails Container (Always renders 5 items) -->
+        <div class="gallery-thumb-list" id="galleryThumbList" role="tablist" aria-label="Navigasi Thumbnail Gallery">
+          <?php for ($pos = -2; $pos <= 2; $pos++): ?>
+            <button type="button" 
+                    role="tab" 
+                    class="gallery-thumb-item thumb-pos-<?= $pos ?> <?= $pos === 0 ? 'is-active' : '' ?>" 
+                    data-rel-pos="<?= $pos ?>" 
+                    aria-selected="<?= $pos === 0 ? 'true' : 'false' ?>"
+                    aria-label="Pilih foto">
+              <img src="" alt="" loading="lazy">
+            </button>
+          <?php endfor; ?>
+        </div>
+
+        <!-- Next Button (Down on Desktop, Right on Mobile) -->
+        <button type="button" class="gallery-thumb-nav-btn btn-next" id="galleryNextBtn" aria-label="Foto Berikutnya">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="desktop-icon">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mobile-icon">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
     </div>
 
-    <?php /* Navigation Arrows */ ?>
-    <div class="gallery-nav-controls">
-      <button type="button" class="gallery-nav-btn gallery-prev-btn" id="galleryPrevBtn" aria-label="Previous slide">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-      </button>
-      <button type="button" class="gallery-nav-btn gallery-next-btn" id="galleryNextBtn" aria-label="Next slide">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </button>
-    </div>
   </div>
 </section>
+

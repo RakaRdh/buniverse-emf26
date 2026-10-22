@@ -1894,159 +1894,130 @@ button {
   color: #ffffff !important;
 }
 
-/* 3D Coverflow Carousel Container */
-.gallery-coverflow-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 1240px;
-  height: 440px;
-  margin: 0 auto;
-  perspective: 1200px;
-  overflow: hidden;
+/* Cascading Stacked Cards Gallery Component */
+.gallery-cascade-wrapper {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  outline: none;
-  cursor: grab;
+  justify-content: space-between;
+  gap: 40px;
+  max-width: 1240px;
+  margin: 0 auto;
+  position: relative;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: pan-y;
 }
 
-.gallery-coverflow-wrapper:active {
-  cursor: grabbing;
-}
-
-.gallery-coverflow-track {
+/* A. Main Slider (Cascading / Stacked Cards) */
+.gallery-cascade-viewport {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 480px;
   position: relative;
-  width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform-style: preserve-3d;
+  overflow: visible;
+  /* Disable swipe / drag gestures as requested */
+  touch-action: pan-y;
+  cursor: default;
 }
 
-/* Base Card Style (Standard 16:9 ratio) */
-.gallery-card {
-  position: absolute;
-  width: 58%;
-  aspect-ratio: 16 / 9;
-  border-radius: 16px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.45s cubic-bezier(0.25, 1, 0.35, 1), opacity 0.45s ease, filter 0.45s ease;
-  will-change: transform, opacity;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: none;
-  outline: none;
-}
-
-.gallery-card:focus-visible {
-  border-color: var(--yellow-6, #fff100);
-  box-shadow: none;
-}
-
-.gallery-card-inner {
+.gallery-cascade-stage {
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+/* Base Card */
+.gallery-cascade-card {
+  position: absolute;
+  width: 72%;
+  aspect-ratio: 16 / 9;
+  border-radius: 20px;
   overflow: hidden;
-  transition: transform 0.45s cubic-bezier(0.25, 1, 0.35, 1);
-  will-change: transform;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              filter 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              z-index 0.5s step-end;
+  will-change: transform, opacity, filter;
+  pointer-events: none; /* No manual drag/click on slider itself */
 }
 
-/* Hover zoom HANYA aktif untuk foto yang sedang muncul di tengah (is-center) */
-.gallery-card.is-center:hover .gallery-card-inner {
-  transform: scale(1.06);
+.gallery-cascade-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
-.gallery-card img {
+.gallery-cascade-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   display: block;
-  transition: transform 0.45s cubic-bezier(0.25, 1, 0.35, 1);
 }
 
-.gallery-card-overlay {
-  position: absolute;
-  inset: 0;
-  background: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 16px;
-  pointer-events: none;
-}
-
-.gallery-card.is-center:hover .gallery-card-overlay {
-  opacity: 1;
-}
-
-.gallery-card-badge {
-  background: rgba(14, 165, 233, 0.85);
-  color: #ffffff;
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  padding: 4px 12px;
-  border-radius: 20px;
-  backdrop-filter: blur(4px);
-}
-
-/* Position Classes: Center, Left, Right, Hidden */
-.gallery-card.is-center {
-  transform: translate3d(0, 0, 100px) rotateY(0deg) scale(1);
-  z-index: 10;
-  opacity: 1;
-  filter: grayscale(0%) contrast(105%);
-  box-shadow: none;
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.gallery-card.is-left {
-  transform: translate3d(-52%, 0, -50px) rotateY(35deg) scale(0.85);
-  z-index: 5;
-  opacity: 0.85;
-  filter: grayscale(40%) brightness(0.85);
-}
-
-.gallery-card.is-right {
-  transform: translate3d(52%, 0, -50px) rotateY(-35deg) scale(0.85);
-  z-index: 5;
-  opacity: 0.85;
-  filter: grayscale(40%) brightness(0.85);
-}
-
-.gallery-card.is-hidden {
-  transform: translate3d(0, 0, -250px) scale(0.5);
+/* Cascade Stacking Positions:
+   Diagonal shift to right-bottom:
+   - pos -2: far top-left
+   - pos -1: mid top-left
+   - pos  0: frontmost active (largest, clearest, bottom-right of stack)
+   - pos +1, +2: pre-rendered buffer/transition states
+*/
+.gallery-cascade-card.card-pos--2 {
+  transform: translate3d(2%, 0%, 0) scale(0.80);
   z-index: 1;
+  opacity: 0.45;
+  filter: blur(4px) brightness(0.65);
+}
+
+.gallery-cascade-card.card-pos--1 {
+  transform: translate3d(14%, 12%, 0) scale(0.90);
+  z-index: 2;
+  opacity: 0.70;
+  filter: blur(2px) brightness(0.8);
+}
+
+.gallery-cascade-card.card-pos-0 {
+  transform: translate3d(28%, 24%, 0) scale(1.0);
+  z-index: 5;
+  opacity: 1;
+  filter: blur(0px) brightness(1);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6);
+}
+
+/* Pre-buffered cards for smooth circular loops */
+.gallery-cascade-card.card-pos-1 {
+  transform: translate3d(36%, 32%, 0) scale(0.95);
+  z-index: 0;
   opacity: 0;
-  pointer-events: none;
+  filter: blur(6px) brightness(0.5);
 }
 
-/* Hover effect on side cards */
-.gallery-card.is-left:hover,
-.gallery-card.is-right:hover {
-  opacity: 0.85;
-  filter: grayscale(40%) brightness(0.9);
+.gallery-cascade-card.card-pos-2 {
+  transform: translate3d(-6%, -10%, 0) scale(0.72);
+  z-index: 0;
+  opacity: 0;
+  filter: blur(8px) brightness(0.4);
 }
 
-/* Navigation Controls (Round white buttons) */
-.gallery-nav-controls {
+/* B. Thumbnail Navigation (Right on Desktop) */
+.gallery-thumb-nav-area {
+  flex: 0 0 240px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 28px;
+  gap: 12px;
+  position: relative;
+  z-index: 10;
 }
 
-.gallery-nav-btn {
+/* Desktop Arrow Buttons (Top and Bottom) */
+.gallery-thumb-nav-btn {
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -2057,26 +2028,103 @@ button {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
   transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.gallery-thumb-nav-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+}
+
+.gallery-thumb-nav-btn .mobile-icon {
+  display: none;
+}
+
+.gallery-thumb-nav-btn .desktop-icon {
+  display: block;
+}
+
+.gallery-thumb-nav-btn:hover {
+  background: var(--yellow-5, #f6df6a);
+  transform: scale(1.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.gallery-thumb-nav-btn:active {
+  transform: scale(0.94);
+}
+
+.gallery-thumb-nav-btn:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* 5 Vertical Thumbnails List */
+.gallery-thumb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.gallery-thumb-item {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.45;
+  filter: blur(1px) brightness(0.7);
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              filter 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
 }
 
-.gallery-nav-btn svg {
-  width: 20px;
-  height: 20px;
-  stroke: currentColor;
-  stroke-width: 2.5;
+.gallery-thumb-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
 }
 
-.gallery-nav-btn:hover {
-  background: var(--yellow-5, #f6df6a);
-  transform: scale(1.08);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+/* Active thumbnail is the center one (thumb-pos-0) */
+.gallery-thumb-item.is-active {
+  opacity: 1;
+  filter: blur(0px) brightness(1);
+  transform: scale(1.02);
+  /* As requested: "Thumbnail aktif tampil normal, tanpa border atau penanda tambahan" */
+  border: none !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-.gallery-nav-btn:active {
-  transform: scale(0.95);
+.gallery-thumb-item:hover:not(.is-active) {
+  opacity: 0.75;
+  filter: blur(0.5px) brightness(0.88);
+}
+
+.gallery-thumb-item:focus-visible {
+  outline: 2px solid var(--yellow-6, #f4d849);
+  outline-offset: 2px;
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .gallery-cascade-card,
+  .gallery-thumb-item,
+  .gallery-thumb-nav-btn {
+    transition: none !important;
+  }
 }
 
 /* Modal Lightbox Styles */
@@ -3839,53 +3887,92 @@ button {
   }
 
   /* --------------------------------------------------------------------------
-     F. GALLERY (Mobile / Tablet): Vertically stacked accordion cards with auto-open
+     F. GALLERY (Mobile / Tablet): Cascade Slider Top, Thumbnail Strip Bottom
      -------------------------------------------------------------------------- */
   .gallery-section {
     padding: 50px 0 60px 0;
   }
 
-  /* --------------------------------------------------------------------------
-     F. GALLERY (Mobile / Tablet): 3-Card 3D Coverflow Carousel
-     -------------------------------------------------------------------------- */
-  .gallery-section {
-    padding: 50px 0 60px 0;
+  .gallery-cascade-wrapper {
+    flex-direction: column;
+    gap: 24px;
+    align-items: stretch;
   }
 
-  .gallery-coverflow-wrapper {
-    height: 250px;
-    max-width: 100%;
-    perspective: 700px;
+  .gallery-cascade-viewport {
+    height: 280px;
+    width: 100%;
   }
 
-  .gallery-card {
-    width: 72%;
-    border-radius: 12px;
+  .gallery-cascade-card {
+    width: 78%;
+    border-radius: 14px;
   }
 
-  .gallery-card.is-center {
-    transform: translate3d(0, 0, 50px) rotateY(0deg) scale(1);
+  /* Tighter diagonal cascade arrangement for smaller screens */
+  .gallery-cascade-card.card-pos--2 {
+    transform: translate3d(2%, 0%, 0) scale(0.82);
+    opacity: 0.45;
   }
 
-  .gallery-card.is-left {
-    transform: translate3d(-46%, 0, -30px) rotateY(32deg) scale(0.84);
+  .gallery-cascade-card.card-pos--1 {
+    transform: translate3d(12%, 10%, 0) scale(0.91);
+    opacity: 0.70;
   }
 
-  .gallery-card.is-right {
-    transform: translate3d(46%, 0, -30px) rotateY(-32deg) scale(0.84);
+  .gallery-cascade-card.card-pos-0 {
+    transform: translate3d(22%, 20%, 0) scale(1.0);
+    opacity: 1;
   }
 
-  .gallery-card.is-hidden {
-    transform: translate3d(0, 0, -150px) scale(0.4);
+  .gallery-cascade-card.card-pos-1 {
+    transform: translate3d(30%, 28%, 0) scale(0.92);
   }
 
-  .gallery-nav-controls {
-    margin-top: 20px;
+  .gallery-cascade-card.card-pos-2 {
+    transform: translate3d(-4%, -8%, 0) scale(0.74);
   }
 
-  .gallery-nav-btn {
-    width: 38px;
-    height: 38px;
+  /* Mobile Strip: Horizontal thumbnail navigation */
+  .gallery-thumb-nav-area {
+    flex: 0 0 auto;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .gallery-thumb-nav-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .gallery-thumb-nav-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .gallery-thumb-nav-btn .desktop-icon {
+    display: none;
+  }
+
+  .gallery-thumb-nav-btn .mobile-icon {
+    display: block;
+  }
+
+  .gallery-thumb-list {
+    flex-direction: row;
+    flex: 1 1 auto;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .gallery-thumb-item {
+    flex: 1 1 0;
+    min-width: 0;
+    border-radius: 8px;
   }
 
   .gallery-modal {

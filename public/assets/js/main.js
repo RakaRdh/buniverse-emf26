@@ -138,265 +138,192 @@ document.addEventListener('DOMContentLoaded', () => {
     sessionStorage.removeItem('active_ids_day');
   } catch (e) {}
 
-  // 3. 3D Coverflow Carousel & Modal Lightbox
-  const galleryWrapper = document.getElementById('galleryCoverflow');
-  const galleryCards = document.querySelectorAll('.gallery-card');
+  // 3. Cascade Stacked Cards Gallery with Synced 5-Thumbnail Navigation
+  const galleryCascadeWrapper = document.getElementById('galleryCascade');
+  const galleryDataEl = document.getElementById('galleryData');
   const prevBtn = document.getElementById('galleryPrevBtn');
   const nextBtn = document.getElementById('galleryNextBtn');
 
-  const galleryModal = document.getElementById('galleryModal');
-  const modalOverlay = document.getElementById('galleryModalOverlay');
-  const modalClose = document.getElementById('galleryModalClose');
-  const modalImg = document.getElementById('galleryModalImg');
-  const modalCaption = document.getElementById('galleryModalCaption');
+  if (galleryCascadeWrapper && galleryDataEl) {
+    let galleryItems = [];
+    try {
+      galleryItems = JSON.parse(galleryDataEl.textContent || '[]');
+    } catch (e) {
+      galleryItems = [];
+    }
 
-  if (galleryCards.length > 0) {
-    const totalCards = galleryCards.length;
-    // Permintaan user: ketika user refresh halaman dan menuju ke section gallery, gambar yang pertama buka gede itu akan random
-    let currentIndex = Math.floor(Math.random() * totalCards);
+    if (galleryItems.length > 0) {
+      const totalItems = galleryItems.length;
+      let currentIndex = 0;
+      let autoSlideTimer = null;
+      const AUTO_SLIDE_DELAY = 4500; // 4.5 seconds
 
-    const updateCoverflow = () => {
-      const leftIndex = (currentIndex - 1 + totalCards) % totalCards;
-      const rightIndex = (currentIndex + 1) % totalCards;
+      // Cache elements
+      const stage = document.getElementById('galleryCascadeStage');
+      const cards = stage ? stage.querySelectorAll('.gallery-cascade-card') : [];
+      const thumbList = document.getElementById('galleryThumbList');
+      const thumbItems = thumbList ? thumbList.querySelectorAll('.gallery-thumb-item') : [];
 
-      galleryCards.forEach((card, idx) => {
-        card.classList.remove('is-center', 'is-left', 'is-right', 'is-hidden');
+      // Check prefers-reduced-motion
+      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        if (idx === currentIndex) {
-          card.classList.add('is-center');
-          card.setAttribute('aria-selected', 'true');
-        } else if (idx === leftIndex) {
-          card.classList.add('is-left');
-          card.setAttribute('aria-selected', 'false');
-        } else if (idx === rightIndex) {
-          card.classList.add('is-right');
-          card.setAttribute('aria-selected', 'false');
-        } else {
-          card.classList.add('is-hidden');
-          card.setAttribute('aria-selected', 'false');
-        }
-      });
-    };
+      // Safe modulo helper for circular infinite cycling
+      const getNormalizedIndex = (idx) => {
+        return ((idx % totalItems) + totalItems) % totalItems;
+      };
 
-    const goToPrev = () => {
-      currentIndex = (currentIndex - 1 + totalCards) % totalCards;
-      updateCoverflow();
-    };
+      // Preload next and previous images for ultra-smooth transition
+      const preloadedCache = new Set();
+      const preloadImages = (centerIdx) => {
+        const indicesToPreload = [
+          getNormalizedIndex(centerIdx - 2),
+          getNormalizedIndex(centerIdx - 1),
+          getNormalizedIndex(centerIdx),
+          getNormalizedIndex(centerIdx + 1),
+          getNormalizedIndex(centerIdx + 2),
+          getNormalizedIndex(centerIdx + 3),
+        ];
 
-    const goToNext = () => {
-      currentIndex = (currentIndex + 1) % totalCards;
-      updateCoverflow();
-    };
+        indicesToPreload.forEach((idx) => {
+          const item = galleryItems[idx];
+          if (item && item.image_url && !preloadedCache.has(item.image_url)) {
+            const img = new Image();
+            img.src = item.image_url;
+            preloadedCache.add(item.image_url);
+          }
+        });
+      };
 
-    if (prevBtn) prevBtn.addEventListener('click', goToPrev);
-    if (nextBtn) nextBtn.addEventListener('click', goToNext);
+      // Render the 5 visible cascaded cards and 5 thumbnail navigation slots
+      const renderGallery = () => {
+        // Cards and thumbnails positions: -2, -1, 0, 1, 2
+        // Position 0 = Active item (frontmost in cascade, center in thumbnail strip)
+        for (let pos = -2; pos <= 2; pos++) {
+          const targetIndex = getNormalizedIndex(currentIndex + pos);
+          const item = galleryItems[targetIndex];
 
-    // Modal handlers
-    const openModal = (card) => {
-      const img = card.querySelector('img');
-      const caption = card.getAttribute('data-caption') || (img ? img.alt : '');
-      if (img && modalImg) {
-        modalImg.src = img.src;
-        modalImg.alt = caption;
-      }
-      if (modalCaption) {
-        modalCaption.textContent = caption;
-        const modalInfo = galleryModal ? galleryModal.querySelector('.gallery-modal-info') : null;
-        if (modalInfo) {
-          modalInfo.style.display = caption ? '' : 'none';
-        }
-      }
-      if (galleryModal) {
-        galleryModal.classList.add('is-open');
-        galleryModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-      }
-    };
+          // 1. Update cascade card
+          const card = stage ? stage.querySelector(`.gallery-cascade-card[data-rel-pos="${pos}"]`) : null;
+          if (card && item) {
+            const img = card.querySelector('img');
+            if (img && img.src !== item.image_url) {
+              img.src = item.image_url;
+              img.alt = item.caption || `Gallery Foto ${targetIndex + 1}`;
+            }
+            card.setAttribute('aria-label', item.caption || `Gallery Foto ${targetIndex + 1}`);
+            if (pos === 0) {
+              card.setAttribute('aria-current', 'true');
+            } else {
+              card.removeAttribute('aria-current');
+            }
+          }
 
-    const closeModal = () => {
-      if (galleryModal) {
-        galleryModal.classList.remove('is-open');
-        galleryModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-    };
-
-    if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
-    if (modalClose) modalClose.addEventListener('click', closeModal);
-
-    // Drag and Touch Swipe Gesture for Coverflow Gallery
-    let startX = 0;
-    let startY = 0;
-    let isSwiping = false;
-    let hasMoved = false;
-    let wasDragging = false;
-
-    // Card click & interaction
-    galleryCards.forEach((card, idx) => {
-      card.addEventListener('click', (e) => {
-        if (wasDragging) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-        if (idx === currentIndex) {
-          // Center card clicked -> open lightbox modal
-          openModal(card);
-        } else {
-          // Side card clicked -> navigate to make it center
-          currentIndex = idx;
-          updateCoverflow();
-        }
-      });
-
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          if (idx === currentIndex) {
-            openModal(card);
-          } else {
-            currentIndex = idx;
-            updateCoverflow();
+          // 2. Update thumbnail item
+          const thumb = thumbList ? thumbList.querySelector(`.gallery-thumb-item[data-rel-pos="${pos}"]`) : null;
+          if (thumb && item) {
+            const thumbImg = thumb.querySelector('img');
+            if (thumbImg && thumbImg.src !== item.image_url) {
+              thumbImg.src = item.image_url;
+              thumbImg.alt = item.caption || `Thumbnail Foto ${targetIndex + 1}`;
+            }
+            thumb.setAttribute('aria-label', `Pindah ke foto ${targetIndex + 1}: ${item.caption || ''}`);
+            if (pos === 0) {
+              thumb.classList.add('is-active');
+              thumb.setAttribute('aria-selected', 'true');
+            } else {
+              thumb.classList.remove('is-active');
+              thumb.setAttribute('aria-selected', 'false');
+            }
           }
         }
-      });
-    });
 
-    if (galleryWrapper) {
-      // Touch events (Mobile)
-      galleryWrapper.addEventListener('touchstart', (e) => {
-        if (!e.touches || e.touches.length === 0) return;
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-        isSwiping = true;
-        hasMoved = false;
-      }, { passive: true });
+        // Trigger preload for upcoming slides
+        preloadImages(currentIndex);
+      };
 
-      galleryWrapper.addEventListener('touchmove', (e) => {
-        if (!isSwiping || !e.touches || e.touches.length === 0) return;
-        const currentX = e.touches[0].clientX;
-        const currentY = e.touches[0].clientY;
-        const diffX = currentX - startX;
-        const diffY = currentY - startY;
+      // Navigation methods
+      const goToIndex = (newIndex) => {
+        currentIndex = getNormalizedIndex(newIndex);
+        renderGallery();
+        resetAutoSlideTimer();
+      };
 
-        // If horizontal swipe is dominant
-        if (Math.abs(diffX) > 10 && Math.abs(diffX) > Math.abs(diffY)) {
-          hasMoved = true;
+      const goToPrev = () => {
+        goToIndex(currentIndex - 1);
+      };
+
+      const goToNext = () => {
+        goToIndex(currentIndex + 1);
+      };
+
+      // Auto scroll logic
+      const startAutoSlide = () => {
+        if (prefersReducedMotion) return; // Respect prefers-reduced-motion
+        stopAutoSlide();
+        autoSlideTimer = setInterval(() => {
+          currentIndex = getNormalizedIndex(currentIndex + 1);
+          renderGallery();
+        }, AUTO_SLIDE_DELAY);
+      };
+
+      const stopAutoSlide = () => {
+        if (autoSlideTimer) {
+          clearInterval(autoSlideTimer);
+          autoSlideTimer = null;
         }
-      }, { passive: true });
+      };
 
-      galleryWrapper.addEventListener('touchend', (e) => {
-        if (!isSwiping) return;
-        isSwiping = false;
-        if (!e.changedTouches || e.changedTouches.length === 0) return;
-        const endX = e.changedTouches[0].clientX;
-        const diffX = endX - startX;
+      const resetAutoSlideTimer = () => {
+        stopAutoSlide();
+        startAutoSlide();
+      };
 
-        // Swipe threshold: 35px
-        if (Math.abs(diffX) > 35) {
-          wasDragging = true;
-          setTimeout(() => { wasDragging = false; }, 80);
-          if (diffX < 0) {
-            goToNext();
-          } else {
-            goToPrev();
-          }
-        }
-      }, { passive: true });
-
-      // Mouse drag events (Desktop)
-      let isMouseDown = false;
-      let mouseStartX = 0;
-
-      galleryWrapper.addEventListener('mousedown', (e) => {
-        // Only trigger on left mouse click and not inside controls
-        if (e.button !== 0 || e.target.closest('.gallery-nav-btn')) return;
-        isMouseDown = true;
-        hasMoved = false;
-        mouseStartX = e.clientX;
-      });
-
-      window.addEventListener('mousemove', (e) => {
-        if (!isMouseDown) return;
-        const diffX = e.clientX - mouseStartX;
-        if (Math.abs(diffX) > 10) {
-          hasMoved = true;
-        }
-      });
-
-      window.addEventListener('mouseup', (e) => {
-        if (!isMouseDown) return;
-        isMouseDown = false;
-        const diffX = e.clientX - mouseStartX;
-        if (Math.abs(diffX) > 35) {
-          wasDragging = true;
-          setTimeout(() => { wasDragging = false; }, 80);
-          if (diffX < 0) {
-            goToNext();
-          } else {
-            goToPrev();
-          }
-        }
-      });
-
-      // Keyboard navigation when carousel container has focus
-      galleryWrapper.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') {
+      // Event Listeners
+      if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
           e.preventDefault();
           goToPrev();
-        } else if (e.key === 'ArrowRight') {
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
           e.preventDefault();
           goToNext();
-        }
-      });
-    }
-
-    // Global escape key to close modal
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && galleryModal && galleryModal.classList.contains('is-open')) {
-        closeModal();
+        });
       }
-    });
 
-    // Autoslide implementation for Coverflow Gallery
-    let autoSlideTimer = null;
-    const startAutoSlide = () => {
-      stopAutoSlide();
-      autoSlideTimer = setInterval(() => {
-        // Jangan autoslide jika modal lightbox terbuka
-        if (galleryModal && galleryModal.classList.contains('is-open')) return;
-        goToNext();
-      }, 4500);
-    };
+      // Thumbnail clicks: clicking any visible thumbnail directly shifts it to active center
+      if (thumbList) {
+        thumbList.addEventListener('click', (e) => {
+          const thumbBtn = e.target.closest('.gallery-thumb-item');
+          if (!thumbBtn) return;
+          const relPos = parseInt(thumbBtn.getAttribute('data-rel-pos'), 10);
+          if (!isNaN(relPos)) {
+            goToIndex(currentIndex + relPos);
+          }
+        });
 
-    const stopAutoSlide = () => {
-      if (autoSlideTimer) {
-        clearInterval(autoSlideTimer);
-        autoSlideTimer = null;
+        // Keyboard navigation for thumbnails (Arrow Up/Down or Left/Right)
+        thumbList.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            goToPrev();
+          } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            goToNext();
+          }
+        });
       }
-    };
 
-    // Pause autoslide on hover/interaction
-    galleryWrapper.addEventListener('mouseenter', stopAutoSlide);
-    galleryWrapper.addEventListener('mouseleave', startAutoSlide);
-    galleryWrapper.addEventListener('touchstart', stopAutoSlide, { passive: true });
-    galleryWrapper.addEventListener('touchend', () => {
-      // Resume autoslide after gesture ends
-      setTimeout(startAutoSlide, 2000);
-    }, { passive: true });
+      // Pause autoscroll on mouse enter, resume on leave
+      galleryCascadeWrapper.addEventListener('mouseenter', stopAutoSlide);
+      galleryCascadeWrapper.addEventListener('mouseleave', startAutoSlide);
 
-    if (prevBtn) {
-      prevBtn.addEventListener('mouseenter', stopAutoSlide);
-      prevBtn.addEventListener('mouseleave', startAutoSlide);
+      // Initialize
+      renderGallery();
+      startAutoSlide();
     }
-    if (nextBtn) {
-      nextBtn.addEventListener('mouseenter', stopAutoSlide);
-      nextBtn.addEventListener('mouseleave', startAutoSlide);
-    }
-
-    // Initial setup
-    updateCoverflow();
-    startAutoSlide();
   }
 
   // 3.1 Locations Floor Plan Lightbox Modal Trigger
