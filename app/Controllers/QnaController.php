@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Config\MockData;
+use Config\MockData;
 
 class QnaController extends BaseController
 {

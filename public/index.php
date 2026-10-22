@@ -9,7 +9,7 @@ use Config\Paths;
  *---------------------------------------------------------------
  */
 
-$minPhpVersion = '8.2'; // If you update this, don't forget to update `spark`.
+$minPhpVersion = '8.0'; // If you update this, don't forget to update `spark`.
 if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
     $message = sprintf(
         'Your PHP version must be %s or higher to run CodeIgniter. Current version: %s',
@@ -54,6 +54,16 @@ require FCPATH . '../app/Config/Paths.php';
 $paths = new Paths();
 
 // LOAD THE FRAMEWORK BOOTSTRAP FILE
-require $paths->systemDirectory . '/Boot.php';
+require rtrim($paths->systemDirectory, '\\/ ') . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
-exit(Boot::bootWeb($paths));
+// Load environment settings from .env files into $_SERVER and $_ENV
+require_once SYSTEMPATH . 'Config/DotEnv.php';
+(new CodeIgniter\Config\DotEnv(ROOTPATH))->load();
+
+// LOAD THE FRONT CONTROLLER
+$app = Config\Services::codeigniter();
+$app->initialize();
+$context = is_cli() ? 'php-cli' : 'web';
+$app->setContext($context);
+
+$app->run();

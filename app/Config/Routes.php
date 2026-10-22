@@ -1,8 +1,22 @@
 <?php
 
+namespace Config;
+
 use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
+$routes = $routes ?? Services::routes();
+
+if (is_file(SYSTEMPATH . 'Config/Routes.php')) {
+    require SYSTEMPATH . 'Config/Routes.php';
+}
+
+$routes->setDefaultNamespace('App\Controllers');
+$routes->setDefaultController('Home');
+$routes->setDefaultMethod('index');
+$routes->setTranslateURIDashes(false);
+$routes->set404Override();
+
 $routes->match(['get', 'head'], '/', 'Home::index');
 $routes->post('api/track-ticket', 'Home::trackTicket');
 $routes->match(['get', 'post'], 'api/clear-cache', 'Home::clearCache');

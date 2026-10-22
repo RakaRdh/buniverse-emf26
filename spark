@@ -38,7 +38,7 @@ if (str_starts_with(PHP_SAPI, 'cgi')) {
  *---------------------------------------------------------------
  */
 
-$minPhpVersion = '8.2'; // If you update this, don't forget to update `public/index.php`.
+$minPhpVersion = '8.0'; // If you update this, don't forget to update `public/index.php`.
 if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
     $message = sprintf(
         'Your PHP version must be %s or higher to run CodeIgniter. Current version: %s',
@@ -82,6 +82,24 @@ require FCPATH . '../app/Config/Paths.php';
 $paths = new Paths();
 
 // LOAD THE FRAMEWORK BOOTSTRAP FILE
-require $paths->systemDirectory . '/Boot.php';
+require rtrim($paths->systemDirectory, '\\/ ') . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
-exit(Boot::bootSpark($paths));
+// Load environment settings from .env files into $_SERVER and $_ENV
+require_once SYSTEMPATH . 'Config/DotEnv.php';
+(new CodeIgniter\Config\DotEnv(ROOTPATH))->load();
+
+// Grab our CodeIgniter
+$app = Config\Services::codeigniter();
+$app->initialize();
+
+// Grab our Console
+$console = new CodeIgniter\CLI\Console();
+
+// Show basic information before we do anything else.
+if (is_int($suppress = array_search('--no-header', $_SERVER['argv'], true))) {
+    unset($_SERVER['argv'][$suppress]); // @codeCoverageIgnore
+    $console->showHeader();
+}
+
+// DRIFT OFF TO DREAMLAND...
+exit($console->run());
