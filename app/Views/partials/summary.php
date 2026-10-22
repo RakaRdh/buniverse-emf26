@@ -5,7 +5,7 @@
     
     <!-- Section Header Centered -->
     <div class="section-header-center">
-      <h2 class="section-title">Berita & Sorotan</h2>
+      <h2 class="section-title">Overview</h2>
     </div>
 
     <?php

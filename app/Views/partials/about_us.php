@@ -5,7 +5,7 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
 <section class="about-us-section editorial-section" id="about-us">
   <?= view('partials/section_decorations', ['sectionKey' => 'about-us', 'decorations' => $sectionDecorations ?? []]) ?>
   <?= view('partials/custom_placements', ['sectionKey' => 'about-us', 'customPlacements' => $customPlacements ?? []]) ?>
-  
+
   <div class="about-ribbon-showcase-wrap" aria-hidden="true">
     <div class="about-ribbon-showcase">
       <?php /* Inner Framed Image: Selalu tegak (upright) dengan transisi rotate masuk searah jarum jam */ ?>
@@ -21,7 +21,7 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
             <img src="<?= base_url('assets/img/image3.jpg') ?>" alt="Event Showcase 3" loading="lazy">
           </div>
           <div class="about-ribbon-slide slide-3" data-index="3">
-            <img src="<?= base_url('assets/img/speakers.png') ?>" alt="Event Showcase 4" loading="lazy">
+            <img src="<?= base_url('assets/img/image1_sq.png') ?>" alt="Event Showcase 4" loading="lazy">
           </div>
         </div>
       </div>
@@ -35,7 +35,7 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
 
   <div class="container">
     <div class="about-us-grid editorial-grid">
-      
+
       <?php /* Kolom Kiri Dikosongkan untuk tempat Ribbon Frame */ ?>
       <div class="about-us-left-spacer" aria-hidden="true"></div>
 
@@ -57,38 +57,38 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
 </section>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  var frame = document.getElementById('aboutRibbonFrame');
-  var slides = document.querySelectorAll('.about-ribbon-slide');
-  if (!frame || slides.length === 0) return;
+  document.addEventListener('DOMContentLoaded', function () {
+    var frame = document.getElementById('aboutRibbonFrame');
+    var slides = document.querySelectorAll('.about-ribbon-slide');
+    if (!frame || slides.length === 0) return;
 
-  var currentStep = 0;
-  var currentIndex = 0;
-  var total = slides.length;
-  var stepAngle = 90; // 90 derajat per step searah jarum jam (clockwise)
+    var currentStep = 0;
+    var currentIndex = 0;
+    var total = slides.length;
+    var stepAngle = 90; // 90 derajat per step searah jarum jam (clockwise)
 
-  setInterval(function () {
-    currentStep++;
-    var prevIndex = currentIndex;
-    var nextIndex = currentStep % total;
-    var rotationDeg = currentStep * stepAngle;
+    setInterval(function () {
+      currentStep++;
+      var prevIndex = currentIndex;
+      var nextIndex = currentStep % total;
+      var rotationDeg = currentStep * stepAngle;
 
-    // Ribbon berputar clockwise
-    frame.style.transform = 'rotate(' + rotationDeg + 'deg)';
+      // Ribbon berputar clockwise
+      frame.style.transform = 'rotate(' + rotationDeg + 'deg)';
 
-    // Gambar lama keluar berputar clockwise (+70deg)
-    slides[prevIndex].classList.remove('active');
-    slides[prevIndex].classList.add('leaving');
+      // Gambar lama keluar berputar clockwise (+70deg)
+      slides[prevIndex].classList.remove('active');
+      slides[prevIndex].classList.add('leaving');
 
-    // Gambar baru masuk berputar clockwise mendarat tegak di 0deg (view asli)
-    slides[nextIndex].classList.remove('leaving');
-    slides[nextIndex].classList.add('active');
+      // Gambar baru masuk berputar clockwise mendarat tegak di 0deg (view asli)
+      slides[nextIndex].classList.remove('leaving');
+      slides[nextIndex].classList.add('active');
 
-    setTimeout(function () {
-      slides[prevIndex].classList.remove('leaving');
-    }, 900);
+      setTimeout(function () {
+        slides[prevIndex].classList.remove('leaving');
+      }, 900);
 
-    currentIndex = nextIndex;
-  }, 3500);
-});
+      currentIndex = nextIndex;
+    }, 3500);
+  });
 </script>

@@ -1442,5 +1442,63 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+
+  // --------------------------------------------------------------------------
+  // Hero Countdown Timer
+  // --------------------------------------------------------------------------
+  const initHeroCountdown = () => {
+    const wrap = document.getElementById('heroCountdown');
+    if (!wrap) return;
+
+    const elDays = document.getElementById('cdDays');
+    const elHours = document.getElementById('cdHours');
+    const elMinutes = document.getElementById('cdMinutes');
+    const elSeconds = document.getElementById('cdSeconds');
+    if (!elDays || !elHours || !elMinutes || !elSeconds) return;
+
+    const targetDateStr = wrap.dataset.targetDate || '2026-10-07T09:00:00+07:00';
+    const targetTime = new Date(targetDateStr).getTime();
+
+    let prevValues = { days: '', hours: '', minutes: '', seconds: '' };
+
+    const updateUnit = (el, val, key) => {
+      const formatted = String(val).padStart(2, '0');
+      if (formatted !== prevValues[key]) {
+        el.textContent = formatted;
+        el.classList.remove('is-tick');
+        // Trigger reflow for animation restart
+        void el.offsetWidth;
+        el.classList.add('is-tick');
+        prevValues[key] = formatted;
+      }
+    };
+
+    const tick = () => {
+      const now = new Date().getTime();
+      const diff = targetTime - now;
+
+      if (diff <= 0) {
+        updateUnit(elDays, 0, 'days');
+        updateUnit(elHours, 0, 'hours');
+        updateUnit(elMinutes, 0, 'minutes');
+        updateUnit(elSeconds, 0, 'seconds');
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      updateUnit(elDays, days, 'days');
+      updateUnit(elHours, hours, 'hours');
+      updateUnit(elMinutes, minutes, 'minutes');
+      updateUnit(elSeconds, seconds, 'seconds');
+    };
+
+    tick();
+    setInterval(tick, 1000);
+  };
+  initHeroCountdown();
 });
 

@@ -23,11 +23,49 @@
     </div>
   </div>
 
+  <?php /* Hero Partner / Kementerian Logo (Sisi Kiri Atas Hero) */ ?>
+  <div class="hero-partner-badge">
+    <img src="<?= base_url('assets/img/kemnaker.webp') ?>" alt="Kementerian Energi dan Sumber Daya Mineral" class="hero-partner-img">
+  </div>
+
   <?php /* 2. Centered Content Group: Bundle single image */ ?>
   <div class="container hero-container">
     <div class="hero-content hero-content-centered">
       <div class="hero-bundle-wrap">
         <img src="<?= base_url('assets/img/logo_green_emf26.webp') ?>" alt="<?= esc($site['title'] ?? 'Investor Daily Summit 2026') ?>" class="hero-bundle-img">
+      </div>
+
+      <?php /* Hero Countdown Glassmorphism Card */ ?>
+      <div class="hero-countdown-wrap" id="heroCountdown" data-target-date="2026-11-10T09:00:00+07:00">
+        <div class="hero-countdown-timer">
+          <div class="hero-countdown-unit" data-unit="days">
+            <div class="hero-countdown-num-box">
+              <span class="hero-countdown-val" id="cdDays">00</span>
+            </div>
+            <span class="hero-countdown-sub">Hari</span>
+          </div>
+          <div class="hero-countdown-sep">:</div>
+          <div class="hero-countdown-unit" data-unit="hours">
+            <div class="hero-countdown-num-box">
+              <span class="hero-countdown-val" id="cdHours">00</span>
+            </div>
+            <span class="hero-countdown-sub">Jam</span>
+          </div>
+          <div class="hero-countdown-sep">:</div>
+          <div class="hero-countdown-unit" data-unit="minutes">
+            <div class="hero-countdown-num-box">
+              <span class="hero-countdown-val" id="cdMinutes">00</span>
+            </div>
+            <span class="hero-countdown-sub">Menit</span>
+          </div>
+          <div class="hero-countdown-sep">:</div>
+          <div class="hero-countdown-unit" data-unit="seconds">
+            <div class="hero-countdown-num-box">
+              <span class="hero-countdown-val" id="cdSeconds">00</span>
+            </div>
+            <span class="hero-countdown-sub">Detik</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
