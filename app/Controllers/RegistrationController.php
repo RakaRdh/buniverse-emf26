@@ -224,6 +224,7 @@ class RegistrationController extends BaseController
 
         $allSent = true;
         $ticketCount = count($tickets);
+        $emailService = \Config\Services::email();
 
         foreach ($tickets as $idx => $t) {
             $tCode = $t['ticket_code'] ?? '';
@@ -333,15 +334,15 @@ class RegistrationController extends BaseController
             </html>';
 
             try {
-                $email = \Config\Services::email();
-                $email->setFrom($email->fromEmail, $email->fromName);
-                $email->setTo($targetEmail);
-                $email->setSubject($subject);
-                $email->setMessage($body);
-                $sent = $email->send();
+                $emailService->clear();
+                $emailService->setFrom($emailService->fromEmail, $emailService->fromName);
+                $emailService->setTo($targetEmail);
+                $emailService->setSubject($subject);
+                $emailService->setMessage($body);
+                $sent = $emailService->send(false);
                 if (!$sent) {
                     $allSent = false;
-                    log_message('error', 'Gagal kirim email tiket #' . ($idx + 1) . ': ' . $email->printDebugger(['headers', 'subject']));
+                    log_message('error', 'Gagal kirim email tiket #' . ($idx + 1) . ': ' . $emailService->printDebugger(['headers', 'subject']));
                 }
             } catch (\Throwable $e) {
                 $allSent = false;

@@ -409,8 +409,48 @@
   </div>
 </div>
 
+<!-- MODAL LOADING ANIMASI (REGISTRASI BERLANGSUNG) -->
+<div id="loadingModal" style="display: none; position: fixed; inset: 0; background: rgba(10, 25, 15, 0.78); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 99999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
+  <div style="background: #ffffff; width: 100%; max-width: 420px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.35); text-align: center; animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+    <!-- Decorative top ribbon with animated gradient -->
+    <div style="height: 6px; background: linear-gradient(90deg, var(--green-6, #49982e), var(--yellow-6, #f4d849), var(--green-6, #49982e)); background-size: 200% 100%; animation: gradientShift 2s linear infinite;"></div>
+    
+    <div style="padding: 38px 28px 32px 28px;">
+      <!-- Glowing Animated Spinner & Icon -->
+      <div style="position: relative; width: 84px; height: 84px; margin: 0 auto 22px auto; display: flex; align-items: center; justify-content: center;">
+        <div class="emf-spinner-ring"></div>
+        <div class="emf-spinner-core">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--green-7, #3e8127);">
+            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"></path>
+            <path d="M13 5v2"></path>
+            <path d="M13 17v2"></path>
+            <path d="M13 11v2"></path>
+          </svg>
+        </div>
+      </div>
+
+      <h3 id="loadingModalTitle" style="margin: 0 0 10px 0; font-size: 19px; font-weight: 800; color: var(--green-10, #214415); letter-spacing: -0.01em;">
+        Memproses Pendaftaran...
+      </h3>
+
+      <p id="loadingModalDesc" style="margin: 0 0 22px 0; font-size: 13.5px; color: #64748b; line-height: 1.55; min-height: 42px;">
+        Sistem sedang mengamankan kuota tiket dan menyiapkan e-badge digital Anda...
+      </p>
+
+      <!-- Animated Progress Bar -->
+      <div style="width: 100%; height: 6px; background: #f1f5f9; border-radius: 999px; overflow: hidden; position: relative; margin-bottom: 14px;">
+        <div class="emf-loading-bar-fill"></div>
+      </div>
+
+      <div style="font-size: 11.5px; font-weight: 600; color: #94a3b8; letter-spacing: 0.04em; text-transform: uppercase;">
+        Mohon jangan tutup atau refresh halaman ini
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL PERINGATAN / ERROR (PENGGANTI ALERT BROWSER) -->
-<div id="errorModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
+<div id="errorModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
   <div style="background: #ffffff; width: 100%; max-width: 440px; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.25); text-align: center; animation: modalIn 0.25s ease;">
     <!-- Modal Header Kuning EMF -->
     <div style="background: var(--yellow-6, #f4d849); padding: 20px 20px; border-bottom: 2px solid var(--yellow-4, #f8e68c);">
@@ -437,7 +477,7 @@
       </p>
 
       <!-- Action Button -->
-      <button type="button" id="btnDismissError" style="width: 100%; background: var(--green-6, #49982e); color: #ffffff; border: none; border-radius: 10px; padding: 12px 18px; font-size: 14.5px; font-weight: 800; cursor: pointer; font-family: inherit;">
+      <button type="button" id="btnDismissError" style="width: 100%; background: var(--green-6, #49982e); color: #ffffff; border: none; border-radius: 10px; padding: 12px 18px; font-size: 14.5px; font-weight: 800; cursor: pointer; font-family: inherit; transition: background 0.2s ease;">
         Tutup & Periksa Kembali
       </button>
     </div>
@@ -446,13 +486,76 @@
 
 <style>
 @keyframes modalIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes emfSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes emfPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.88; }
+}
+
+@keyframes loadingBarAnim {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(30%); }
+  100% { transform: translateX(200%); }
+}
+
+.emf-spinner-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 4px solid #e2e8f0;
+  border-top-color: var(--green-6, #49982e);
+  border-right-color: var(--yellow-6, #f4d849);
+  animation: emfSpin 0.9s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+}
+
+.emf-spinner-core {
+  width: 52px;
+  height: 52px;
+  background: #f0fdf4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(73, 152, 46, 0.18);
+  animation: emfPulse 1.8s ease-in-out infinite;
+}
+
+.emf-loading-bar-fill {
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-6, #49982e), var(--yellow-6, #f4d849));
+  border-radius: 999px;
+  animation: loadingBarAnim 1.6s ease-in-out infinite;
 }
 </style>
 
 <script>
+function lockScroll() {
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
+}
+
+function unlockScroll() {
+  document.body.style.overflow = '';
+  document.documentElement.style.overflow = '';
+}
+
 function showErrorModal(title, message) {
+  lockScroll();
   document.getElementById('errorModalTitle').textContent = title || 'Pemberitahuan';
   document.getElementById('errorModalDesc').textContent = message || 'Terjadi kendala saat memproses pendaftaran.';
   document.getElementById('errorModal').style.display = 'flex';
@@ -460,7 +563,40 @@ function showErrorModal(title, message) {
 
 document.getElementById('btnDismissError').addEventListener('click', function() {
   document.getElementById('errorModal').style.display = 'none';
+  unlockScroll();
 });
+
+let loadingInterval = null;
+
+function showLoadingModal() {
+  lockScroll();
+  const modal = document.getElementById('loadingModal');
+  const title = document.getElementById('loadingModalTitle');
+  const desc = document.getElementById('loadingModalDesc');
+  
+  title.textContent = 'Memproses Pendaftaran...';
+  desc.textContent = 'Sistem sedang mengamankan kuota tiket dan menyiapkan e-badge digital Anda...';
+  modal.style.display = 'flex';
+
+  const messages = [
+    { title: 'Mengamankan Tiket...', desc: 'Memvalidasi ketersediaan kuota dan data peserta...' },
+    { title: 'Menyiapkan E-Badge...', desc: 'Membangun QR Code dan digital badge resmi Anda...' },
+    { title: 'Mengirimkan Konfirmasi...', desc: 'Menghubungkan ke server email untuk mengirimkan tiket masuk...' }
+  ];
+
+  let step = 0;
+  clearInterval(loadingInterval);
+  loadingInterval = setInterval(() => {
+    step = (step + 1) % messages.length;
+    title.textContent = messages[step].title;
+    desc.textContent = messages[step].desc;
+  }, 2200);
+}
+
+function hideLoadingModal() {
+  clearInterval(loadingInterval);
+  document.getElementById('loadingModal').style.display = 'none';
+}
 
 document.getElementById('regForm').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -471,6 +607,7 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
 
   btn.disabled = true;
   btn.textContent = 'Memproses Pendaftaran...';
+  showLoadingModal();
 
   const formData = new FormData(this);
 
@@ -485,9 +622,11 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
     });
 
     const json = await res.json();
+    hideLoadingModal();
 
     if (res.ok && json.success) {
-      // Tampilkan Modal Berhasil
+      // Tampilkan Modal Berhasil (scroll tetap terkunci agar fokus di modal)
+      lockScroll();
       document.getElementById('modalEmail').textContent = json.participant?.email || formData.get('email');
 
       // Update sisa kuota dan dropdown jumlah tiket secara realtime
@@ -495,7 +634,7 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
       const isSoldOut = Boolean(json.is_sold_out || (remainingQuota !== null && remainingQuota <= 0));
 
       if (isSoldOut) {
-        // Jika kuota pas habis setelah pemesanan ini, reload saat modal ditutup atau ganti ke status Sold Out
+        // Jika kuota pas habis setelah pemesanan ini
         const fieldset = document.querySelector('#regForm fieldset');
         if (fieldset) fieldset.disabled = true;
         btn.disabled = true;
@@ -542,6 +681,7 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
       btn.textContent = 'Kirim Pendaftaran';
     }
   } catch (err) {
+    hideLoadingModal();
     showErrorModal('Koneksi Terputus', 'Gagal menghubungi server. Silakan periksa jaringan internet Anda.');
     btn.disabled = false;
     btn.textContent = 'Kirim Pendaftaran';
@@ -551,6 +691,7 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
 // Event Pesan Tiket Lagi: Tutup modal dan fokus ke input nama
 document.getElementById('btnRegisterAgain').addEventListener('click', function() {
   document.getElementById('successModal').style.display = 'none';
+  unlockScroll();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   const nameInput = document.getElementById('full_name');
   if (nameInput) nameInput.focus();

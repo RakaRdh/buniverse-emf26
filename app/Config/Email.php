@@ -58,7 +58,7 @@ class Email extends BaseConfig
     /**
      * Enable persistent SMTP connections
      */
-    public bool $SMTPKeepAlive = false;
+    public bool $SMTPKeepAlive = true;
 
     /**
      * SMTP Encryption.
