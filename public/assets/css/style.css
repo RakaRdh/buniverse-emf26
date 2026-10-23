@@ -537,7 +537,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
   width: 100%;
 }
 
@@ -545,69 +545,86 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 58px;
+  min-width: 54px;
 }
 
-.hero-countdown-num-box {
-  background: rgba(27, 67, 23, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius: 10px;
-  padding: 6px 10px;
-  width: 100%;
-  box-sizing: border-box;
+/* Container angka roller vertikal modern (Clean, Minimalist seperti referensi) */
+.hero-roller-box {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+  gap: 2px;
+  height: 44px;
+  overflow: hidden;
+  position: relative;
+  /* Mask gradient atas-bawah agar angka masuk & keluar memudar halus seperti film roller */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%);
 }
 
-.hero-countdown-val {
-  font-size: 26px;
+.hero-roller-col {
+  width: 22px;
+  height: 44px;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-roller-track {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.hero-roller-digit,
+.hero-roller-track span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
   font-weight: 800;
-  line-height: 1;
-  color: var(--green-9, #173813);
+  line-height: 44px;
+  color: var(--green-10, #143320);
+  font-family: 'Manrope', -apple-system, sans-serif;
   font-variant-numeric: tabular-nums;
-  display: inline-block;
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
-}
-
-/* Animasi flip/pulse saat detik/angka berganti */
-.hero-countdown-val.is-tick {
-  animation: countdownTick 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes countdownTick {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  45% {
-    transform: translateY(-3px) scale(1.12);
-    color: var(--green-6, #49982e);
-    opacity: 0.9;
-  }
-  100% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
+  user-select: none;
+  will-change: transform;
 }
 
 .hero-countdown-sub {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 1px;
   color: var(--green-8, #2a5d24);
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .hero-countdown-sep {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 800;
-  color: var(--green-7, #3d8026);
-  margin-top: -18px;
-  opacity: 0.8;
-  animation: sepPulse 1.8s ease-in-out infinite;
+  color: var(--green-8, #2a5d24);
+  margin-top: -24px;
+  opacity: 0.75;
+  animation: sepPulse 2s ease-in-out infinite;
+}
+
+@keyframes sepPulse {
+  0%, 100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.95;
+  }
 }
 
 @keyframes sepPulse {

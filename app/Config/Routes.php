@@ -42,3 +42,16 @@ $routes->get('qna', 'QnaController::index');
 
 // Media Proxy Route under Frontend domain (GET & HEAD)
 $routes->match(['get', 'head'], 'uploads/(:any)', 'MediaController::serve/$1');
+
+// Public Visitor Registration Routes (Non-SPA)
+$routes->get('register', 'RegistrationController::index');
+$routes->post('register/submit', 'RegistrationController::submit');
+$routes->get('register/success/(:segment)', 'RegistrationController::success/$1');
+
+// Disguised Receptionist Desk Portal (with 6-Digit Passcode Session)
+$routes->get('gate/portal_desk_ops_access_verify', 'RegistrationController::gatePortal');
+$routes->post('gate/portal_desk_ops_access_verify/verify', 'RegistrationController::verifyGatePasscode');
+$routes->get('gate/portal_desk_ops_access_verify/lock', 'RegistrationController::lockGatePortal');
+$routes->post('gate/portal_desk_ops_access_verify/checkin', 'RegistrationController::proxyCheckin');
+$routes->get('gate/portal_desk_ops_access_verify/search', 'RegistrationController::proxySearch');
+$routes->get('gate/portal_desk_ops_access_verify/stats', 'RegistrationController::proxyStats');

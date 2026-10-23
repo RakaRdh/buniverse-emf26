@@ -73,16 +73,28 @@
             </a>
           <?php endforeach; ?>
           <?php if (!empty($site['cta_ticket_active'])): ?>
-            <a href="<?= esc($site['ticket_url']) ?>" class="btn-ticket btn-ticket-mobile" data-track-ticket="true" target="_blank" rel="noopener noreferrer">
-              <?= esc($site['cta_ticket_label'] ?? 'Get Tickets') ?>
-            </a>
+            <?php if (!empty($site['is_sold_out'])): ?>
+              <span class="btn-ticket btn-ticket-mobile disabled" style="background:#cbd5e1; color:#64748b; border-color:#94a3b8; cursor:not-allowed; opacity:0.8;">
+                Sold Out
+              </span>
+            <?php else: ?>
+              <a href="<?= base_url('register') ?>" class="btn-ticket btn-ticket-mobile" data-track-ticket="true">
+                <?= esc($site['cta_ticket_label'] ?? 'Get Tickets') ?>
+              </a>
+            <?php endif; ?>
           <?php endif; ?>
         </nav>
 
         <?php if (!empty($site['cta_ticket_active'])): ?>
-          <a href="<?= esc($site['ticket_url']) ?>" class="btn-ticket btn-ticket-desktop" data-track-ticket="true" target="_blank" rel="noopener noreferrer">
-            <?= esc($site['cta_ticket_label'] ?? 'Get Tickets') ?>
-          </a>
+          <?php if (!empty($site['is_sold_out'])): ?>
+            <span class="btn-ticket btn-ticket-desktop disabled" style="background:#cbd5e1; color:#64748b; border-color:#94a3b8; cursor:not-allowed; opacity:0.8;">
+              Sold Out
+            </span>
+          <?php else: ?>
+            <a href="<?= base_url('register') ?>" class="btn-ticket btn-ticket-desktop" data-track-ticket="true">
+              <?= esc($site['cta_ticket_label'] ?? 'Get Tickets') ?>
+            </a>
+          <?php endif; ?>
         <?php endif; ?>
         
         <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">

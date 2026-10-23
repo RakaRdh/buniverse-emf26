@@ -1444,33 +1444,77 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --------------------------------------------------------------------------
-  // Hero Countdown Timer
+  // Hero Countdown Timer — Smooth Continuous Downward Rolling Digits
   // --------------------------------------------------------------------------
   const initHeroCountdown = () => {
     const wrap = document.getElementById('heroCountdown');
     if (!wrap) return;
 
-    const elDays = document.getElementById('cdDays');
-    const elHours = document.getElementById('cdHours');
-    const elMinutes = document.getElementById('cdMinutes');
-    const elSeconds = document.getElementById('cdSeconds');
-    if (!elDays || !elHours || !elMinutes || !elSeconds) return;
-
-    const targetDateStr = wrap.dataset.targetDate || '2026-10-07T09:00:00+07:00';
+    const targetDateStr = wrap.dataset.targetDate || '2026-11-10T09:00:00+07:00';
     const targetTime = new Date(targetDateStr).getTime();
 
-    let prevValues = { days: '', hours: '', minutes: '', seconds: '' };
+    let isInitial = true;
 
-    const updateUnit = (el, val, key) => {
-      const formatted = String(val).padStart(2, '0');
-      if (formatted !== prevValues[key]) {
-        el.textContent = formatted;
-        el.classList.remove('is-tick');
-        // Trigger reflow for animation restart
-        void el.offsetWidth;
-        el.classList.add('is-tick');
-        prevValues[key] = formatted;
+    // Update satu kolom digit (puluhan / satuan) agar SELALU bergulir ke bawah
+    const setColDigit = (col, newDigit) => {
+      const currentSpan = col.querySelector('.hero-roller-digit.active') || col.querySelector('span');
+      const currentVal = currentSpan ? currentSpan.textContent.trim() : null;
+
+      if (currentVal === String(newDigit)) {
+        return; // Tidak ada perubahan, lewati
       }
+
+      if (isInitial || !currentSpan) {
+        col.innerHTML = `<span class="hero-roller-digit active" style="transform: translateY(0);">${newDigit}</span>`;
+        return;
+      }
+
+      // Bersihkan sisa elemen transisi sebelumnya jika ada
+      const staleSpans = col.querySelectorAll('.hero-roller-digit:not(.active)');
+      staleSpans.forEach(s => s.remove());
+
+      // Buat elemen angka baru yang masuk dari ATAS (-100%)
+      const nextSpan = document.createElement('span');
+      nextSpan.className = 'hero-roller-digit incoming';
+      nextSpan.textContent = newDigit;
+      nextSpan.style.transform = 'translateY(-100%)';
+      nextSpan.style.transition = 'none';
+
+      col.appendChild(nextSpan);
+
+      // Force layout reflow agar transform awal (-100%) diterapkan browser
+      void nextSpan.offsetHeight;
+
+      // Animasikan KONSISTEN KE BAWAH:
+      // Angka lama bergerak ke bawah (0 -> 100%)
+      // Angka baru masuk ke bawah (-100% -> 0)
+      const animTransition = 'transform 0.48s cubic-bezier(0.16, 1, 0.3, 1)';
+      currentSpan.style.transition = animTransition;
+      nextSpan.style.transition = animTransition;
+
+      currentSpan.style.transform = 'translateY(100%)';
+      nextSpan.style.transform = 'translateY(0)';
+
+      // Setelah transisi selesai, hapus angka lama dan jadikan angka baru sebagai active
+      setTimeout(() => {
+        if (currentSpan.parentNode === col) {
+          col.removeChild(currentSpan);
+        }
+        nextSpan.className = 'hero-roller-digit active';
+        nextSpan.style.transition = '';
+      }, 500);
+    };
+
+    const updateRollerBox = (boxId, num) => {
+      const box = document.getElementById(boxId);
+      if (!box) return;
+
+      const str = String(num).padStart(2, '0');
+      const colTens = box.querySelector('[data-col="t"]');
+      const colUnits = box.querySelector('[data-col="u"]');
+
+      if (colTens) setColDigit(colTens, str[0]);
+      if (colUnits) setColDigit(colUnits, str[1]);
     };
 
     const tick = () => {
@@ -1478,10 +1522,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const diff = targetTime - now;
 
       if (diff <= 0) {
-        updateUnit(elDays, 0, 'days');
-        updateUnit(elHours, 0, 'hours');
-        updateUnit(elMinutes, 0, 'minutes');
-        updateUnit(elSeconds, 0, 'seconds');
+        updateRollerBox('rollDays', 0);
+        updateRollerBox('rollHours', 0);
+        updateRollerBox('rollMinutes', 0);
+        updateRollerBox('rollSeconds', 0);
+        isInitial = false;
         return;
       }
 
@@ -1490,12 +1535,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-      updateUnit(elDays, days, 'days');
-      updateUnit(elHours, hours, 'hours');
-      updateUnit(elMinutes, minutes, 'minutes');
-      updateUnit(elSeconds, seconds, 'seconds');
+      updateRollerBox('rollDays', days);
+      updateRollerBox('rollHours', hours);
+      updateRollerBox('rollMinutes', minutes);
+      updateRollerBox('rollSeconds', seconds);
+
+      isInitial = false;
     };
 
+    // Jalankan segera dan set interval 1 detik
     tick();
     setInterval(tick, 1000);
   };

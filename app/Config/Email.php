@@ -123,4 +123,22 @@ class Email extends BaseConfig
      * Enable notify message from server
      */
     public bool $DSN = false;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        if (env('SMTP_HOST')) {
+            $this->protocol   = 'smtp';
+            $this->SMTPHost   = (string)env('SMTP_HOST');
+            $this->SMTPPort   = (int)(env('SMTP_PORT') ?: 465);
+            $this->SMTPUser   = (string)env('SMTP_USER');
+            $this->SMTPPass   = (string)env('SMTP_PASS');
+            $crypto           = env('SMTP_CRYPTO');
+            $this->SMTPCrypto = ($crypto !== null && $crypto !== false) ? (string)$crypto : '';
+            $this->fromEmail  = (string)(env('SMTP_FROM') ?: 'no-reply@energimineralfest.id');
+            $this->fromName   = (string)(env('SMTP_FROM_NAME') ?: 'Energi & Mineral Festival 2026');
+            $this->mailType   = 'html';
+        }
+    }
 }

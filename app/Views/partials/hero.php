@@ -39,29 +39,33 @@
       <div class="hero-countdown-wrap" id="heroCountdown" data-target-date="2026-11-10T09:00:00+07:00">
         <div class="hero-countdown-timer">
           <div class="hero-countdown-unit" data-unit="days">
-            <div class="hero-countdown-num-box">
-              <span class="hero-countdown-val" id="cdDays">00</span>
+            <div class="hero-roller-box" id="rollDays">
+              <div class="hero-roller-col" data-col="t"><span class="hero-roller-digit active">0</span></div>
+              <div class="hero-roller-col" data-col="u"><span class="hero-roller-digit active">0</span></div>
             </div>
             <span class="hero-countdown-sub">Hari</span>
           </div>
           <div class="hero-countdown-sep">:</div>
           <div class="hero-countdown-unit" data-unit="hours">
-            <div class="hero-countdown-num-box">
-              <span class="hero-countdown-val" id="cdHours">00</span>
+            <div class="hero-roller-box" id="rollHours">
+              <div class="hero-roller-col" data-col="t"><span class="hero-roller-digit active">0</span></div>
+              <div class="hero-roller-col" data-col="u"><span class="hero-roller-digit active">0</span></div>
             </div>
             <span class="hero-countdown-sub">Jam</span>
           </div>
           <div class="hero-countdown-sep">:</div>
           <div class="hero-countdown-unit" data-unit="minutes">
-            <div class="hero-countdown-num-box">
-              <span class="hero-countdown-val" id="cdMinutes">00</span>
+            <div class="hero-roller-box" id="rollMinutes">
+              <div class="hero-roller-col" data-col="t"><span class="hero-roller-digit active">0</span></div>
+              <div class="hero-roller-col" data-col="u"><span class="hero-roller-digit active">0</span></div>
             </div>
             <span class="hero-countdown-sub">Menit</span>
           </div>
           <div class="hero-countdown-sep">:</div>
           <div class="hero-countdown-unit" data-unit="seconds">
-            <div class="hero-countdown-num-box">
-              <span class="hero-countdown-val" id="cdSeconds">00</span>
+            <div class="hero-roller-box" id="rollSeconds">
+              <div class="hero-roller-col" data-col="t"><span class="hero-roller-digit active">0</span></div>
+              <div class="hero-roller-col" data-col="u"><span class="hero-roller-digit active">0</span></div>
             </div>
             <span class="hero-countdown-sub">Detik</span>
           </div>

@@ -33,9 +33,15 @@
 
     <!-- Right: Get Ticket Button (matching navbar style with radius 10) -->
     <div class="floating-bottom-action">
-      <a href="<?= esc($floatingBtnUrl) ?>" class="btn-floating-ticket" data-track-ticket="true" target="_blank" rel="noopener noreferrer">
-        <?= esc($floatingBtnLabel) ?>
-      </a>
+      <?php if (!empty($site['is_sold_out'])): ?>
+        <span class="btn-floating-ticket disabled" style="background:#cbd5e1; color:#64748b; border:1px solid #94a3b8; cursor:not-allowed; opacity:0.85;">
+          Sold Out
+        </span>
+      <?php else: ?>
+        <a href="<?= base_url('register') ?>" class="btn-floating-ticket" data-track-ticket="true">
+          <?= esc($floatingBtnLabel) ?>
+        </a>
+      <?php endif; ?>
     </div>
 
   </div>

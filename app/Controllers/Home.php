@@ -136,8 +136,28 @@ class Home extends BaseController
                 $site['contact_phone'] = $live['site']['contact']['phone'] ?? '+62 812-1267-8789';
                 $site['contact_label'] = $live['site']['contact']['label'] ?? 'Phone';
                 $site['contact_url'] = $live['site']['contact']['url'] ?? null;
-                $site['nav_items'] = $live['site']['nav_items'] ?? [];
                 $site['socials'] = $live['site']['socials'] ?? [];
+            }
+
+            // Cek status kuota tiket langsung dari database
+            $db = \Config\Database::connect();
+            $eventDb = $db->table('events')->where('slug', 'emf-2026')->get()->getRowArray();
+            $quota = (int)($eventDb['quota'] ?? 0);
+            $confirmedCount = 0;
+            if (!empty($eventDb['id'])) {
+                $confirmedCount = $db->table('participants')
+                    ->where('event_id', $eventDb['id'])
+                    ->where('status', 'confirmed')
+                    ->countAllResults();
+            }
+            $isSoldOut = ($quota > 0 && $confirmedCount >= $quota);
+            $site['is_sold_out'] = $isSoldOut;
+            if ($isSoldOut) {
+                $site['cta_ticket_label'] = 'Sold Out';
+                if (!empty($site['floating_bar'])) {
+                    $site['floating_bar']['btn_label'] = 'Sold Out';
+                    $site['floating_bar']['text'] = 'Mohon Maaf, Kuota Tiket Sudah Penuh (Sold Out)';
+                }
             }
 
             // Define EMF Green & Yellow Palette Theme Properties
