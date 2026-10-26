@@ -214,32 +214,6 @@ button {
     box-shadow: none !important;
     border-bottom: 1px solid transparent !important;
   }
-
-  /* Saat navbar unscrolled (berada di posisi atas hero): teks nav link & tombol Get Tickets berwarna KUNING */
-  .site-header.header-hero-transparent .nav-link {
-    color: var(--yellow-6, #fff100) !important;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
-  }
-
-  .site-header.header-hero-transparent .nav-link:hover,
-  .site-header.header-hero-transparent .nav-link.active {
-    color: #fef08a !important;
-    text-shadow: 0 0 10px rgba(255, 241, 0, 0.6);
-  }
-
-  .site-header.header-hero-transparent .btn-ticket {
-    background-color: var(--yellow-6, #fff100) !important;
-    color: var(--green-10, #143320) !important;
-    box-shadow: 0 4px 16px rgba(255, 241, 0, 0.35) !important;
-    font-weight: 800;
-  }
-
-  .site-header.header-hero-transparent .btn-ticket:hover {
-    background-color: #fef08a !important;
-    color: var(--green-10, #143320) !important;
-    outline-color: var(--yellow-6, #fff100) !important;
-    box-shadow: 0 6px 22px rgba(255, 241, 0, 0.55) !important;
-  }
 }
 
 .header-inner {

@@ -156,6 +156,39 @@
       color: #1a202c;
     }
 
+    .reg-phone-group {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .reg-country-select {
+      flex: 0 0 auto;
+      width: 110px;
+      padding: 12px 8px;
+      background: #ffffff;
+      border: 1.5px solid rgba(73, 152, 46, 0.3);
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1a202c;
+      font-family: inherit;
+      outline: none;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    .reg-country-select:focus {
+      border-color: var(--green-6, #49982e);
+      box-shadow: 0 0 0 3px rgba(73, 152, 46, 0.15);
+    }
+
+    .reg-phone-input {
+      flex: 1;
+      min-width: 0;
+    }
+
     .reg-textarea {
       resize: vertical;
       min-height: 80px;
@@ -260,8 +293,19 @@
             <div class="reg-hint-text" style="font-size: 11px; color: #64748b; margin-top: 4px;">Tiket dan barcode akan dikirimkan ke email ini.</div>
           </div>
           <div class="reg-form-group">
-            <label class="reg-label" for="phone">Nomor Telepon / WhatsApp <span class="req">*</span></label>
-            <input type="tel" id="phone" name="phone" class="reg-input" required pattern="^(08|\+?628)[0-9]{7,11}$" placeholder="081234567890" value="<?= old('phone') ?>">
+            <label class="reg-label" for="phone_number">Nomor Telepon / WhatsApp <span class="req">*</span></label>
+            <div class="reg-phone-group">
+              <select id="country_dial" class="reg-country-select" aria-label="Kode Negara Telepon">
+                <?php foreach (\App\Helpers\PhoneHelper::SUPPORTED_COUNTRIES as $code => $country): ?>
+                  <option value="<?= esc($country['dial_code']) ?>" <?= $code === 'ID' ? 'selected' : '' ?>>
+                    <?= $country['flag'] ?> +<?= esc($country['dial_code']) ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+              <input type="tel" id="phone_number" class="reg-input reg-phone-input" required placeholder="81234567890" value="<?= old('phone') ?>">
+            </div>
+            <input type="hidden" id="phone" name="phone" value="<?= old('phone') ?>">
+            <div class="reg-hint-text" style="font-size: 11px; color: #64748b; margin-top: 4px;">Contoh: 81234567890 (tanpa angka 0 di depan jika menggunakan kode negara).</div>
           </div>
         </div>
 
@@ -280,9 +324,9 @@
           <div class="reg-form-group">
             <label class="reg-label" for="ticket_quantity">
               Jumlah Tiket <span class="req">*</span>
-              <span id="remainingQuotaBadge" style="font-size: 11.5px; font-weight: 700; color: #dc2626; margin-left: 4px; <?= (!empty($totalQuota) && $remainingQuota > 0) ? '' : 'display: none;' ?>">
+              <!-- <span id="remainingQuotaBadge" style="font-size: 11.5px; font-weight: 700; color: #dc2626; margin-left: 4px; <?= (!empty($totalQuota) && $remainingQuota > 0) ? '' : 'display: none;' ?>">
                 (Sisa: <?= (int)($remainingQuota ?? 0) ?> tiket)
-              </span>
+              </span> -->
             </label>
             <select id="ticket_quantity" name="ticket_quantity" class="reg-select" required>
               <?php
@@ -317,7 +361,7 @@
         </div>
 
         <!-- SEKSI 4: PIC (OPSIONAL) -->
-        <div class="reg-section-title" style="margin-top: 28px;">4. Kontak Narahubung / PIC (Opsional)</div>
+        <div class="reg-section-title" style="margin-top: 28px;">4. Kontak Narahubung / PIC</div>
 
         <div class="reg-form-group">
           <label class="reg-label" for="pic_name">Nama PIC / Pendamping</label>
@@ -446,6 +490,46 @@
 
       <div style="font-size: 11.5px; font-weight: 600; color: #94a3b8; letter-spacing: 0.04em; text-transform: uppercase;">
         Mohon jangan tutup atau refresh halaman ini
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL KONFIRMASI DUPLIKASI EMAIL -->
+<div id="duplicateConfirmModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(5px); z-index: 10000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
+  <div style="background: #ffffff; width: 100%; max-width: 460px; border-radius: 18px; overflow: hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.25); text-align: center; animation: modalIn 0.25s ease;">
+    <!-- Modal Header Kuning EMF -->
+    <div style="background: var(--yellow-6, #f4d849); padding: 18px 20px; border-bottom: 2px solid var(--yellow-4, #f8e68c);">
+      <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green-9, #2a571a); margin-bottom: 2px;">
+        KONFIRMASI EMAIL TERDAFTAR
+      </div>
+      <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: var(--green-10, #214415);">
+        Energi & Mineral Festival 2026
+      </h3>
+    </div>
+
+    <!-- Modal Body -->
+    <div style="padding: 28px 24px; color: #1e293b;">
+      <div style="width: 56px; height: 56px; background: #fef3c7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; color: #d97706; font-size: 26px; font-weight: 800;">
+        &#9888;
+      </div>
+
+      <h4 style="margin: 0 0 10px 0; font-size: 17px; font-weight: 800; color: #92400e;">
+        Email Sudah Pernah Terdaftar
+      </h4>
+      
+      <p id="duplicateConfirmDesc" style="margin: 0 0 24px 0; font-size: 13.5px; color: #475569; line-height: 1.6;">
+        Alamat email ini sudah terdaftar pada sistem kami. Apakah Anda yakin ingin melakukan pendaftaran tiket tambahan?
+      </p>
+
+      <!-- Action Buttons (Batal vs Ya, Lanjutkan) -->
+      <div style="display: flex; gap: 10px;">
+        <button type="button" id="btnCancelDuplicate" style="flex: 1; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; font-weight: 700; cursor: pointer; font-family: inherit;">
+          Batal / Periksa
+        </button>
+        <button type="button" id="btnConfirmDuplicate" style="flex: 1.3; background: var(--green-6, #49982e); color: #ffffff; border: none; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; font-weight: 800; cursor: pointer; font-family: inherit; transition: background 0.2s ease;">
+          Ya, Lanjutkan
+        </button>
       </div>
     </div>
   </div>
@@ -600,9 +684,84 @@ function hideLoadingModal() {
   document.getElementById('loadingModal').style.display = 'none';
 }
 
+// Format nomor telepon dengan strip (-): misal 812-3456-7890
+function formatPhoneChunks(digits, dialCode) {
+  if (!digits) return '';
+  const pattern = (dialCode === '62') ? [3, 4, 4] : [3, 3, 4];
+  const chunks = [];
+  let cursor = 0;
+  for (const len of pattern) {
+    if (cursor >= digits.length) break;
+    chunks.push(digits.substring(cursor, cursor + len));
+    cursor += len;
+  }
+  if (cursor < digits.length) {
+    chunks.push(digits.substring(cursor));
+  }
+  return chunks.join('-');
+}
+
+// Sinkronisasi dan format otomatis nomor telepon dengan strip (-) saat diketik
+function handlePhoneInput(e) {
+  const dial = document.getElementById('country_dial').value;
+  const input = document.getElementById('phone_number');
+  let raw = (input.value || '').trim();
+  
+  // Ambil hanya digit
+  let digits = raw.replace(/[^0-9]/g, '');
+  if (digits.startsWith('0')) {
+    digits = digits.replace(/^0+/, '');
+  }
+
+  // Batasi panjang digit wajar (maksimal 14 digit)
+  if (digits.length > 14) {
+    digits = digits.substring(0, 14);
+  }
+
+  // Format dengan strip (-)
+  const formatted = formatPhoneChunks(digits, dial);
+  input.value = formatted;
+
+  // Set nilai murni (dial + digits tanpa strip) ke hidden input untuk backend
+  document.getElementById('phone').value = digits ? (dial + digits) : '';
+}
+
+function syncFullPhoneNumber() {
+  handlePhoneInput();
+}
+
+document.getElementById('country_dial').addEventListener('change', handlePhoneInput);
+document.getElementById('phone_number').addEventListener('input', handlePhoneInput);
+
+let isForceDuplicate = false;
+
+document.getElementById('btnCancelDuplicate').addEventListener('click', function() {
+  document.getElementById('duplicateConfirmModal').style.display = 'none';
+  unlockScroll();
+  const emailInput = document.getElementById('email');
+  if (emailInput) {
+    emailInput.focus();
+    emailInput.select();
+  }
+});
+
+document.getElementById('btnConfirmDuplicate').addEventListener('click', function() {
+  document.getElementById('duplicateConfirmModal').style.display = 'none';
+  unlockScroll();
+  isForceDuplicate = true;
+  document.getElementById('regForm').dispatchEvent(new Event('submit', { cancelable: true }));
+});
+
 document.getElementById('regForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   
+  syncFullPhoneNumber();
+  const phoneVal = document.getElementById('phone').value;
+  if (!phoneVal) {
+    showErrorModal('Nomor Telepon Diperlukan', 'Mohon masukkan nomor telepon/WhatsApp Anda.');
+    return;
+  }
+
   const btn = document.getElementById('btnSubmitReg');
   const errorBox = document.querySelector('.reg-alert-error');
   if (errorBox) errorBox.style.display = 'none';
@@ -612,6 +771,10 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
   showLoadingModal();
 
   const formData = new FormData(this);
+  if (isForceDuplicate) {
+    formData.set('force_duplicate', '1');
+    isForceDuplicate = false; // reset
+  }
 
   try {
     const res = await fetch("<?= base_url('register/submit') ?>", {
@@ -627,7 +790,7 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
     hideLoadingModal();
 
     if (res.ok && json.success) {
-      // Tampilkan Modal Berhasil (scroll tetap terkunci agar fokus di modal)
+      // Tampilkan Modal Berhasil
       lockScroll();
       document.getElementById('modalEmail').textContent = json.participant?.email || formData.get('email');
 
@@ -636,7 +799,6 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
       const isSoldOut = Boolean(json.is_sold_out || (remainingQuota !== null && remainingQuota <= 0));
 
       if (isSoldOut) {
-        // Jika kuota pas habis setelah pemesanan ini
         const fieldset = document.querySelector('#regForm fieldset');
         if (fieldset) fieldset.disabled = true;
         btn.disabled = true;
@@ -672,12 +834,50 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
       
       // Reset form
       document.getElementById('regForm').reset();
+      document.getElementById('phone').value = '';
+      btn.disabled = false;
+      btn.textContent = 'Kirim Pendaftaran';
+    } else if (res.status === 409 && json.requires_confirmation) {
+      // Modal Interaktif Konfirmasi Duplikasi Email
+      lockScroll();
+      document.getElementById('duplicateConfirmDesc').textContent = json.message || 'Alamat email ini sudah terdaftar sebelumnya. Apakah Anda yakin ingin melakukan pendaftaran tiket tambahan dengan email ini?';
+      document.getElementById('duplicateConfirmModal').style.display = 'flex';
       btn.disabled = false;
       btn.textContent = 'Kirim Pendaftaran';
     } else {
-      const modalTitle = (res.status === 422 && json.message && json.message.toLowerCase().includes('kuota'))
-        ? 'Kuota Tiket Habis'
-        : 'Pendaftaran Belum Berhasil';
+      // Kuota habis atau error lainnya
+      const isQuotaError = (res.status === 422 && json.message && json.message.toLowerCase().includes('kuota'));
+      const modalTitle = isQuotaError ? 'Kuota Tiket Habis' : 'Pendaftaran Belum Berhasil';
+      
+      if (typeof json.remaining_quota !== 'undefined' || json.is_sold_out) {
+        const rQuota = parseInt(json.remaining_quota || 0);
+        if (rQuota <= 0 || json.is_sold_out) {
+          const fieldset = document.querySelector('#regForm fieldset');
+          if (fieldset) fieldset.disabled = true;
+          btn.disabled = true;
+          btn.textContent = 'Pendaftaran Ditutup (Sold Out)';
+          btn.style.background = '#94a3b8';
+          const badge = document.getElementById('remainingQuotaBadge');
+          if (badge) badge.style.display = 'none';
+        } else {
+          const badge = document.getElementById('remainingQuotaBadge');
+          if (badge) {
+            badge.textContent = `(Sisa: ${rQuota} tiket)`;
+            badge.style.display = 'inline';
+          }
+          const qtySelect = document.getElementById('ticket_quantity');
+          if (qtySelect) {
+            qtySelect.innerHTML = '';
+            for (let q = 1; q <= Math.min(5, rQuota); q++) {
+              const opt = document.createElement('option');
+              opt.value = q;
+              opt.textContent = `${q} Tiket`;
+              qtySelect.appendChild(opt);
+            }
+          }
+        }
+      }
+
       showErrorModal(modalTitle, json.message || 'Pendaftaran gagal diproses. Silakan periksa kembali data Anda.');
       btn.disabled = false;
       btn.textContent = 'Kirim Pendaftaran';

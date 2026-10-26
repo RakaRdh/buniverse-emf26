@@ -5,8 +5,26 @@ namespace App\Helpers;
 class PhoneHelper
 {
     /**
-     * Normalisasi nomor telepon ke format lokal Indonesia (08...) atau internasional.
-     * Mengembalikan string nomor yang sudah dibersihkan atau false jika invalid.
+     * Supported countries for WhatsApp / phone validation.
+     */
+    public const SUPPORTED_COUNTRIES = [
+        'ID' => ['name' => 'Indonesia', 'dial_code' => '62', 'flag' => '🇮🇩', 'min_digits' => 9, 'max_digits' => 13],
+        'MY' => ['name' => 'Malaysia', 'dial_code' => '60', 'flag' => '🇲🇾', 'min_digits' => 9, 'max_digits' => 10],
+        'SG' => ['name' => 'Singapore', 'dial_code' => '65', 'flag' => '🇸🇬', 'min_digits' => 8, 'max_digits' => 8],
+        'TH' => ['name' => 'Thailand', 'dial_code' => '66', 'flag' => '🇹🇭', 'min_digits' => 9, 'max_digits' => 9],
+        'PH' => ['name' => 'Philippines', 'dial_code' => '63', 'flag' => '🇵🇭', 'min_digits' => 10, 'max_digits' => 10],
+        'IN' => ['name' => 'India', 'dial_code' => '91', 'flag' => '🇮🇳', 'min_digits' => 10, 'max_digits' => 10],
+        'JP' => ['name' => 'Japan', 'dial_code' => '81', 'flag' => '🇯🇵', 'min_digits' => 10, 'max_digits' => 11],
+        'KR' => ['name' => 'South Korea', 'dial_code' => '82', 'flag' => '🇰🇷', 'min_digits' => 9, 'max_digits' => 11],
+        'US' => ['name' => 'USA / Canada', 'dial_code' => '1', 'flag' => '🇺🇸', 'min_digits' => 10, 'max_digits' => 10],
+        'GB' => ['name' => 'United Kingdom', 'dial_code' => '44', 'flag' => '🇬🇧', 'min_digits' => 10, 'max_digits' => 11],
+        'AU' => ['name' => 'Australia', 'dial_code' => '61', 'flag' => '🇦🇺', 'min_digits' => 9, 'max_digits' => 9],
+        'AE' => ['name' => 'UAE', 'dial_code' => '971', 'flag' => '🇦🇪', 'min_digits' => 9, 'max_digits' => 9],
+        'SA' => ['name' => 'Saudi Arabia', 'dial_code' => '966', 'flag' => '🇸🇦', 'min_digits' => 9, 'max_digits' => 9],
+    ];
+
+    /**
+     * Normalize a phone number to pure digits E.164 without '+'.
      */
     public static function normalize(?string $raw): string|false
     {
@@ -19,7 +37,6 @@ class PhoneHelper
             return false;
         }
 
-        // Hapus karakter non-digit selain '+' di awal
         $hasPlus = str_starts_with($trimmed, '+');
         $digits = preg_replace('/[^0-9]/', '', $trimmed);
 
@@ -27,54 +44,66 @@ class PhoneHelper
             return false;
         }
 
-        // Jika diawali 628 -> konversi ke 08 untuk format lokal Indonesia
-        if (str_starts_with($digits, '628')) {
-            $digits = '08' . substr($digits, 3);
-        } elseif (str_starts_with($digits, '8') && strlen($digits) >= 8 && strlen($digits) <= 12) {
-            $digits = '08' . substr($digits, 1);
+        if ($hasPlus) {
+            foreach (self::SUPPORTED_COUNTRIES as $country) {
+                $dial = $country['dial_code'];
+                if (str_starts_with($digits, $dial)) {
+                    $national = substr($digits, strlen($dial));
+                    if (str_starts_with($national, '0')) {
+                        $national = ltrim($national, '0');
+                    }
+                    return $dial . $national;
+                }
+            }
+            return $digits;
         }
 
-        return $digits;
+        if (str_starts_with($digits, '0')) {
+            return '62' . substr($digits, 1);
+        }
+
+        if (str_starts_with($digits, '62')) {
+            return $digits;
+        }
+
+        foreach (self::SUPPORTED_COUNTRIES as $country) {
+            $dial = $country['dial_code'];
+            if ($dial !== '62' && str_starts_with($digits, $dial)) {
+                return $digits;
+            }
+        }
+
+        if (str_starts_with($digits, '8') && strlen($digits) >= 8 && strlen($digits) <= 13) {
+            return '62' . $digits;
+        }
+
+        if (strlen($digits) >= 8 && strlen($digits) <= 15) {
+            return $digits;
+        }
+
+        return false;
     }
 
     /**
-     * Validasi nomor telepon khusus Indonesia (awalan 08, 9-13 digit, dan anti-spam).
+     * Validate normalized phone number.
      */
-    public static function validate(string $phone): array
+    public static function validate(string $normalized): array
     {
-        $normalized = self::normalize($phone);
-        if ($normalized === false) {
-            return [
-                'valid'   => false,
-                'message' => 'Nomor telepon tidak boleh kosong dan hanya boleh berupa angka.',
-            ];
-        }
-
-        // Wajib berawalan 08
-        if (!str_starts_with($normalized, '08')) {
-            return [
-                'valid'   => false,
-                'message' => 'Nomor telepon harus nomor Indonesia yang diawali 08 (contoh: 081234567890).',
-            ];
-        }
-
         $len = strlen($normalized);
-        if ($len < 9 || $len > 13) {
+        if ($len < 8 || $len > 15) {
             return [
                 'valid'   => false,
-                'message' => 'Nomor telepon harus berukuran antara 9 hingga 13 digit (saat ini ' . $len . ' digit).',
+                'message' => 'Panjang nomor telepon harus antara 8 hingga 15 digit.'
             ];
         }
 
-        // Anti-spam: 6 digit berulang berturut-turut (misal: 08111111111)
-        if (preg_match('/(\d)\1{5,}/', $normalized)) {
+        if (preg_match('/(\d)\1{6,}/', $normalized)) {
             return [
                 'valid'   => false,
-                'message' => 'Nomor telepon tidak valid (terdeteksi angka berulang / spam).',
+                'message' => 'Nomor telepon tidak valid (terdeteksi digit berulang).'
             ];
         }
 
-        // Anti-spam: deret sekuensial
         $consecutiveSeqs = [
             '12345678', '23456789', '34567890',
             '87654321', '98765432', '09876543'
@@ -83,15 +112,100 @@ class PhoneHelper
             if (str_contains($normalized, $seq)) {
                 return [
                     'valid'   => false,
-                    'message' => 'Nomor telepon tidak valid (terdeteksi pola urutan angka).',
+                    'message' => 'Nomor telepon tidak valid (pola nomor sekuensial).'
                 ];
             }
         }
 
-        return [
-            'valid'      => true,
-            'message'    => 'Nomor telepon valid.',
-            'normalized' => $normalized,
-        ];
+        $matched = null;
+        foreach (self::SUPPORTED_COUNTRIES as $code => $country) {
+            if (str_starts_with($normalized, $country['dial_code'])) {
+                if ($matched === null || strlen($country['dial_code']) > strlen($matched['dial_code'])) {
+                    $matched = $country;
+                }
+            }
+        }
+
+        if ($matched !== null) {
+            $national = substr($normalized, strlen($matched['dial_code']));
+            $nationalLen = strlen($national);
+
+            if ($nationalLen < $matched['min_digits']) {
+                return [
+                    'valid'   => false,
+                    'message' => "Nomor telepon {$matched['name']} terlalu pendek (minimal {$matched['min_digits']} digit setelah kode negara)."
+                ];
+            }
+            if ($nationalLen > $matched['max_digits']) {
+                return [
+                    'valid'   => false,
+                    'message' => "Nomor telepon {$matched['name']} terlalu panjang (maksimal {$matched['max_digits']} digit setelah kode negara)."
+                ];
+            }
+        }
+
+        return ['valid' => true, 'message' => 'Nomor telepon valid.', 'normalized' => $normalized];
+    }
+
+    /**
+     * Generate wa.me link from any phone format.
+     */
+    public static function waUrl(?string $phone): string
+    {
+        if (empty($phone)) {
+            return '';
+        }
+
+        $norm = self::normalize($phone);
+        if (!$norm) {
+            $digits = preg_replace('/[^0-9]/', '', $phone);
+            return $digits ? "https://wa.me/{$digits}" : '';
+        }
+
+        return "https://wa.me/{$norm}";
+    }
+
+    /**
+     * Standardize and format phone number for human display (e.g. "+62 812-1267-8789").
+     */
+    public static function formatDisplay(?string $phone): string
+    {
+        if (empty($phone)) {
+            return '-';
+        }
+
+        $normalized = self::normalize($phone);
+        if (!$normalized) {
+            return $phone;
+        }
+
+        $matched = null;
+        foreach (self::SUPPORTED_COUNTRIES as $country) {
+            if (str_starts_with($normalized, $country['dial_code'])) {
+                if ($matched === null || strlen($country['dial_code']) > strlen($matched['dial_code'])) {
+                    $matched = $country;
+                }
+            }
+        }
+
+        if ($matched !== null) {
+            $dial = $matched['dial_code'];
+            $national = substr($normalized, strlen($dial));
+            $pattern = ($dial === '62') ? [3, 4, 4] : [3, 3, 4];
+            $chunks = [];
+            $cursor = 0;
+            foreach ($pattern as $len) {
+                if ($cursor >= strlen($national)) break;
+                $chunks[] = substr($national, $cursor, $len);
+                $cursor += $len;
+            }
+            if ($cursor < strlen($national)) {
+                $chunks[] = substr($national, $cursor);
+            }
+
+            return "+{$dial} " . implode('-', $chunks);
+        }
+
+        return "+{$normalized}";
     }
 }

@@ -123,7 +123,8 @@ class RegistrationController extends BaseController
             'job_title'       => trim(strip_tags((string)$this->request->getPost('job_title'))),
             'company_name'    => trim(strip_tags((string)$this->request->getPost('company_name'))),
             'visit_day'       => trim(strip_tags((string)$this->request->getPost('visit_day'))),
-            'ticket_quantity' => (int)$this->request->getPost('ticket_quantity') ?: 1,
+            'ticket_quantity' => min(5, max(1, (int)$this->request->getPost('ticket_quantity') ?: 1)),
+            'force_duplicate' => (int)$this->request->getPost('force_duplicate') ?: 0,
             'pic_name'        => trim(strip_tags((string)$this->request->getPost('pic_name'))),
             'pic_email'       => trim(strip_tags((string)$this->request->getPost('pic_email'))),
             'pic_phone'       => trim(strip_tags((string)$this->request->getPost('pic_phone'))),
@@ -162,7 +163,7 @@ class RegistrationController extends BaseController
             return redirect()->back()->withInput()->with('error', $err);
         }
 
-        // 3. Validasi & Normalisasi Nomor Telepon (08..., 9-13 digit, anti-spam)
+        // 3. Validasi & Normalisasi Nomor Telepon (Mendukung Multi-Country VLC Helper)
         $phoneVal = \App\Helpers\PhoneHelper::validate($postData['phone']);
         if (!$phoneVal['valid']) {
             $err = $phoneVal['message'];
@@ -229,14 +230,22 @@ class RegistrationController extends BaseController
             return redirect()->to(base_url('register'));
         }
 
-        $msg = $body['message'] ?? 'Terjadi kesalahan saat pendaftaran.';
-        if ($isAjax) {
-            return $this->response->setStatusCode($code ?: 400)->setJSON([
-                'success' => false,
-                'message' => $msg,
-            ]);
+        // Jika respons 409 (Duplikasi Email yang Membutuhkan Konfirmasi)
+        if ($code === 409 || !empty($body['requires_confirmation'])) {
+            if ($isAjax) {
+                return $this->response->setStatusCode(409)->setJSON($body);
+            }
         }
 
+        // Jika respons 422 (misal Kuota Habis saat Race Condition)
+        if ($isAjax) {
+            $common = $this->getCommonData();
+            $body['remaining_quota'] = $common['remainingQuota'] ?? 0;
+            $body['is_sold_out'] = $common['isSoldOut'] ?? false;
+            return $this->response->setStatusCode($code ?: 400)->setJSON($body);
+        }
+
+        $msg = $body['message'] ?? 'Terjadi kesalahan saat pendaftaran.';
         return redirect()->back()->withInput()->with('error', $msg);
     }
 
