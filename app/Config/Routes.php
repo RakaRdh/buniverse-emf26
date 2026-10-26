@@ -18,6 +18,7 @@ $routes->setTranslateURIDashes(false);
 $routes->set404Override();
 
 $routes->match(['get', 'head'], '/', 'Home::index');
+$routes->match(['get', 'head'], 'preview-hero', 'Home::previewHero');
 $routes->post('api/track-ticket', 'Home::trackTicket');
 $routes->match(['get', 'post'], 'api/clear-cache', 'Home::clearCache');
 
@@ -55,3 +56,7 @@ $routes->get('gate/portal_desk_ops_access_verify/lock', 'RegistrationController:
 $routes->post('gate/portal_desk_ops_access_verify/checkin', 'RegistrationController::proxyCheckin');
 $routes->get('gate/portal_desk_ops_access_verify/search', 'RegistrationController::proxySearch');
 $routes->get('gate/portal_desk_ops_access_verify/stats', 'RegistrationController::proxyStats');
+
+// On-The-Spot (OTS) Registration Module (Model A Murni - Instant Check-In)
+$routes->get('gate/portal_desk_ops_access_verify/registration', 'RegistrationController::gateRegistration');
+$routes->post('gate/portal_desk_ops_access_verify/registration/submit', 'RegistrationController::submitGateRegistration');

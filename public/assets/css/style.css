@@ -214,6 +214,32 @@ button {
     box-shadow: none !important;
     border-bottom: 1px solid transparent !important;
   }
+
+  /* Saat navbar unscrolled (berada di posisi atas hero): teks nav link & tombol Get Tickets berwarna KUNING */
+  .site-header.header-hero-transparent .nav-link {
+    color: var(--yellow-6, #fff100) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  }
+
+  .site-header.header-hero-transparent .nav-link:hover,
+  .site-header.header-hero-transparent .nav-link.active {
+    color: #fef08a !important;
+    text-shadow: 0 0 10px rgba(255, 241, 0, 0.6);
+  }
+
+  .site-header.header-hero-transparent .btn-ticket {
+    background-color: var(--yellow-6, #fff100) !important;
+    color: var(--green-10, #143320) !important;
+    box-shadow: 0 4px 16px rgba(255, 241, 0, 0.35) !important;
+    font-weight: 800;
+  }
+
+  .site-header.header-hero-transparent .btn-ticket:hover {
+    background-color: #fef08a !important;
+    color: var(--green-10, #143320) !important;
+    outline-color: var(--yellow-6, #fff100) !important;
+    box-shadow: 0 6px 22px rgba(255, 241, 0, 0.55) !important;
+  }
 }
 
 .header-inner {
@@ -5690,5 +5716,265 @@ button {
 
   .locations-hotel-name {
     font-size: 28px;
+  }
+}
+
+/* ==========================================================================
+   PREVIEW HERO SECTION (TEMPLATE BARU ROUTE /preview-hero)
+   ========================================================================== */
+.hero-preview-section {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 120px 24px 90px 24px;
+  box-sizing: border-box;
+}
+
+/* 1. Full Background Image (hero-bg.webp) */
+.hero-preview-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-preview-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  transform: scale(1.02);
+}
+
+.hero-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.45) 100%);
+  z-index: 2;
+}
+
+/* 2. Container Tengah */
+.hero-preview-container {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.hero-preview-center-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+/* 3. Kombo Ribbon Berputar + Teks Tengah (Presisi Se-paket) */
+.hero-emblem-combo {
+  position: relative;
+  width: clamp(300px, 35vw, 420px);
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  user-select: none;
+}
+
+/* Ribbon berputar halus di belakang */
+.hero-ribbon-spin-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  animation: heroRibbonSpin 28s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.hero-ribbon-spin-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.4));
+}
+
+@keyframes heroRibbonSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Teks Putih (emftxt-white.webp) tepat di tengah lubang ribbon */
+.hero-emftxt-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-emftxt-img {
+  width: 40%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 3px 12px rgba(0, 0, 0, 0.65));
+}
+
+/* 4. Hero Bottom Graphic Text (hero-btm.webp) */
+.hero-btm-wrap {
+  width: 100%;
+  max-width: clamp(340px, 48vw, 620px);
+  margin-top: clamp(20px, 3vw, 36px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.hero-btm-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.65));
+}
+
+/* 5. Countdown di Sudut Kanan Bawah Hero Section */
+.hero-preview-countdown-corner {
+  position: absolute;
+  bottom: 32px;
+  right: max(32px, calc((100vw - 1240px) / 2 + 24px));
+  z-index: 6;
+  pointer-events: auto;
+}
+
+.hero-countdown-corner-wrap {
+  margin: 0 !important;
+  max-width: 320px;
+  background: rgba(10, 24, 12, 0.55) !important;
+  border-radius: 18px !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5) !important;
+  padding: 12px 20px 14px 20px !important;
+}
+
+.hero-countdown-corner-wrap .hero-countdown-label {
+  color: #fef08a !important; /* Yellow light text */
+  font-size: 10.5px !important;
+  letter-spacing: 1.5px !important;
+  margin-bottom: 6px !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.hero-countdown-corner-wrap .hero-roller-digit,
+.hero-countdown-corner-wrap .hero-roller-track span {
+  color: #ffffff !important;
+  font-size: 26px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+.hero-countdown-corner-wrap .hero-roller-box,
+.hero-countdown-corner-wrap .hero-roller-col {
+  height: 36px !important;
+}
+
+.hero-countdown-corner-wrap .hero-roller-col {
+  width: 18px !important;
+}
+
+.hero-countdown-corner-wrap .hero-countdown-timer {
+  gap: 10px !important;
+}
+
+.hero-countdown-corner-wrap .hero-countdown-unit {
+  min-width: 42px !important;
+}
+
+.hero-countdown-corner-wrap .hero-countdown-sub {
+  color: #cbd5e1 !important;
+  font-size: 9.5px !important;
+  margin-top: 4px !important;
+}
+
+.hero-countdown-corner-wrap .hero-countdown-sep {
+  color: #fef08a !important;
+  font-size: 20px !important;
+  margin-top: -18px !important;
+}
+
+/* Responsiveness Preview Hero */
+@media (max-width: 991px) {
+  .hero-preview-countdown-corner {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    margin-top: 36px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .hero-countdown-corner-wrap {
+    max-width: 380px;
+    width: 90%;
+  }
+
+  .hero-scroll-indicator {
+    bottom: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-preview-section {
+    padding: 100px 16px 80px 16px;
+  }
+
+  .hero-emblem-combo {
+    width: clamp(220px, 60vw, 290px);
+  }
+
+  .hero-btm-wrap {
+    max-width: 88vw;
+    margin-top: 18px;
+  }
+
+  .hero-countdown-corner-wrap {
+    padding: 10px 14px 12px 14px !important;
+  }
+
+  .hero-countdown-corner-wrap .hero-roller-digit {
+    font-size: 22px !important;
   }
 }

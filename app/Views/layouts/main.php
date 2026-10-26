@@ -47,8 +47,8 @@
 
   <?php /* Main Content Body */ ?>
   <main id="mainContent">
-    <?php /* 2. Hero Section */ ?>
-    <?= $this->include('partials/hero') ?>
+    <?php /* 2. Hero Section (Mendukung Preview Template Baru via Route /preview-hero) */ ?>
+    <?= $this->include(!empty($heroView) && $heroView === 'preview' ? 'partials/hero_preview' : 'partials/hero') ?>
 
     <?php /* 3. About Us Section (Energi & Mineral Festival) */ ?>
     <?= $this->include('partials/about_us') ?>

@@ -6,7 +6,7 @@ use Config\MockData;
 
 class Home extends BaseController
 {
-    public function index(): string
+    public function index(array $extraData = []): string
     {
         $mock = config(MockData::class);
 
@@ -630,7 +630,20 @@ class Home extends BaseController
             'seo' => $seo,
         ];
 
+        if (!empty($extraData)) {
+            $data = array_merge($data, $extraData);
+        }
+
         return view('home', $data);
+    }
+
+    /**
+     * Preview Template Hero Baru (Route: /preview-hero)
+     * Tidak menyentuh atau mengganggu halaman / utama yang sedang aktif.
+     */
+    public function previewHero(): string
+    {
+        return $this->index(['heroView' => 'preview']);
     }
 
     /**
@@ -908,8 +921,8 @@ class Home extends BaseController
             }
         }
 
-        // Fallback tanggal default jika tidak ada data sama sekali
-        if (empty($targetDate)) {
+        // Fallback tanggal default EMF 2026 jika tidak ada data sama sekali atau jika targetDate sudah lampau
+        if (empty($targetDate) || (strtotime($targetDate . ' ' . $targetTime) <= time())) {
             $targetDate = '2026-11-10';
         }
 
