@@ -221,7 +221,7 @@
       <a href="<?= base_url('/') ?>">
         <img src="<?= base_url('assets/img/logo_green_emf26.webp') ?>" alt="<?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?>" class="reg-logo">
       </a>
-      <h1 class="reg-title">Formulir Registrasi Pengunjung</h1>
+      <h1 class="reg-title">Formulir Registrasi</h1>
       <p class="reg-subtitle"><?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?> &bull; <?= esc($site['dates'] ?? '10 - 11 November 2026') ?><br><?= esc($site['venue'] ?? 'Jakarta') ?></p>
     </div>
 
@@ -249,17 +249,19 @@
 
         <div class="reg-form-group">
           <label class="reg-label" for="full_name">Nama Lengkap <span class="req">*</span></label>
-          <input type="text" id="full_name" name="full_name" class="reg-input" required placeholder="Contoh: Budi Santoso" value="<?= old('full_name') ?>">
+          <input type="text" id="full_name" name="full_name" class="reg-input" required minlength="3" placeholder="Contoh: Budi Santoso" value="<?= old('full_name') ?>">
+          <div class="reg-hint-text" style="font-size: 11px; color: #64748b; margin-top: 4px;">Minimal 3 karakter.</div>
         </div>
 
         <div class="reg-grid-2">
           <div class="reg-form-group">
             <label class="reg-label" for="email">Email Aktif <span class="req">*</span></label>
             <input type="email" id="email" name="email" class="reg-input" required placeholder="budi@example.com" value="<?= old('email') ?>">
+            <div class="reg-hint-text" style="font-size: 11px; color: #64748b; margin-top: 4px;">Tiket dan barcode akan dikirimkan ke email ini.</div>
           </div>
           <div class="reg-form-group">
             <label class="reg-label" for="phone">Nomor Telepon / WhatsApp <span class="req">*</span></label>
-            <input type="tel" id="phone" name="phone" class="reg-input" required placeholder="081234567890" value="<?= old('phone') ?>">
+            <input type="tel" id="phone" name="phone" class="reg-input" required pattern="^(08|\+?628)[0-9]{7,11}$" placeholder="081234567890" value="<?= old('phone') ?>">
           </div>
         </div>
 

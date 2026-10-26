@@ -144,6 +144,35 @@ class RegistrationController extends BaseController
             return redirect()->back()->withInput()->with('error', $err);
         }
 
+        // 1. Validasi Nama Lengkap: Minimal 3 karakter
+        if (mb_strlen($postData['full_name']) < 3) {
+            $err = 'Nama lengkap minimal harus terdiri dari 3 karakter.';
+            if ($isAjax) {
+                return $this->response->setStatusCode(422)->setJSON(['success' => false, 'message' => $err]);
+            }
+            return redirect()->back()->withInput()->with('error', $err);
+        }
+
+        // 2. Validasi Format Email
+        if (!filter_var($postData['email'], FILTER_VALIDATE_EMAIL)) {
+            $err = 'Format alamat email tidak valid (contoh: nama@domain.com).';
+            if ($isAjax) {
+                return $this->response->setStatusCode(422)->setJSON(['success' => false, 'message' => $err]);
+            }
+            return redirect()->back()->withInput()->with('error', $err);
+        }
+
+        // 3. Validasi & Normalisasi Nomor Telepon (08..., 9-13 digit, anti-spam)
+        $phoneVal = \App\Helpers\PhoneHelper::validate($postData['phone']);
+        if (!$phoneVal['valid']) {
+            $err = $phoneVal['message'];
+            if ($isAjax) {
+                return $this->response->setStatusCode(422)->setJSON(['success' => false, 'message' => $err]);
+            }
+            return redirect()->back()->withInput()->with('error', $err);
+        }
+        $postData['phone'] = $phoneVal['normalized'];
+
         $res = $this->fetchApi('participants/register', 'POST', $postData);
 
         if (!$res || empty($res['data'])) {
@@ -381,39 +410,84 @@ class RegistrationController extends BaseController
     public function gatePortal()
     {
         $data = $this->getCommonData();
-        $isUnlocked = (bool)session()->get('emf_gate_unlocked');
-
-        $data['isUnlocked'] = $isUnlocked;
+        $data['isUnlocked'] = true;
         $data['pageTitle']  = 'Desk Presence Terminal';
+
+        // Pre-query data awal (20 data pertama) & telemetri agar halaman langsung tampil instan (tanpa jeda kosong AJAX)
+        $db = \Config\Database::connect();
+        $event = $db->table('events')->where('slug', $this->eventSlug)->get()->getRowArray();
+        
+        $initialParticipants = [];
+        $initialPagination = [
+            'current_page'  => 1,
+            'per_page'      => 20,
+            'total_records' => 0,
+            'total_pages'   => 1,
+            'showing_from'  => 0,
+            'showing_to'    => 0,
+        ];
+        $initialStats = [
+            'total_registered' => 0,
+            'total_checked_in' => 0,
+            'unattended'       => 0,
+        ];
+
+        if ($event) {
+            $totalRegistered = $db->table('participants')
+                ->where('event_id', $event['id'])
+                ->where('status', 'confirmed')
+                ->countAllResults();
+
+            $totalCheckedIn = $db->table('participants')
+                ->where('event_id', $event['id'])
+                ->where('status', 'confirmed')
+                ->where('is_checked_in', 1)
+                ->countAllResults();
+
+            $initialStats = [
+                'total_registered' => $totalRegistered,
+                'total_checked_in' => $totalCheckedIn,
+                'unattended'       => max(0, $totalRegistered - $totalCheckedIn),
+            ];
+
+            // 20 data peserta pertama
+            $perPage = 20;
+            $builder = $db->table('participants')->where('event_id', $event['id']);
+            $totalRecords = $builder->countAllResults(false);
+            $totalPages = max(1, (int)ceil($totalRecords / $perPage));
+
+            $selectFields = 'participants.*, (SELECT COUNT(*) FROM participant_checkins WHERE participant_checkins.participant_id = participants.id) as checkin_count';
+            $initialParticipants = $builder->select($selectFields)
+                ->orderBy('participants.id', 'desc')
+                ->limit($perPage, 0)
+                ->get()
+                ->getResultArray();
+
+            $initialPagination = [
+                'current_page'  => 1,
+                'per_page'      => $perPage,
+                'total_records' => $totalRecords,
+                'total_pages'   => $totalPages,
+                'showing_from'  => $totalRecords > 0 ? 1 : 0,
+                'showing_to'    => min(count($initialParticipants), $totalRecords),
+            ];
+        }
+
+        $data['initialParticipants'] = $initialParticipants;
+        $data['initialPagination']   = $initialPagination;
+        $data['initialStats']        = $initialStats;
 
         return view('ticket/gate_portal', $data);
     }
 
     /**
-     * Verifikasi 6-Digit Passcode
+     * Verifikasi 6-Digit Passcode (Fallback jika dipanggil)
      */
     public function verifyGatePasscode()
     {
-        $passcode = trim((string)$this->request->getPost('passcode'));
-        
-        $res = $this->fetchApi('gate/verify-passcode', 'POST', [
-            'passcode'   => $passcode,
-            'event_slug' => $this->eventSlug,
-        ]);
-
-        if (!empty($res['data']['success'])) {
-            session()->set('emf_gate_unlocked', true);
-            session()->set('emf_gate_passcode', $passcode);
-
-            return $this->response->setJSON([
-                'success' => true,
-                'message' => 'Passcode valid. Akses terminal dibuka.',
-            ]);
-        }
-
-        return $this->response->setStatusCode(401)->setJSON([
-            'success' => false,
-            'message' => $res['data']['message'] ?? 'Passcode 6 digit salah.',
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Akses terminal dibuka.',
         ]);
     }
 
@@ -422,10 +496,132 @@ class RegistrationController extends BaseController
      */
     public function lockGatePortal()
     {
-        session()->remove('emf_gate_unlocked');
-        session()->remove('emf_gate_passcode');
-
         return redirect()->to(base_url('gate/portal_desk_ops_access_verify'));
+    }
+
+    /**
+     * Halaman Registrasi On-The-Spot (OTS) Resepsionis (Model A Murni: Direct Check-In)
+     */
+    public function gateRegistration()
+    {
+        $data = $this->getCommonData();
+        $data['isUnlocked'] = true;
+        $data['pageTitle']  = 'Registrasi OTS Pengunjung — Desk Ops';
+
+        return view('ticket/gate_registration', $data);
+    }
+
+    /**
+     * Submit Registrasi OTS Pengunjung (Otomatis Check-In Langsung & Kirim Email Barcode)
+     */
+    public function submitGateRegistration()
+    {
+        $postData = [
+            'full_name'       => trim(strip_tags((string)$this->request->getPost('full_name'))),
+            'email'           => trim(strip_tags((string)$this->request->getPost('email'))),
+            'phone'           => trim(strip_tags((string)$this->request->getPost('phone'))),
+            'address'         => trim(strip_tags((string)$this->request->getPost('address'))),
+            'job_title'       => trim(strip_tags((string)$this->request->getPost('job_title'))),
+            'company_name'    => trim(strip_tags((string)$this->request->getPost('company_name'))),
+            'visit_day'       => trim(strip_tags((string)$this->request->getPost('visit_day'))),
+            'ticket_quantity' => 1, // OTS individual pass
+            'event_slug'      => $this->eventSlug,
+            'auto_checkin'    => 1, // Model A: Langsung berstatus Checked-In
+            'checkin_note'    => 'Registrasi OTS Desk Terminal (' . date('d M Y H:i:s') . ')',
+        ];
+
+        // Validasi wajib
+        if (empty($postData['full_name']) || empty($postData['email']) || empty($postData['phone']) || 
+            empty($postData['address']) || empty($postData['job_title']) || empty($postData['company_name'])) {
+            return $this->response->setStatusCode(422)->setJSON([
+                'success' => false,
+                'message' => 'Mohon lengkapi seluruh kolom wajib yang bertanda bintang (*).',
+            ]);
+        }
+
+        // 1. Validasi Nama
+        if (mb_strlen($postData['full_name']) < 3) {
+            return $this->response->setStatusCode(422)->setJSON([
+                'success' => false,
+                'message' => 'Nama lengkap minimal harus 3 karakter.',
+            ]);
+        }
+
+        // 2. Validasi Email RFC
+        if (!filter_var($postData['email'], FILTER_VALIDATE_EMAIL)) {
+            return $this->response->setStatusCode(422)->setJSON([
+                'success' => false,
+                'message' => 'Format email pengunjung tidak valid.',
+            ]);
+        }
+
+        // 3. Validasi & Normalisasi Nomor Telepon (08..., 9-13 digit, anti-spam)
+        $phoneVal = \App\Helpers\PhoneHelper::validate($postData['phone']);
+        if (!$phoneVal['valid']) {
+            return $this->response->setStatusCode(422)->setJSON([
+                'success' => false,
+                'message' => $phoneVal['message'],
+            ]);
+        }
+        $postData['phone'] = $phoneVal['normalized'];
+
+        $res = $this->fetchApi('participants/register', 'POST', $postData);
+        if (!$res || empty($res['data'])) {
+            return $this->response->setStatusCode(500)->setJSON([
+                'success' => false,
+                'message' => 'Gagal menghubungi server pendaftaran. Silakan coba sesaat lagi.',
+            ]);
+        }
+
+        $code = $res['status_code'];
+        $body = $res['data'];
+
+        if ($code === 201 || !empty($body['success'])) {
+            $participant = $body['participant'] ?? [];
+            if (empty($participant['email']) && !empty($postData['email'])) {
+                $participant['email'] = $postData['email'];
+            }
+            if (empty($participant['full_name']) && !empty($postData['full_name'])) {
+                $participant['full_name'] = $postData['full_name'];
+            }
+            if (empty($participant['company_name']) && !empty($postData['company_name'])) {
+                $participant['company_name'] = $postData['company_name'];
+            }
+            
+            $tickets = $body['tickets'] ?? [];
+            if (empty($tickets) && !empty($body['ticket_code'])) {
+                $tickets = [[
+                    'ticket_code'  => $body['ticket_code'],
+                    'full_name'    => $participant['full_name'],
+                    'visit_day'    => $postData['visit_day'] ?: 'all_days',
+                    'ticket_index' => 1,
+                ]];
+            }
+
+            // Kirim email konfirmasi tiket (Barcode SVG & QR Code) ke pengunjung
+            $this->sendRegistrationEmail($participant, $tickets, $body['order_id'] ?? '');
+
+            return $this->response->setJSON([
+                'success'         => true,
+                'status'          => 'success',
+                'message'         => 'Registrasi OTS Berhasil! Tamu langsung berstatus "Sudah Hadir" (Checked-In).',
+                'ticket_code'     => $tickets[0]['ticket_code'] ?? ($body['ticket_code'] ?? '-'),
+                'checked_in_at'   => date('H:i:s, d M Y'),
+                'participant'     => [
+                    'full_name'    => $participant['full_name'],
+                    'company_name' => $participant['company_name'],
+                    'job_title'    => $participant['job_title'] ?? $postData['job_title'],
+                    'email'        => $participant['email'],
+                    'phone'        => $postData['phone'],
+                    'visit_day'    => $postData['visit_day'],
+                ],
+            ]);
+        }
+
+        return $this->response->setStatusCode($code ?: 400)->setJSON([
+            'success' => false,
+            'message' => $body['message'] ?? 'Gagal memproses registrasi OTS.',
+        ]);
     }
 
     /**
@@ -436,13 +632,6 @@ class RegistrationController extends BaseController
      */
      public function proxyCheckin()
      {
-         if (!session()->get('emf_gate_unlocked')) {
-             return $this->response->setStatusCode(401)->setJSON([
-                 'success' => false,
-                 'message' => 'Sesi terkunci. Masukkan passcode 6 digit.',
-             ]);
-         }
-
          $ticketCode = trim((string)$this->request->getPost('ticket_code'));
          if (empty($ticketCode)) {
              return $this->response->setStatusCode(400)->setJSON([
@@ -618,47 +807,109 @@ class RegistrationController extends BaseController
      }
 
     /**
-     * Pencarian peserta langsung dari DB lokal (Super Cepat, Tanpa Deadlock HTTP cURL)
+     * Pencarian peserta langsung dari DB lokal dengan Pagination (default 5 item), Sorting, dan Multi-Filter (VLC style)
      */
     public function proxySearch()
     {
-        if (!session()->get('emf_gate_unlocked')) {
-            return $this->response->setStatusCode(401)->setJSON(['data' => []]);
-        }
-
-        $q = trim((string)$this->request->getGet('q'));
         $db = \Config\Database::connect();
-
         $event = $db->table('events')->where('slug', $this->eventSlug)->get()->getRowArray();
         if (!$event) {
-            return $this->response->setJSON(['data' => []]);
+            return $this->response->setJSON([
+                'success' => true,
+                'data' => [],
+                'pagination' => [
+                    'current_page'  => 1,
+                    'per_page'      => 20,
+                    'total_records' => 0,
+                    'total_pages'   => 1,
+                    'showing_from'  => 0,
+                    'showing_to'    => 0,
+                ],
+            ]);
         }
 
+        $q          = trim((string)$this->request->getGet('q'));
+        $status     = trim((string)$this->request->getGet('status')); // '', 'checked_in', 'unattended'
+        $visitDay   = trim((string)$this->request->getGet('visit_day')); // '', 'day_1', 'day_2', 'all_days'
+        $sortCol    = trim((string)$this->request->getGet('sort') ?: 'id');
+        $sortDir    = strtolower(trim((string)$this->request->getGet('order') ?: 'desc')) === 'asc' ? 'asc' : 'desc';
+        $page       = max(1, (int)($this->request->getGet('page') ?: 1));
+        $perPage    = max(1, min(100, (int)($this->request->getGet('per_page') ?: 20))); // default 20 data/page
+
+        // Validasi sort column
+        $allowedSort = [
+            'id'            => 'participants.id',
+            'full_name'     => 'participants.full_name',
+            'company_name'  => 'participants.company_name',
+            'visit_day'     => 'participants.visit_day',
+            'is_checked_in' => 'participants.is_checked_in',
+            'ticket_code'   => 'participants.ticket_code',
+        ];
+        $orderBySql = $allowedSort[$sortCol] ?? 'participants.id';
+
+        // Base query
+        $builder = $db->table('participants')->where('event_id', $event['id']);
+
+        if ($status === 'checked_in') {
+            $builder->where('is_checked_in', 1);
+        } elseif ($status === 'unattended') {
+            $builder->where('is_checked_in', 0);
+        }
+
+        if (!empty($visitDay) && in_array($visitDay, ['day_1', 'day_2', 'all_days'])) {
+            $builder->where('visit_day', $visitDay);
+        }
+
+        if (!empty($q) && $q !== 'all') {
+            $builder->groupStart()
+                ->like('full_name', $q)
+                ->orLike('email', $q)
+                ->orLike('phone', $q)
+                ->orLike('ticket_code', $q)
+                ->orLike('company_name', $q)
+            ->groupEnd();
+        }
+
+        // Hitung total records
+        $totalRecords = $builder->countAllResults(false);
+        $totalPages   = max(1, (int)ceil($totalRecords / $perPage));
+        if ($page > $totalPages) {
+            $page = $totalPages;
+        }
+        $offset = ($page - 1) * $perPage;
+
+        // Ambil data halaman aktif
         $selectFields = 'participants.*, (SELECT COUNT(*) FROM participant_checkins WHERE participant_checkins.participant_id = participants.id) as checkin_count';
-        $builder = $db->table('participants')->select($selectFields)->where('event_id', $event['id']);
-
-        if (empty($q) || $q === 'all') {
-            $builder->orderBy('is_checked_in', 'ASC')->orderBy('id', 'DESC')->limit(50);
-            $results = $builder->get()->getResultArray();
-            return $this->response->setJSON(['success' => true, 'data' => $results]);
-        }
-
-        if (mb_strlen($q) < 2) {
-            return $this->response->setJSON(['data' => []]);
-        }
-
-        $builder->groupStart()
-            ->like('full_name', $q)
-            ->orLike('email', $q)
-            ->orLike('phone', $q)
-            ->orLike('ticket_code', $q)
-            ->orLike('company_name', $q)
-        ->groupEnd()
-        ->orderBy('id', 'DESC')
-        ->limit(30);
+        $builder->select($selectFields)
+            ->orderBy($orderBySql, $sortDir)
+            ->limit($perPage, $offset);
 
         $results = $builder->get()->getResultArray();
-        return $this->response->setJSON(['success' => true, 'data' => $results]);
+
+        $showingFrom = $totalRecords > 0 ? ($offset + 1) : 0;
+        $showingTo   = min($offset + count($results), $totalRecords);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'data'    => $results,
+            'pagination' => [
+                'current_page'  => $page,
+                'per_page'      => $perPage,
+                'total_records' => $totalRecords,
+                'total_pages'   => $totalPages,
+                'showing_from'  => $showingFrom,
+                'showing_to'    => $showingTo,
+            ],
+            'sorting' => [
+                'col'   => $sortCol,
+                'order' => $sortDir,
+            ],
+            'filters' => [
+                'q'         => $q,
+                'status'    => $status,
+                'visit_day' => $visitDay,
+            ],
+        ]);
     }
 
     /**
@@ -666,10 +917,6 @@ class RegistrationController extends BaseController
      */
     public function proxyStats()
     {
-        if (!session()->get('emf_gate_unlocked')) {
-            return $this->response->setStatusCode(401)->setJSON(['data' => []]);
-        }
-
         $db = \Config\Database::connect();
         $event = $db->table('events')->where('slug', $this->eventSlug)->get()->getRowArray();
         if (!$event) {
