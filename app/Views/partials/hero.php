@@ -25,7 +25,7 @@
 
   <?php /* Hero Partner / Kementerian Logo (Sisi Kiri Atas Hero) */ ?>
   <div class="hero-partner-badge">
-    <img src="<?= base_url('assets/img/kemnaker.webp') ?>" alt="Kementerian Energi dan Sumber Daya Mineral" class="hero-partner-img">
+    <img src="<?= base_url('assets/img/esdm.webp') ?>" alt="Kementerian Energi dan Sumber Daya Mineral" class="hero-partner-img">
   </div>
 
   <?php /* 2. Centered Content Group: Bundle single image */ ?>
@@ -35,8 +35,13 @@
         <img src="<?= base_url('assets/img/logo_green_emf26.webp') ?>" alt="<?= esc($site['title'] ?? 'Investor Daily Summit 2026') ?>" class="hero-bundle-img">
       </div>
 
-      <?php /* Hero Countdown Glassmorphism Card */ ?>
-      <div class="hero-countdown-wrap" id="heroCountdown" data-target-date="2026-11-10T09:00:00+07:00">
+      <?php 
+        /* Hero Countdown Glassmorphism Card (Dynamic Target Date from Day 1 Earliest Session & Event Date) */ 
+        $targetTimestamp = !empty($countdownTargetDate) ? strtotime($countdownTargetDate) : strtotime('2026-11-10T09:00:00+07:00');
+        $isCountdownPassed = ($targetTimestamp !== false && $targetTimestamp <= time());
+      ?>
+      <?php if (!$isCountdownPassed): ?>
+      <div class="hero-countdown-wrap" id="heroCountdown" data-target-date="<?= esc($countdownTargetDate ?? '2026-11-10T09:00:00+07:00') ?>">
         <div class="hero-countdown-timer">
           <div class="hero-countdown-unit" data-unit="days">
             <div class="hero-roller-box" id="rollDays">
@@ -71,6 +76,7 @@
           </div>
         </div>
       </div>
+      <?php endif; ?>
     </div>
   </div>
 

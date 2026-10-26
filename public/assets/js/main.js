@@ -1522,11 +1522,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const diff = targetTime - now;
 
       if (diff <= 0) {
-        updateRollerBox('rollDays', 0);
-        updateRollerBox('rollHours', 0);
-        updateRollerBox('rollMinutes', 0);
-        updateRollerBox('rollSeconds', 0);
-        isInitial = false;
+        wrap.style.display = 'none';
+        wrap.remove();
+        if (timerId) clearInterval(timerId);
         return;
       }
 
@@ -1544,8 +1542,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Jalankan segera dan set interval 1 detik
+    let timerId = null;
     tick();
-    setInterval(tick, 1000);
+    if (document.getElementById('heroCountdown')) {
+      timerId = setInterval(tick, 1000);
+    }
   };
   initHeroCountdown();
 });

@@ -32,6 +32,11 @@ class Home extends BaseController
         $customPlacements = [];
         $seo = [];
         $locations = null;
+        $livestream = null;
+        $livestreams = [];
+        $newsPortals = [];
+        $highlights = null;
+        $eventDb = null;
 
         // Attempt live synchronization with BackendCMS REST API for EMF Event
         $cacheKey = 'cms_live_event_emf-2026';
@@ -582,8 +587,12 @@ class Home extends BaseController
             }
         }
 
+        // Resolve Hero Countdown Target Dynamically (Day 1 earliest session time & event date)
+        $countdownTargetDate = $this->resolveHeroCountdownTarget($schedule, $live, $eventDb ?? null);
+
         $data = [
             'site' => $site,
+            'countdownTargetDate' => $countdownTargetDate,
             'themeProperties' => $themeProperties,
             'heroCarousel' => $heroCarousel,
             'overview' => $overview,
@@ -778,6 +787,9 @@ class Home extends BaseController
         foreach ($cmsUrls as $cmsUrl) {
             try {
                 $response = $client->post($cmsUrl, [
+                    'form_params' => [
+                        'event_slug' => 'emf-2026',
+                    ],
                     'headers' => [
                         'User-Agent' => (string) $this->request->getUserAgent(),
                         'X-Forwarded-For' => $this->request->getIPAddress(),
@@ -793,6 +805,23 @@ class Home extends BaseController
             } catch (\Throwable $e) {
                 // Try next endpoint
             }
+        }
+
+        // Direct DB fallback insert to ensure EMF click telemetry is 100% saved
+        if (!$success) {
+            try {
+                $db = \Config\Database::connect();
+                $event = $db->table('events')->where('slug', 'emf-2026')->get()->getRowArray();
+                if ($event) {
+                    $db->table('ticket_click_logs')->insert([
+                        'event_id'   => $event['id'],
+                        'clicked_at' => date('Y-m-d H:i:s'),
+                        'user_agent' => substr((string)$this->request->getUserAgent(), 0, 500),
+                        'referrer'   => substr((string)$this->request->getServer('HTTP_REFERER') ?: base_url(), 0, 500),
+                    ]);
+                    $success = true;
+                }
+            } catch (\Throwable $e) {}
         }
 
         return $this->response->setJSON([
@@ -829,5 +858,98 @@ class Home extends BaseController
             'timestamp' => date('Y-m-d H:i:s'),
         ]);
     }
+
+    /**
+     * Tentukan Target Waktu Countdown Hero Secara Dinamis
+     * Mengikuti jadwal sesi pertama di Day 1 dan tanggal mulai event di CMS/Database.
+     */
+    protected function resolveHeroCountdownTarget(array $schedule, ?array $live, ?array $eventDb = null): string
+    {
+        $targetDate = null;
+        $targetTime = '09:00:00';
+
+        // 1. Dapatkan tanggal Day 1 dari Jadwal (Schedule Day 1)
+        // Prioritas a: Dari tanggal Day 1 pada jadwal ($schedule['day_1']['date'] atau live schedule day_1/days)
+        if (!empty($schedule['day_1']['date'])) {
+            $cleanDateStr = preg_replace('/(\d+)(st|nd|rd|th)/', '$1', (string)$schedule['day_1']['date']);
+            $ts = strtotime($cleanDateStr);
+            if ($ts !== false && $ts > 0) {
+                $targetDate = date('Y-m-d', $ts);
+            }
+        }
+
+        if (empty($targetDate) && !empty($live['schedule']['day_1']['date'])) {
+            $ts = strtotime((string)$live['schedule']['day_1']['date']);
+            if ($ts !== false && $ts > 0) {
+                $targetDate = date('Y-m-d', $ts);
+            }
+        }
+
+        if (empty($targetDate) && !empty($live['schedule']['days'][0]['event_date'])) {
+            $ts = strtotime($live['schedule']['days'][0]['event_date']);
+            if ($ts !== false && $ts > 0) {
+                $targetDate = date('Y-m-d', $ts);
+            }
+        }
+
+        // Prioritas b: Dari live API event_date_start
+        if (empty($targetDate) && !empty($live['event']['event_date_start'])) {
+            $ts = strtotime($live['event']['event_date_start']);
+            if ($ts !== false && $ts > 0) {
+                $targetDate = date('Y-m-d', $ts);
+            }
+        }
+
+        // Prioritas c: Dari database tabel events jika tersedia
+        if (empty($targetDate) && !empty($eventDb['event_date_start'])) {
+            $ts = strtotime($eventDb['event_date_start']);
+            if ($ts !== false && $ts > 0) {
+                $targetDate = date('Y-m-d', $ts);
+            }
+        }
+
+        // Fallback tanggal default jika tidak ada data sama sekali
+        if (empty($targetDate)) {
+            $targetDate = '2026-11-10';
+        }
+
+        // 2. Dapatkan jam sesi pertama di Day 1
+        $firstSession = null;
+        if (!empty($schedule['day_1']['items']) && is_array($schedule['day_1']['items'])) {
+            $firstSession = reset($schedule['day_1']['items']);
+        }
+
+        if (!empty($firstSession)) {
+            // Cek start_time terstruktur (format 'HH:MM' atau 'HH:MM:SS')
+            if (!empty($firstSession['start_time'])) {
+                $st = trim((string)$firstSession['start_time']);
+                if (preg_match('/^\d{1,2}:\d{2}(:\d{2})?$/', $st)) {
+                    $targetTime = (strlen($st) === 5) ? ($st . ':00') : $st;
+                    if (strlen($targetTime) === 7) {
+                        $targetTime = '0' . $targetTime;
+                    }
+                }
+            } elseif (!empty($firstSession['time'])) {
+                // Parse format string seperti '08:30 AM - 09:30 AM' atau '09:00 - 10:00'
+                $timeStr = trim((string)$firstSession['time']);
+                $parts = preg_split('/[\-–]/', $timeStr);
+                if (!empty($parts[0])) {
+                    $startPart = trim($parts[0]);
+                    $parsedTime = strtotime($startPart);
+                    if ($parsedTime !== false) {
+                        $targetTime = date('H:i:s', $parsedTime);
+                    }
+                }
+            }
+        }
+
+        // Pastikan format H:i:s valid
+        if (!preg_match('/^\d{2}:\d{2}:\d{2}$/', $targetTime)) {
+            $targetTime = '09:00:00';
+        }
+
+        return "{$targetDate}T{$targetTime}+07:00";
+    }
 }
+
 
