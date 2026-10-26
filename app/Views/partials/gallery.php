@@ -35,6 +35,9 @@
           'caption'   => $placeholderCaptions[$idx] ?? ('Investor Daily Summit Highlight ' . ($idx + 1)),
       ];
   }
+
+  // Acak urutan foto galeri (randomized / shuffle)
+  shuffle($items);
 ?>
 
 <section class="gallery-section" id="gallery">
@@ -66,14 +69,14 @@
           ?>
             <div class="gallery-cascade-card card-pos-<?= $pos ?>" data-rel-pos="<?= $pos ?>" role="img" aria-label="<?= esc($initialItem['caption'] ?? 'Gallery Foto') ?>">
               <div class="gallery-cascade-card-inner">
-                <img src="<?= esc($initialItem['image_url']) ?>" alt="<?= esc($initialItem['caption'] ?? '') ?>" loading="lazy">
+                <img src="<?= esc($initialItem['image_url']) ?>" alt="<?= esc($initialItem['caption'] ?? '') ?>" loading="eager" decoding="async">
               </div>
             </div>
           <?php endfor; ?>
         </div>
       </div>
 
-      <!-- B. Thumbnail Navigation Strip -->
+      <!-- B. Thumbnail Navigation Strip (Spotlight paten selalu di tengah: Slot 2) -->
       <div class="gallery-thumb-nav-area">
         <!-- Prev Button (Up on Desktop, Left on Mobile) -->
         <button type="button" class="gallery-thumb-nav-btn btn-prev" id="galleryPrevBtn" aria-label="Foto Sebelumnya">
@@ -85,17 +88,22 @@
           </svg>
         </button>
 
-        <!-- Thumbnails Container (Always renders exactly 5 items) -->
+        <!-- Thumbnails Container (Spotlight paten di posisi tengah slot 2) -->
         <div class="gallery-thumb-list" id="galleryThumbList" role="tablist" aria-label="Navigasi Thumbnail Gallery">
-          <?php for ($slot = 0; $slot < 5; $slot++): ?>
+          <?php 
+            $activeSlot = 2; // Paten di tengah (1 2 [3/spotlight] 4 5)
+            for ($slot = 0; $slot < 5; $slot++): 
+              $offset = $slot - 2; // -2, -1, 0, 1, 2
+              $itemIdx = (($offset % $totalCount) + $totalCount) % $totalCount;
+          ?>
             <button type="button" 
                     role="tab" 
-                    class="gallery-thumb-item <?= $slot === 0 ? 'is-active' : '' ?>" 
+                    class="gallery-thumb-item <?= $slot === $activeSlot ? 'is-active' : '' ?>" 
                     data-slot="<?= $slot ?>" 
-                    data-gallery-index="<?= $slot ?>" 
-                    aria-selected="<?= $slot === 0 ? 'true' : 'false' ?>"
-                    aria-label="Pilih foto <?= $slot + 1 ?>">
-              <img src="<?= esc($items[$slot % count($items)]['image_url'] ?? '') ?>" alt="<?= esc($items[$slot % count($items)]['caption'] ?? '') ?>" loading="lazy">
+                    data-gallery-index="<?= $itemIdx ?>" 
+                    aria-selected="<?= $slot === $activeSlot ? 'true' : 'false' ?>"
+                    aria-label="Pilih foto <?= $itemIdx + 1 ?>">
+              <img src="<?= esc($items[$itemIdx]['image_url'] ?? '') ?>" alt="<?= esc($items[$itemIdx]['caption'] ?? '') ?>" loading="eager" decoding="async">
             </button>
           <?php endfor; ?>
         </div>

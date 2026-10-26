@@ -173,19 +173,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return ((idx % totalItems) + totalItems) % totalItems;
       };
 
-      // Preload next and previous images for ultra-smooth transition
-      const preloadedCache = new Set();
-      const preloadImages = (centerIdx) => {
-        for (let offset = -4; offset <= 4; offset++) {
-          const targetIndex = getNormalizedIndex(centerIdx + offset);
-          const item = galleryItems[targetIndex];
-          if (item && item.image_url && !preloadedCache.has(item.image_url)) {
+      // Preload seluruh gambar gallery ke memory cache browser sejak awal (Nol delay / no delay roundtrip)
+      const imageMemoryCache = {};
+      const preloadAllImages = () => {
+        galleryItems.forEach(item => {
+          if (item && item.image_url && !imageMemoryCache[item.image_url]) {
             const img = new Image();
             img.src = item.image_url;
-            preloadedCache.add(item.image_url);
+            imageMemoryCache[item.image_url] = img;
           }
-        }
+        });
       };
+      preloadAllImages();
 
       // Render the gallery with actual motion transitions:
       // Lightbox Modal Handlers for Center Card
@@ -230,46 +229,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const thumbListItems = thumbList ? Array.from(thumbList.querySelectorAll('.gallery-thumb-item')) : [];
       let isAnimating = false;
 
-      // Update active state and sliding 5-slot window for thumbnails matching user specification:
-      // index 0 -> [1(ac), 2, 3, 4, 5] (active slot 0)
-      // index 1 -> [1, 2(ac), 3, 4, 5] (active slot 1)
-      // index 2 -> [1, 2, 3(ac), 4, 5] (active slot 2)
-      // index 3 -> [2, 3, 4(ac), 5, 6] (active slot 2)
-      // index 4 -> [3, 4, 5(ac), 6, 7] (active slot 2)
-      // Update active state and sliding window for thumbnails:
-      // Mobile (<= 768px, 3 visible slots):
-      // - index 0 -> [0(ac), 1, 2] (active slot 0)
-      // - index >= 1 -> [i-1, i(ac), i+1] (active slot 1)
-      // Desktop (> 768px, 5 visible slots):
-      // - index 0 -> [0(ac), 1, 2, 3, 4] (active slot 0)
-      // - index 1 -> [0, 1(ac), 2, 3, 4] (active slot 1)
-      // - index >= 2 -> [i-2, i-1, i(ac), i+1, i+2] (active slot 2)
+      // Update active state: Spotlight foto aktif selalu PATEN berada di tengah
+      // Desktop: 5 slot -> [i-2, i-1, i(spotlight), i+1, i+2] (active slot selalu 2)
+      // Mobile: 3 slot -> [i-1, i(spotlight), i+1] (active slot selalu 1)
       const updateThumbnails = () => {
         const isMobile = window.innerWidth <= 768;
-        let activeSlot = 0;
+        let activeSlot = 2;
         let slotIndices = [];
 
         if (isMobile) {
-          if (currentIndex === 0) {
-            activeSlot = 0;
-            slotIndices = [0, 1, 2].map(idx => getNormalizedIndex(idx));
-          } else {
-            activeSlot = 1;
-            slotIndices = [-1, 0, 1].map(offset => getNormalizedIndex(currentIndex + offset));
-          }
-          // Pad remaining slots 3 and 4 so DOM elements stay safe
+          activeSlot = 1; // Posisi tengah dari 3 slot mobile
+          slotIndices = [-1, 0, 1].map(offset => getNormalizedIndex(currentIndex + offset));
+          // Pad slot 3 & 4 agar aman di DOM
           slotIndices.push(getNormalizedIndex(currentIndex + 2), getNormalizedIndex(currentIndex + 3));
         } else {
-          if (currentIndex === 0) {
-            activeSlot = 0;
-            slotIndices = [0, 1, 2, 3, 4].map(idx => getNormalizedIndex(idx));
-          } else if (currentIndex === 1) {
-            activeSlot = 1;
-            slotIndices = [0, 1, 2, 3, 4].map(idx => getNormalizedIndex(idx));
-          } else {
-            activeSlot = 2;
-            slotIndices = [-2, -1, 0, 1, 2].map(offset => getNormalizedIndex(currentIndex + offset));
-          }
+          activeSlot = 2; // Posisi tengah dari 5 slot desktop: 1, 2, [3 / SPOTLIGHT], 4, 5
+          slotIndices = [-2, -1, 0, 1, 2].map(offset => getNormalizedIndex(currentIndex + offset));
         }
 
         thumbListItems.forEach((thumb, slot) => {
@@ -326,7 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
         updateThumbnails();
-        preloadImages(currentIndex);
       };
 
       // Core Step Function: Rotates cards continuously with pure GPU CSS transforms
@@ -405,7 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateThumbnails();
-        preloadImages(currentIndex);
 
         setTimeout(() => {
           isAnimating = false;
