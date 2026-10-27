@@ -165,9 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const thumbList = document.getElementById('galleryThumbList');
       const thumbItems = thumbList ? thumbList.querySelectorAll('.gallery-thumb-item') : [];
 
-      // Check prefers-reduced-motion
-      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
       // Safe modulo helper for circular infinite cycling
       const getNormalizedIndex = (idx) => {
         return ((idx % totalItems) + totalItems) % totalItems;
@@ -472,9 +469,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { passive: true });
       }
 
-      // Auto scroll logic (runs the exact same stepGallery as button clicks!)
+      // Auto scroll logic (Adopted from IDS: reliable and resilient across all devices)
+      let touchResumeTimer = null;
       const startAutoSlide = () => {
-        if (prefersReducedMotion) return;
         stopAutoSlide();
         autoSlideTimer = setInterval(() => {
           if (galleryModal && galleryModal.classList.contains('is-open')) return;
@@ -500,6 +497,8 @@ document.addEventListener('DOMContentLoaded', () => {
           e.preventDefault();
           goToPrev();
         });
+        prevBtn.addEventListener('mouseenter', stopAutoSlide);
+        prevBtn.addEventListener('mouseleave', startAutoSlide);
       }
 
       if (nextBtn) {
@@ -507,6 +506,8 @@ document.addEventListener('DOMContentLoaded', () => {
           e.preventDefault();
           goToNext();
         });
+        nextBtn.addEventListener('mouseenter', stopAutoSlide);
+        nextBtn.addEventListener('mouseleave', startAutoSlide);
       }
 
       // Thumbnail Clicks: directly navigate to clicked photo
@@ -532,9 +533,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // Pause autoscroll on mouse enter, resume on leave
-      galleryCascadeWrapper.addEventListener('mouseenter', stopAutoSlide);
-      galleryCascadeWrapper.addEventListener('mouseleave', startAutoSlide);
+      // Pause autoscroll on mouse hover (desktop only)
+      galleryCascadeWrapper.addEventListener('mouseenter', () => {
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+          stopAutoSlide();
+        }
+      });
+      galleryCascadeWrapper.addEventListener('mouseleave', () => {
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+          startAutoSlide();
+        }
+      });
+
+      // Mobile Touch Handling (Adopted directly from IDS)
+      galleryCascadeWrapper.addEventListener('touchstart', () => {
+        stopAutoSlide();
+        if (touchResumeTimer) clearTimeout(touchResumeTimer);
+      }, { passive: true });
+
+      galleryCascadeWrapper.addEventListener('touchend', () => {
+        if (touchResumeTimer) clearTimeout(touchResumeTimer);
+        // Resume autoslide 2s after user finishes touching/swiping
+        touchResumeTimer = setTimeout(() => {
+          startAutoSlide();
+        }, 2000);
+      }, { passive: true });
+
+      // Tab Visibility API: Auto pause when backgrounded, resume when tab is active
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          stopAutoSlide();
+        } else {
+          startAutoSlide();
+        }
+      });
 
       // Initialize
       initGallery();

@@ -661,7 +661,7 @@ class Home extends BaseController
         $portalUrls = [
             'investor' => "https://api.investor.id/article/type=latest&num={$limit}&tag=investor-daily-summit-2026&page=1",
             'beritasatu' => "https://api.beritasatu.com/v4/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
-            'jakartaglobe' => "https://api.jakartaglobe.id/apiweb-v2/search/keyword=investor-daily-summit&num={$limit}&page=0",
+            'jakartaglobe' => "https://api.jakartaglobe.id/apiweb-v2/search/keyword=energy-mineral-festival&num={$limit}&page=0",
             'datasatu' => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
             'overview' => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:100",
         ];
