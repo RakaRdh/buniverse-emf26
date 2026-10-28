@@ -60,8 +60,13 @@
     ?>
     <?= $this->include($heroTemplate) ?>
 
-    <?php /* 3. About Us Section (Energi & Mineral Festival) */ ?>
-    <?= $this->include('partials/about_us') ?>
+    <?php /* 3. About Us Section (Energi & Mineral Festival) - Dukung Template Baru via /preview-about */ ?>
+    <?php
+      $aboutTemplate = (!empty($aboutView) && $aboutView === 'preview')
+          ? 'partials/about_us_preview'
+          : 'partials/about_us';
+    ?>
+    <?= $this->include($aboutTemplate) ?>
 
     <?php /* 4. Live Streaming (YouTube Embed) Section */ ?>
     <?= $this->include('partials/livestream') ?>
@@ -77,8 +82,10 @@
     <?php /* 6. Gallery Section */ ?>
     <?= $this->include('partials/gallery') ?>
 
-    <?php /* 6.1 Overview (Summary Cards) Section */ ?>
-    <?= $this->include('partials/summary') ?>
+    <?php /* 6.1 Overview (Summary Cards) Section (Bisa di-toggle via CMS / setting overviewNewsActive) */ ?>
+    <?php if (!empty($overviewNewsActive)): ?>
+      <?= $this->include('partials/summary') ?>
+    <?php endif; ?>
 
     <?php /* 7. Related News Section */ ?>
     <?= $this->include('partials/related_news') ?>

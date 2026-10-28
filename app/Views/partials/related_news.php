@@ -36,6 +36,10 @@
     <?php foreach ($newsRows as $row): 
       $portalKey = $row['id'];
       $portalConfig = $newsPortals[$portalKey] ?? null;
+      // Skip jika portal dinonaktifkan via CMS
+      if (isset($portalConfig['is_active']) && empty($portalConfig['is_active'])) {
+        continue;
+      }
       $portalUrl = $portalConfig['url'] ?? '#';
       if ($portalUrl === '#' || empty($portalUrl)) {
         if ($portalKey === 'investor-daily') $portalUrl = 'https://investor.id';

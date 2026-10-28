@@ -20,6 +20,7 @@ $routes->set404Override();
 $routes->match(['get', 'head'], '/', 'Home::index');
 $routes->match(['get', 'head'], 'preview-hero', 'Home::previewHero');
 $routes->match(['get', 'head'], 'preview-hero2', 'Home::previewHero2');
+$routes->match(['get', 'head'], 'preview-about', 'Home::previewAbout');
 $routes->post('api/track-ticket', 'Home::trackTicket');
 $routes->match(['get', 'post'], 'api/clear-cache', 'Home::clearCache');
 

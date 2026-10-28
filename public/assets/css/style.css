@@ -812,8 +812,9 @@ button {
   grid-template-columns: 1fr 1.25fr;
   gap: 70px;
   align-items: flex-start;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
 }
 
 .editorial-left {
@@ -903,10 +904,11 @@ button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
 }
 
 .editorial-right .topic-badge {
-  width: 573px;
+  width: 100%;
   max-width: 100%;
   margin-bottom: 30px;
   background-color: var(--green-6, #49982e);
@@ -919,7 +921,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 573px;
+  max-width: 100%;
   width: 100%;
   position: relative;
   z-index: 3;

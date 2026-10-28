@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 380" width="240" height="380">
+  <defs>
+    <!-- Gradasi Masking sesuai CSS mask-image -->
+    <linearGradient id="stripFadeGradient" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="30%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0.8"/>
+      <stop offset="85%" stop-color="#ffffff" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shape Jajaran Genjang Solid (Bisa langsung dipakai untuk Clipping Mask di Figma / Photoshop) -->
+  <polygon points="80,0 240,0 160,380 0,380" fill="#ffffff" />
+</svg>

@@ -293,11 +293,33 @@ class Home extends BaseController
             );
 
             // Sync news portals from live API
-            $newsPortals = $live['news_portals'] ?? [
-                'investor-daily' => ['name' => 'investor.id', 'url' => 'https://investor.id', 'is_active' => true],
-                'beritasatu' => ['name' => 'beritasatu.com', 'url' => 'https://www.beritasatu.com', 'is_active' => true],
-                'jakartaglobe' => ['name' => 'jakartaglobe.id', 'url' => 'https://jakartaglobe.id', 'is_active' => true],
-            ];
+            if (!empty($live['news_portals']) && is_array($live['news_portals'])) {
+                $newsPortals = $live['news_portals'];
+
+                // Refresh fetch berita menggunakan endpoint / status aktif dari CMS jika tersedia
+                if (!empty($newsPortals['investor-daily']['is_active'])) {
+                    $relatedNewsInvestor = $this->fetchNewsFromPortal('investor', 4, $newsPortals['investor-daily']['api_url'] ?? null) ?: $relatedNewsInvestor;
+                    $relatedNews = $relatedNewsInvestor;
+                }
+                if (!empty($newsPortals['beritasatu']['is_active'])) {
+                    $relatedNewsBeritaSatu = $this->fetchNewsFromPortal('beritasatu', 4, $newsPortals['beritasatu']['api_url'] ?? null) ?: $relatedNewsBeritaSatu;
+                }
+                if (!empty($newsPortals['jakartaglobe']['is_active'])) {
+                    $relatedNewsJakartaGlobe = $this->fetchNewsFromPortal('jakartaglobe', 4, $newsPortals['jakartaglobe']['api_url'] ?? null) ?: $relatedNewsJakartaGlobe;
+                }
+                if (!empty($newsPortals['datasatu']['is_active'])) {
+                    $relatedNewsDatasatu = $this->fetchNewsFromPortal('datasatu', 4, $newsPortals['datasatu']['api_url'] ?? null) ?: $relatedNewsDatasatu;
+                }
+                if (!empty($newsPortals['overview']['is_active'])) {
+                    $summaryNews = $this->fetchNewsFromPortal('overview', 100, $newsPortals['overview']['api_url'] ?? null) ?: [];
+                }
+            } else {
+                $newsPortals = [
+                    'investor-daily' => ['name' => 'investor.id', 'url' => 'https://investor.id', 'is_active' => true],
+                    'beritasatu'     => ['name' => 'beritasatu.com', 'url' => 'https://www.beritasatu.com', 'is_active' => true],
+                    'jakartaglobe'   => ['name' => 'jakartaglobe.id', 'url' => 'https://jakartaglobe.id', 'is_active' => true],
+                ];
+            }
 
             // Sync highlights from live API
             $highlights = $live['highlights'] ?? [
@@ -631,6 +653,7 @@ class Home extends BaseController
             'relatedNewsJakartaGlobe' => $relatedNewsJakartaGlobe,
             'relatedNewsDatasatu' => $relatedNewsDatasatu,
             'summaryNews' => $summaryNews,
+            'overviewNewsActive' => !empty($newsPortals['overview']['is_active']),
             'sponsors' => $sponsors,
             'sponsorPartnership' => $sponsorPartnership,
             'sectionDecorations' => $sectionDecorations,
@@ -664,26 +687,43 @@ class Home extends BaseController
     }
 
     /**
+     * Preview Template About Us Baru (Route: /preview-about)
+     * Tidak menyentuh atau mengganggu halaman / utama yang sedang aktif.
+     */
+    public function previewAbout(): string
+    {
+        return $this->index(['aboutView' => 'preview']);
+    }
+
+    /**
      * Fetch related news from external B-Universe article APIs per portal
      * Default limit is 4 items per portal.
+     * Supports dynamic URL override from CMS with {limit} placeholder.
      */
-    private function fetchNewsFromPortal(string $portal, int $limit = 4): ?array
+    private function fetchNewsFromPortal(string $portal, int $limit = 4, ?string $cmsConfiguredUrl = null): ?array
     {
-        $cacheKey = 'ids_news_' . $portal . '_limit' . $limit . '_v1';
-        $cached = cache($cacheKey);
+        $cacheKey = 'ids_news_' . $portal . '_limit' . $limit . '_v3';
+        $noCache = $this->request->getGet('nocache') !== null || $this->request->getGet('refresh') !== null;
+        $cached = $noCache ? null : cache($cacheKey);
         if ($cached !== null) {
             return !empty($cached) ? $cached : null;
         }
 
         $portalUrls = [
-            'investor' => "https://api.investor.id/article/type=latest&num={$limit}&tag=investor-daily-summit-2026&page=1",
-            'beritasatu' => "https://api.beritasatu.com/v4/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
+            'investor'     => "https://api.investor.id/article/type=latest&num={$limit}&tag=energi-mineral-festival-2025&page=1",
+            'beritasatu'   => "https://api.beritasatu.com/v4/article/type:bytag/tag:energi-mineral-festival/start:0/limit:{$limit}",
             'jakartaglobe' => "https://api.jakartaglobe.id/apiweb-v2/search/keyword=energy-mineral-festival&num={$limit}&page=0",
-            'datasatu' => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
-            'overview' => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:100",
+            'datasatu'     => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
+            'overview'     => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:100",
         ];
 
-        $targetUrl = $portalUrls[$portal] ?? null;
+        // Jika CMS menyediakan URL dinamis, gunakan dan replace placeholder {limit}
+        if (!empty($cmsConfiguredUrl)) {
+            $targetUrl = str_replace('{limit}', (string)$limit, $cmsConfiguredUrl);
+        } else {
+            $targetUrl = $portalUrls[$portal] ?? null;
+        }
+
         if (!$targetUrl) {
             return null;
         }
