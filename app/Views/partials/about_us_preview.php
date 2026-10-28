@@ -155,26 +155,28 @@ if (empty($carouselImages)) {
   height: 100%;
   opacity: 0;
   visibility: hidden;
-  transform: scale(0.96);
-  transition: opacity 1.3s ease-in-out, transform 1.3s cubic-bezier(0.25, 1, 0.5, 1);
+  transform: translate(0, 0) scale(0.78);
+  transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
   will-change: transform, opacity;
   pointer-events: none;
+  z-index: 1;
 }
 
-/* Slide Aktif: Diam (Stay / Tenang), tidak ada animasi kedut-kedut */
+/* Slide Aktif: Gambar B muncul persis dari belakang, tumbuh dari scale(0.78) ke ukuran normal penuh */
 .about-circular-slide.is-active {
   opacity: 1;
   visibility: visible;
-  transform: scale(1.0);
+  transform: translate(0, 0) scale(1.0);
   z-index: 2;
 }
 
-/* Slide yang sedang keluar saat transisi berganti */
+/* Slide Keluar: Gambar A bergeser ke kanan dan mengecil seperti kartu di-shuffle */
 .about-circular-slide.is-leaving {
   opacity: 0;
   visibility: visible;
-  transform: scale(1.05);
-  z-index: 1;
+  transform: translate(36%, 0) scale(0.78) rotate(2.5deg);
+  z-index: 3;
+  transition: opacity 1.1s cubic-bezier(0.35, 0, 0.25, 1), transform 1.2s cubic-bezier(0.35, 0, 0.25, 1);
 }
 
 .about-circular-slide img {
