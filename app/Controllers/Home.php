@@ -374,11 +374,10 @@ class Home extends BaseController
                 }
             }
 
-            /* === LEGACY TIER-BASED SPONSORS SYNC (COMMENTED OUT) ===
+            // Dedicated Tier-based Sponsors Sync
             if (!empty($live['sponsors'])) {
                 $sponsors = $live['sponsors'];
             }
-            === END LEGACY SPONSORS SYNC === */
 
             // Sync live schedule if available from current event
             $hasLiveSessions = false;
@@ -530,6 +529,24 @@ class Home extends BaseController
 
             if (!empty($sponsorPartnership['logo_url'])) {
                 $sponsorPartnership['logo_url'] = $fixUrl($sponsorPartnership['logo_url']);
+            }
+
+            if (!empty($sponsors)) {
+                foreach (['sponsored_by', 'collaborations', 'partnerships'] as $groupKey) {
+                    if (!empty($sponsors[$groupKey]) && is_array($sponsors[$groupKey])) {
+                        foreach ($sponsors[$groupKey] as &$tier) {
+                            if (!empty($tier['items']) && is_array($tier['items'])) {
+                                foreach ($tier['items'] as &$item) {
+                                    if (!empty($item['logo'])) {
+                                        $item['logo'] = $fixUrl($item['logo']);
+                                    }
+                                }
+                                unset($item);
+                            }
+                        }
+                        unset($tier);
+                    }
+                }
             }
 
             foreach ($speakers as &$spk) {

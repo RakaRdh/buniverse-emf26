@@ -3036,16 +3036,17 @@ button {
 .sponsor-badge {
   display: inline-flex;
   align-items: center;
-  background-color: rgba(11, 111, 138, 0.5);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  color: #BAE6FD;
-  font-size: 12px;
+  background-color: var(--green-6, #49982e);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 1.5px;
-  padding: 6px 20px;
+  padding: 8px 24px;
   border-radius: var(--radius-pill);
   margin-bottom: 36px;
   text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(42, 87, 26, 0.2);
 }
 
 .sponsor-row {
@@ -3060,86 +3061,182 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform var(--transition-normal), opacity var(--transition-normal);
-  filter: brightness(0) invert(1);
+  transition: filter var(--transition-normal), opacity var(--transition-normal);
+  filter: grayscale(1) opacity(0.7);
   opacity: 0.9;
 }
 
-/* .sponsor-logo-item:hover {
-  transform: scale(1.08);
-  opacity: 1;
-} */
-
-/* Tier XL: 2 logo paling gede */
-.sponsor-row.tier-xl {
-  gap: 80px;
-  margin-bottom: 40px;
+/* Hover: restore full color, no transform/scale */
+.sponsor-logo-item:hover,
+.sponsor-logo-item:hover img,
+.sponsor-logo-item a:hover img {
+  filter: grayscale(0) opacity(1) !important;
+  opacity: 1 !important;
+  transform: none !important;
 }
 
-.sponsor-row.tier-xl .sponsor-logo-item img {
-  height: 64px;
-  max-width: 260px;
-  width: auto;
-  object-fit: contain;
-}
-
-/* Tier LG: 2 logo lagi lebih kecil */
-.sponsor-row.tier-lg {
-  gap: 60px;
-  margin-bottom: 34px;
-}
-
-.sponsor-row.tier-lg .sponsor-logo-item img {
-  height: 46px;
-  max-width: 200px;
-  width: auto;
-  object-fit: contain;
-}
-
-/* Tier Regular / MD: 6 logo reguler per baris */
-.sponsor-row.tier-regular,
-.sponsor-row.tier-md {
+/* Tier Block & Title */
+.sponsor-tier-block {
+  width: 100%;
+  margin-bottom: 46px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+}
+
+.sponsor-tier-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--green-9, #2a571a);
+  margin-bottom: 22px;
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* Static Centered Grid */
+.sponsor-grid-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 48px;
+}
+
+/* Tier Sizing: Rank 1 (Top Tier, e.g. Platinum) - DIPERBESAR LAGI (~105px) */
+.sponsor-tier-block.tier-size-rank-1 .sponsor-grid-row {
+  gap: 70px;
+}
+
+.sponsor-tier-block.tier-size-rank-1 .sponsor-logo-item img,
+.sponsor-tier-block.tier-xl .sponsor-logo-item img {
+  height: 105px;
+  max-width: 330px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Tier Sizing: Rank 2 (e.g. Gold) - Menggunakan ukuran Platinum saat ini (~80px) */
+.sponsor-tier-block.tier-size-rank-2 .sponsor-grid-row {
+  gap: 52px;
+}
+
+.sponsor-tier-block.tier-size-rank-2 .sponsor-logo-item img,
+.sponsor-tier-block.tier-lg .sponsor-logo-item img {
+  height: 80px;
+  max-width: 270px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Tier Sizing: Rank 3 (e.g. Silver / Collaboration) (~60px) */
+.sponsor-tier-block.tier-size-rank-3 .sponsor-grid-row {
+  gap: 44px;
+}
+
+.sponsor-tier-block.tier-size-rank-3 .sponsor-logo-item img,
+.sponsor-tier-block.tier-md .sponsor-logo-item img {
+  height: 60px;
+  max-width: 210px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Tier Sizing: Rank 4+ (e.g. Bronze / Partnership) (~48px) */
+.sponsor-tier-block.tier-size-rank-4 .sponsor-grid-row {
   gap: 36px;
-  margin-bottom: 28px;
-  max-width: 1120px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-.sponsor-row.tier-regular .sponsor-logo-item img,
-.sponsor-row.tier-md .sponsor-logo-item img {
-  height: 32px;
-  max-width: 130px;
+.sponsor-tier-block.tier-size-rank-4 .sponsor-logo-item img,
+.sponsor-tier-block.tier-sm .sponsor-logo-item img {
+  height: 48px;
+  max-width: 170px;
   width: auto;
   object-fit: contain;
 }
 
-/* Tier SM / Bronze / Partnership: logo ukuran lebih kecil */
-.sponsor-row.tier-partnership,
-.sponsor-row.tier-sm {
+/* Marquee for Tiers with > 3 (top) or > 4 (other) logos - limited to ~5 visible logos on desktop */
+.sponsor-marquee-container {
+  position: relative;
+  width: 100%;
+  max-width: 1060px; /* limits visible window to ~5 logos in desktop view */
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 14px 0;
+  /* Fade gradient on left and right edges */
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.sponsor-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+/* Default Left Scroll */
+.sponsor-marquee-track,
+.sponsor-marquee-track.marquee-dir-left {
+  animation: sponsorMarqueeScrollLeft 32s linear infinite;
+}
+
+/* Zig-zag Alternating Right Scroll */
+.sponsor-marquee-track.marquee-dir-right {
+  animation: sponsorMarqueeScrollRight 32s linear infinite;
+}
+
+/* Stop/Pause marquee immediately on hover over any logo or container */
+.sponsor-marquee-container:hover .sponsor-marquee-track,
+.sponsor-marquee-track:hover {
+  animation-play-state: paused !important;
+}
+
+.sponsor-marquee-content {
+  display: flex;
+  align-items: center;
+  gap: 55px;
+  padding-right: 55px;
+  flex-shrink: 0;
+}
+
+@keyframes sponsorMarqueeScrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes sponsorMarqueeScrollRight {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.sponsor-logo-item a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Legacy single banner */
+.sponsor-single-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 40px;
-  max-width: 900px;
-  margin-bottom: 24px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
 }
 
-.sponsor-row.tier-partnership .sponsor-logo-item img,
-.sponsor-row.tier-sm .sponsor-logo-item img {
-  height: 26px;
-  max-width: 110px;
-  width: auto;
+.sponsor-banner-img {
+  max-width: 100%;
+  height: auto;
   object-fit: contain;
-}
-
-.sponsor-row:last-child {
-  margin-bottom: 0;
 }
 
 /* Footer bottom: Kuning hangat EMF (#f4d849), elemen hijau (#49982e) */
