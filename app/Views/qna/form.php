@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Q&A Session — <?= esc($sessionTitle) ?> | <?= esc($site['title'] ?? 'Investor Daily Summit 2026') ?></title>
+  <title>Q&A Session — <?= esc($sessionTitle) ?> | <?= esc($site['title'] ?? 'Energy & Mineral Festival 2026') ?></title>
   
   <!-- Favicon -->
   <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
   <link rel="icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
   
-  <!-- Google Fonts: Manrope & Playfair Display -->
+  <!-- Google Fonts: Manrope -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
@@ -29,7 +29,19 @@
   <?php endif; ?>
 
   <style>
-    /* QnA Form Specific Layout */
+    /* ==========================================================================
+       EMF QNA FORM — PALET RESMI REGISTER (SOLID YELLOW #F4D849 & FOREST GREEN)
+       ========================================================================== */
+    html, body {
+      background-color: var(--yellow-6, #f4d849) !important;
+      color: var(--green-10, #214415);
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
     .qna-hero-wrapper {
       min-height: 100vh;
       min-height: 100dvh;
@@ -37,17 +49,98 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
+      justify-content: flex-start;
+      padding: 48px 20px 80px 20px;
+      box-sizing: border-box;
+      background-color: var(--yellow-6, #f4d849);
       overflow: hidden;
-      background-color: var(--primary-1, #010A2D);
     }
 
+    /* --------------------------------------------------------------------------
+       RIBBON DECORATIVE ASSETS (POJOK KIRI BAWAH & POJOK KANAN ATAS)
+       -------------------------------------------------------------------------- */
+    .qna-ribbon-deco {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      width: clamp(260px, 28vw, 380px);
+      height: clamp(260px, 28vw, 380px);
+      overflow: hidden;
+    }
+
+    .qna-ribbon-deco-left {
+      bottom: 0;
+      left: 0;
+      display: block;
+    }
+
+    .qna-ribbon-deco-right {
+      top: 0;
+      right: 0;
+      display: block;
+    }
+
+    /* Posisi gambar ribbon berputar: hanya 1/4 bagian yang visible dari tepi pojok */
+    .qna-ribbon-deco-left img {
+      position: absolute;
+      bottom: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      object-fit: contain;
+      opacity: 0.9;
+      animation: qnaRibbonSpin 32s linear infinite;
+    }
+
+    .qna-ribbon-deco-right img {
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      object-fit: contain;
+      opacity: 0.9;
+      animation: qnaRibbonSpinReverse 32s linear infinite;
+    }
+
+    @keyframes qnaRibbonSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    @keyframes qnaRibbonSpinReverse {
+      from { transform: rotate(360deg); }
+      to   { transform: rotate(0deg); }
+    }
+
+    /* Mobile: hanya pojok kanan atas yang tampil, pojok kiri atas di-hide */
+    @media (max-width: 768px) {
+      .qna-ribbon-deco-left {
+        display: none !important;
+      }
+      .qna-ribbon-deco-right {
+        width: 190px;
+        height: 190px;
+      }
+      .qna-ribbon-deco-right img {
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+      }
+      .qna-hero-wrapper {
+        padding: 36px 16px 60px 16px;
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       CONTAINER & HEADER
+       -------------------------------------------------------------------------- */
     .qna-card-container {
       position: relative;
       z-index: 10;
       width: 100%;
-      max-width: 540px;
+      max-width: 580px;
       margin: 0 auto;
     }
 
@@ -60,59 +153,69 @@
       max-height: 52px;
       width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
-      margin-bottom: 12px;
+      margin: 0 auto 18px auto;
+      display: inline-block;
     }
 
     .qna-session-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 14px;
+      padding: 6px 16px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #ffffff;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1.5px solid rgba(73, 152, 46, 0.4);
+      color: var(--green-9, #2a571a);
+      font-size: 12.5px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
       text-transform: none;
-      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(33, 68, 21, 0.06);
+      margin-bottom: 12px;
     }
 
     .qna-session-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #5e9cbf;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--green-7, #3e8127);
       line-height: 1.4;
       margin: 0 0 6px 0;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
     }
 
     .qna-session-subtitle {
       font-size: 20px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--green-10, #214415);
       line-height: 1.35;
-      margin: 4px 0 10px 0;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      margin: 4px 0 8px 0;
+      letter-spacing: -0.01em;
     }
 
     .qna-session-time {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.7);
-      font-weight: 500;
+      font-size: 13.5px;
+      color: var(--green-8, #346c21);
+      font-weight: 600;
     }
 
+    /* --------------------------------------------------------------------------
+       FORM CARD (PUTIH BERSIH PERSIS FORM REGISTER)
+       -------------------------------------------------------------------------- */
     .qna-form-box {
-      background: rgba(12, 47, 136, 0.28);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      padding: 28px 24px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: #ffffff;
+      border: 1px solid rgba(73, 152, 46, 0.25);
+      box-shadow: 0 10px 30px rgba(33, 68, 21, 0.08);
+      border-radius: 18px;
+      padding: 32px 28px;
+      box-sizing: border-box;
+      transition: box-shadow 0.2s ease;
+    }
+
+    @media (max-width: 600px) {
+      .qna-form-box {
+        padding: 24px 20px;
+      }
     }
 
     .qna-field-group {
@@ -124,86 +227,83 @@
       display: block;
       font-size: 13px;
       font-weight: 700;
-      color: rgba(255, 255, 255, 0.9);
+      color: var(--green-10, #214415);
       margin-bottom: 8px;
-      letter-spacing: 0.02em;
     }
 
-    .qna-field-label span {
-      color: var(--primary-2-4);
+    .qna-field-label span.req {
+      color: #dc2626;
+      margin-left: 2px;
     }
 
     .qna-input, .qna-textarea {
       width: 100%;
-      background: rgba(1, 10, 45, 0.6);
-      border: 1.5px solid rgba(255, 255, 255, 0.16);
-      border-radius: 12px;
-      padding: 14px 16px;
+      background: #ffffff;
+      border: 1.5px solid rgba(73, 152, 46, 0.3);
+      border-radius: 10px;
+      padding: 12px 14px;
       font-size: 14px;
-      color: #ffffff;
+      color: #1a202c;
       font-family: inherit;
       outline: none;
-      transition: all 0.2s ease;
       box-sizing: border-box;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .qna-input:focus, .qna-textarea:focus {
-      border-color: var(--primary-2-4);
-      background: rgba(1, 10, 45, 0.85);
-      /* box-shadow: 0 0 0 3px var(--primary-2-5); */
+      border-color: var(--green-6, #49982e);
+      box-shadow: 0 0 0 3px rgba(73, 152, 46, 0.15);
     }
 
     .qna-input::placeholder, .qna-textarea::placeholder {
-      color: rgba(255, 255, 255, 0.35);
+      color: #94a3b8;
     }
 
     .qna-textarea {
       resize: vertical;
-      min-height: 200px;
+      min-height: 160px;
       line-height: 1.5;
     }
 
     .qna-char-counter {
       display: flex;
       justify-content: flex-end;
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.45);
+      font-size: 11.5px;
+      color: #64748b;
       margin-top: 6px;
+      font-weight: 500;
     }
 
     .qna-btn-submit {
       width: 100%;
       padding: 14px 20px;
-      background: var(--primary-2-4);
-      color: #010a2d;
+      background: var(--green-6, #49982e);
+      color: #ffffff;
       font-size: 15px;
-      font-weight: 800;
+      font-weight: 700;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      /* box-shadow: 0 6px 20px var(--primary-2-5); */
-      transition: all 0.2s ease;
-      letter-spacing: 0.03em;
+      transition: background 0.2s ease, transform 0.1s ease;
+      letter-spacing: 0.01em;
+      margin-top: 10px;
     }
 
-    .qna-btn-submit:hover {
-      transform: translateY(-2px);
-      /* box-shadow: 0 8px 25px var(--primary-2-5); */
-      /* filter: brightness(1.08); */
+    .qna-btn-submit:hover:not(:disabled) {
+      background: var(--green-7, #3e8127);
     }
 
-    .qna-btn-submit:active {
-      transform: translateY(0);
+    .qna-btn-submit:active:not(:disabled) {
+      transform: translateY(1px);
     }
 
     .qna-btn-submit:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-      transform: none;
     }
 
     /* Success State Card */
@@ -216,27 +316,26 @@
     .qna-success-icon {
       width: 64px;
       height: 64px;
-      background: rgba(34, 197, 94, 0.15);
-      border: 2px solid #22c55e;
+      background: rgba(73, 152, 46, 0.12);
+      border: 2px solid var(--green-6, #49982e);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 18px;
-      color: #4ade80;
-      box-shadow: 0 0 25px rgba(34, 197, 94, 0.3);
+      color: var(--green-7, #3e8127);
     }
 
     .qna-success-title {
       font-size: 22px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--green-10, #214415);
       margin-bottom: 8px;
     }
 
     .qna-success-desc {
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.75);
+      color: var(--green-8, #346c21);
       line-height: 1.5;
       margin-bottom: 24px;
     }
@@ -247,9 +346,9 @@
       justify-content: center;
       padding: 12px 24px;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #ffffff;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: var(--green-10, #214415);
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
@@ -257,105 +356,86 @@
     }
 
     .qna-btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.16);
-      border-color: rgba(255, 255, 255, 0.4);
+      background: #e2e8f0;
+      border-color: #94a3b8;
     }
 
     .qna-footer-note {
       text-align: center;
-      margin-top: 20px;
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.4);
+      margin-top: 24px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--green-9, #2a571a);
     }
   </style>
 </head>
 <body>
 
   <div class="qna-hero-wrapper">
-    <?php /* 1. Pure CSS Hero Background Canvas (Base #010A2D with ambient royal blue glow #0C2F88 at top-left) */ ?>
-    <div class="hero-bg-canvas" aria-hidden="true"></div>
-
-    <?php /* 2. Hero Decorative Discs (Identical positioning & animation to Hero section) */ ?>
-    <div class="hero-deco-wrap" aria-hidden="true">
-      <?php /* Deco A: Top Left Subtle Accent */ ?>
-      <div class="hero-deco-item hero-deco-topleft">
-        <img src="<?= base_url('assets/img/decoration.png') ?>" alt="" class="hero-deco-img">
-      </div>
-
-      <?php /* Deco B: Center-Right Perspective 3D Spinning Disc wrapped with static Luminance mask */ ?>
-      <div class="hero-deco-main-mask">
-        <div class="hero-deco-item hero-deco-main-perspective">
-          <div class="hero-deco-tilt">
-            <div class="hero-deco-spin">
-              <img src="<?= base_url('assets/img/decoration.png') ?>" alt="" class="hero-deco-img">
-            </div>
-          </div>
-        </div>
-      </div>
+    
+    <?php /* 1. Ribbon Dekoratif Pojok Kiri Atas (Desktop) & Pojok Kanan Atas (Desktop + Mobile) */ ?>
+    <div class="qna-ribbon-deco qna-ribbon-deco-left" aria-hidden="true">
+      <img src="<?= base_url('assets/img/ribbon.webp') ?>" alt="">
+    </div>
+    <div class="qna-ribbon-deco qna-ribbon-deco-right" aria-hidden="true">
+      <img src="<?= base_url('assets/img/ribbon.webp') ?>" alt="">
     </div>
 
-    <?php /* 3. Main Centered Interactive QnA Container */ ?>
+    <?php /* 2. Main Centered Interactive QnA Container */ ?>
     <div class="qna-card-container">
       
-      <?php /* Brand Header */ ?>
+      <?php /* Brand Header: Pakai logo resmi EMF (logo_green_emf26.webp) */ ?>
       <div class="qna-brand-header">
-        <a href="<?= base_url('/') ?>"><img src="<?= base_url('assets/img/logo_theme.webp') ?>" alt="<?= esc($site['title'] ?? 'Investor Daily Summit') ?>" class="qna-logo-img"></a>
+        <a href="<?= base_url('/') ?>">
+          <img src="<?= base_url('assets/img/logo_green_emf26.webp') ?>" alt="<?= esc($site['title'] ?? 'Energy & Mineral Festival 2026') ?>" class="qna-logo-img">
+        </a>
+        
         <?php if (!empty($sessionNotFound)): ?>
-          <span class="qna-session-badge" style="background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.35); color: #f87171;">
-            404 • Sesi Tidak Ditemukan
-          </span>
-          <h1 class="qna-session-title"><?= esc($sessionTitle) ?></h1>
-          <?php if (!empty($sessionSubtitle)): ?>
-            <div class="qna-session-subtitle" style="color: #94a3b8;"><?= esc($sessionSubtitle) ?></div>
-          <?php endif; ?>
+          <div>
+            <span class="qna-session-badge" style="background: #fef2f2; border-color: #f87171; color: #b91c1c;">
+              404 • Sesi Tidak Ditemukan
+            </span>
+            <h1 class="qna-session-title"><?= esc($sessionTitle) ?></h1>
+            <?php if (!empty($sessionSubtitle)): ?>
+              <div class="qna-session-subtitle" style="color: #64748b;"><?= esc($sessionSubtitle) ?></div>
+            <?php endif; ?>
+          </div>
         <?php else: ?>
-          <span class="qna-session-badge">
-            <?= !empty($roomName) ? esc($roomName) : (!empty($dayNumber) ? 'Day ' . esc($dayNumber) : esc($dayLabel ?? 'Q&A Session')) ?>
-          </span>
-          <?php if (!empty($sessionSubtitle)): ?>
-            <div class="qna-session-title"><?= esc($sessionTitle) ?></div>
-            <h1 class="qna-session-subtitle"><?= esc($sessionSubtitle) ?></h1>
-          <?php else: ?>
-            <h1 class="qna-session-subtitle"><?= esc($sessionTitle) ?></h1>
-          <?php endif; ?>
-          <?php if (!empty($sessionTime)): ?>
-            <div class="qna-session-time"><?= esc($sessionTime) ?></div>
-          <?php endif; ?>
+          <div>
+            <span class="qna-session-badge">
+              <?= !empty($roomName) ? esc($roomName) : (!empty($dayNumber) ? 'Day ' . esc($dayNumber) : esc($dayLabel ?? 'Q&A Session')) ?>
+            </span>
+            <?php if (!empty($sessionSubtitle)): ?>
+              <div class="qna-session-title"><?= esc($sessionTitle) ?></div>
+              <h1 class="qna-session-subtitle"><?= esc($sessionSubtitle) ?></h1>
+            <?php else: ?>
+              <h1 class="qna-session-subtitle"><?= esc($sessionTitle) ?></h1>
+            <?php endif; ?>
+            <?php if (!empty($sessionTime)): ?>
+              <div class="qna-session-time"><?= esc($sessionTime) ?></div>
+            <?php endif; ?>
+          </div>
         <?php endif; ?>
       </div>
 
       <?php /* Form Card or Not Found State */ ?>
       <div class="qna-form-box" id="qnaFormCard">
         <?php if (!empty($sessionNotFound)): ?>
-          <?php /* Invalid / Not Found Route State (Form is completely hidden) */ ?>
-          <div class="qna-not-found-box" style="text-align: center; padding: 24px 12px;">
-            <div class="qna-not-found-icon" style="width: 72px; height: 72px; background: rgba(239, 68, 68, 0.12); border: 2px solid rgba(239, 68, 68, 0.35); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: #f87171; box-shadow: 0 0 28px rgba(239, 68, 68, 0.2);">
-              <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <div style="text-align: center; padding: 20px 10px;">
+            <div style="width: 64px; height: 64px; background: #fee2e2; border: 2px solid #ef4444; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; color: #dc2626;">
+              <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="8" x2="12" y2="12"></line>
                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
               </svg>
             </div>
-            <h2 style="font-size: 21px; font-weight: 800; color: #ffffff; margin: 0 0 10px 0; letter-spacing: -0.01em;">Sesi Tidak Ditemukan</h2>
-            <p style="font-size: 14px; color: rgba(255, 255, 255, 0.72); line-height: 1.6; margin: 0 auto 28px auto; max-width: 420px;">
-              Tautan sesi tanya jawab yang Anda buka tidak valid, telah berakhir, atau tidak sesuai dengan hari kegiatan yang dipilih.
+            <h2 style="font-size: 20px; font-weight: 800; color: #991b1b; margin: 0 0 8px 0;">Sesi Tidak Ditemukan</h2>
+            <p style="font-size: 14px; color: #475569; line-height: 1.5; margin: 0 auto 24px auto;">
+              Tautan sesi tanya jawab yang Anda buka tidak valid atau tidak sesuai dengan hari kegiatan.
             </p>
-            <?php /*
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-              <a href="<?= base_url('/#schedule') ?>" class="qna-btn-submit" style="text-decoration: none; justify-content: center;">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                <span>Lihat Jadwal Sesi Lengkap</span>
-              </a>
-              <a href="<?= base_url('/') ?>" class="qna-btn-secondary" style="text-decoration: none; justify-content: center;">
-                <span>Kembali ke Beranda Utama</span>
-              </a>
-            </div>
-            */ ?>
+            <a href="<?= base_url('/#schedule') ?>" class="qna-btn-secondary" style="text-decoration: none;">
+              Kembali ke Jadwal
+            </a>
           </div>
         <?php else: ?>
           <?php /* Active QnA Form */ ?>
@@ -363,41 +443,29 @@
             <?= csrf_field() ?>
             
             <?php if (!empty($sessionId)): ?>
-              <?php /* Hidden IDs dynamically extracted from URL/Barcode */ ?>
               <input type="hidden" name="schedule_day_id" value="<?= esc($dayId) ?>">
               <input type="hidden" name="schedule_session_id" value="<?= esc($sessionId) ?>">
               <?php if (!empty($itemId)): ?>
                 <input type="hidden" name="session_item_id" value="<?= esc($itemId) ?>">
               <?php endif; ?>
             <?php else: ?>
-              <?php /* Session Selector when no specific session barcode is scanned */ ?>
+              <?php /* Manual Session Selector Fallback */ ?>
               <div class="qna-field-group">
-                <label class="qna-field-label" for="sessionSelect">Pilih Sesi Acara <span>*</span></label>
-                <select id="sessionSelect" name="schedule_session_id" class="qna-input" style="background: rgba(1, 10, 45, 0.95); cursor: pointer;" required>
-                  <option value="">-- Pilih Sesi Tanya Jawab --</option>
+                <label for="sessionSelect" class="qna-field-label">Pilih Sesi Acara <span class="req">*</span></label>
+                <select name="schedule_session_id" id="sessionSelect" class="qna-input" required>
+                  <option value="" disabled selected>-- Pilih Sesi Pertanyaan --</option>
                   <?php if (!empty($allDays)): ?>
                     <?php foreach ($allDays as $d): ?>
                       <?php if (!empty($d['sessions'])): ?>
-                        <?php 
-                          $roomGrouped = [];
-                          foreach ($d['sessions'] as $s) {
-                              $rKey = !empty(trim($s['room_name'] ?? '')) ? trim($s['room_name']) : '';
-                              $roomGrouped[$rKey][] = $s;
-                          }
-                          $dayPrefix = 'Day ' . esc($d['day_number']) . (!empty($d['formatted_date']) ? ' (' . esc($d['formatted_date']) . ')' : (!empty($d['event_date']) ? ' (' . date('F j, Y', strtotime($d['event_date'])) . ')' : ''));
-                        ?>
-                        <?php foreach ($roomGrouped as $rName => $sessList): ?>
-                          <?php 
-                            $optGroupLabel = !empty($rName) ? ($dayPrefix . ' — ' . esc($rName)) : $dayPrefix;
-                          ?>
-                          <optgroup label="<?= $optGroupLabel ?>">
-                            <?php foreach ($sessList as $s): ?>
-                              <option value="<?= $s['id'] ?><?= !empty($s['item_id']) ? ':' . $s['item_id'] : '' ?>">
-                                [<?= esc($s['start_time']) ?>] <?= esc($s['title']) ?><?= !empty($s['subtitle']) ? ' — ' . esc($s['subtitle']) : '' ?>
-                              </option>
-                            <?php endforeach; ?>
-                          </optgroup>
-                        <?php endforeach; ?>
+                        <optgroup label="Day <?= esc($d['day_number']) ?> &mdash; <?= esc($d['label']) ?>">
+                          <?php foreach ($d['sessions'] as $s): ?>
+                            <?php 
+                              $optionVal = $s['id'] . (!empty($s['item_id']) ? ':' . $s['item_id'] : '');
+                              $optionLabel = '[' . esc($s['start_time']) . '] ' . esc($s['title']) . (!empty($s['subtitle']) ? ' - ' . esc($s['subtitle']) : '');
+                            ?>
+                            <option value="<?= $optionVal ?>"><?= $optionLabel ?></option>
+                          <?php endforeach; ?>
+                        </optgroup>
                       <?php endif; ?>
                     <?php endforeach; ?>
                   <?php endif; ?>
@@ -405,9 +473,9 @@
               </div>
             <?php endif; ?>
 
-            <?php /* Nama Lengkap */ ?>
+            <?php /* Field 1: Asker Name */ ?>
             <div class="qna-field-group">
-              <label class="qna-field-label" for="askerName">Nama Lengkap <span>*</span></label>
+              <label for="askerName" class="qna-field-label">Nama Lengkap <span class="req">*</span></label>
               <input 
                 type="text" 
                 id="askerName" 
@@ -415,108 +483,111 @@
                 class="qna-input" 
                 placeholder="Ketik nama lengkap Anda..." 
                 required 
-                minlength="5"
                 maxlength="150"
                 autocomplete="name"
               >
             </div>
 
-            <?php /* Pertanyaan */ ?>
+            <?php /* Field 2: Question Body */ ?>
             <div class="qna-field-group">
-              <label class="qna-field-label" for="questionText">Pertanyaan Anda <span>*</span></label>
+              <label for="questionText" class="qna-field-label">Pertanyaan Anda <span class="req">*</span></label>
               <textarea 
                 id="questionText" 
                 name="question" 
                 class="qna-textarea" 
                 placeholder="Tuliskan pertanyaan Anda untuk pembicara sesi ini..." 
                 required 
-                minlength="5"
                 maxlength="2000"
               ></textarea>
               <div class="qna-char-counter">
-                <span id="charCount">0</span> / 2000 karakter (min. 5 karakter)
+                <span id="charCount">0</span>/2000 karakter (min. 5 karakter)
               </div>
             </div>
 
-            <?php /* Error Message Notice */ ?>
-            <div id="qnaErrorNotice" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; font-size: 13px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;"></div>
+            <?php /* Error Notice */ ?>
+            <div id="qnaErrorNotice" style="display: none; background: #fef2f2; border: 1px solid #f87171; color: #b91c1c; border-radius: 8px; padding: 12px 14px; font-size: 13.5px; margin-bottom: 16px;"></div>
 
             <?php /* Submit Button */ ?>
             <button type="submit" id="btnSubmitQna" class="qna-btn-submit">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
               <span>Kirim Pertanyaan</span>
             </button>
           </form>
 
-          <?php /* Success State View (Revealed after submit) */ ?>
+          <?php /* Success Box State */ ?>
           <div class="qna-success-box" id="qnaSuccessBox">
             <div class="qna-success-icon">
-              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
             </div>
             <h2 class="qna-success-title">Pertanyaan Terkirim!</h2>
-            <p class="qna-success-desc">Terima kasih atas partisipasi Anda. Pertanyaan Anda telah masuk dan akan dibacakan oleh moderator sesi.</p>
+            <p class="qna-success-desc">
+              Terima kasih. Pertanyaan Anda telah berhasil kami terima dan akan ditampilkan kepada moderator pada sesi ini.
+            </p>
             <button type="button" id="btnAskAnother" class="qna-btn-secondary">
-              + Ajukan Pertanyaan Lain
+              Kirim Pertanyaan Lain
             </button>
           </div>
         <?php endif; ?>
       </div>
 
+      <?php /* Footer Copyright */ ?>
       <div class="qna-footer-note">
-        &copy; <?= date('Y') ?> <?= esc($site['title'] ?? 'Investor Daily Summit') ?>. All rights reserved.
+        &copy; <?= date('Y') ?> <?= esc($site['title'] ?? 'Energy & Mineral Festival 2026') ?>. All rights reserved.
       </div>
-
     </div>
   </div>
 
+  <?php /* Interactive Client Script */ ?>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('qnaForm');
-      const formCard = document.getElementById('qnaFormCard');
-      const successBox = document.getElementById('qnaSuccessBox');
       const questionText = document.getElementById('questionText');
       const charCount = document.getElementById('charCount');
       const btnSubmit = document.getElementById('btnSubmitQna');
-      const btnAskAnother = document.getElementById('btnAskAnother');
       const errorNotice = document.getElementById('qnaErrorNotice');
+      const successBox = document.getElementById('qnaSuccessBox');
+      const btnAskAnother = document.getElementById('btnAskAnother');
 
-      // Character counter
+      // Character Counter
       if (questionText && charCount) {
         questionText.addEventListener('input', () => {
-          charCount.textContent = questionText.value.length;
+          const len = questionText.value.length;
+          charCount.textContent = len;
+          if (len > 1950) {
+            charCount.style.color = '#ef4444';
+          } else {
+            charCount.style.color = '#64748b';
+          }
         });
       }
 
-      // AJAX Submit Handling for seamless experience
+      // AJAX Submission
       if (form) {
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
           errorNotice.style.display = 'none';
 
-          const askerNameVal = document.getElementById('askerName').value.trim();
-          const questionVal = questionText.value.trim();
+          const asker = document.getElementById('askerName').value.trim();
+          const qText = questionText.value.trim();
 
-          if (!askerNameVal || !questionVal) {
-            errorNotice.textContent = 'Mohon isi nama lengkap dan pertanyaan Anda.';
-            errorNotice.style.display = 'block';
-            return;
-          }
-
-          if (askerNameVal.length < 5) {
+          if (asker.length < 5) {
             errorNotice.textContent = 'Nama lengkap minimal 5 karakter.';
             errorNotice.style.display = 'block';
-            document.getElementById('askerName').focus();
             return;
           }
 
-          if (questionVal.length < 5) {
+          if (qText.length < 5) {
             errorNotice.textContent = 'Pertanyaan minimal 5 karakter.';
             errorNotice.style.display = 'block';
-            questionText.focus();
             return;
           }
 
-          // Disable button
           btnSubmit.disabled = true;
           const originalBtnHtml = btnSubmit.innerHTML;
           btnSubmit.innerHTML = '<span>Mengirim...</span>';
@@ -535,7 +606,6 @@
             const result = await response.json();
 
             if (response.ok && result.success) {
-              // Show success state
               form.style.display = 'none';
               successBox.style.display = 'block';
               questionText.value = '';
@@ -554,7 +624,6 @@
         });
       }
 
-      // Reset to ask another question
       if (btnAskAnother) {
         btnAskAnother.addEventListener('click', () => {
           successBox.style.display = 'none';

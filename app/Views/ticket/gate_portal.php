@@ -1063,7 +1063,12 @@ async function loadParticipantsData(page = 1) {
   const tbody = document.getElementById('participantTableBody');
   const mBox = document.getElementById('mobileCardsContainer');
 
-  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:#64748b;">Memuat data...</td></tr>`;
+  // Lock minimum height during loading agar halaman tidak loncat ke atas (stay in position)
+  if (tbody && tbody.offsetHeight > 100) {
+    tbody.style.minHeight = tbody.offsetHeight + 'px';
+  }
+
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:32px; color:#64748b;">Memuat data...</td></tr>`;
   mBox.innerHTML = `<div style="text-align:center; padding:20px; color:#64748b; font-size:13px;">Memuat data...</div>`;
 
   const params = new URLSearchParams({
@@ -1094,6 +1099,7 @@ async function loadParticipantsData(page = 1) {
 
 function renderTableRows(list, startIndex) {
   const tbody = document.getElementById('participantTableBody');
+  if (tbody) tbody.style.minHeight = '';
   if (!list || list.length === 0) {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:#64748b;">Tidak ada data peserta yang cocok.</td></tr>`;
     return;

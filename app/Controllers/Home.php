@@ -46,6 +46,7 @@ class Home extends BaseController
 
         if ($live === null) {
             $apiUrls = [
+                // 'https://investordailysummit.com/backend/api/v1/event/emf-2026',
                 'http://[::1]:8081/api/v1/event/emf-2026',
                 'http://127.0.0.1:8081/api/v1/event/emf-2026',
                 'http://localhost:8081/api/v1/event/emf-2026',
@@ -485,6 +486,14 @@ class Home extends BaseController
             if (!empty($site['logo_footer_white']))
                 $site['logo_footer_white'] = $fixUrl($site['logo_footer_white']);
 
+            if (!empty($site['logo_placements']) && is_array($site['logo_placements'])) {
+                foreach ($site['logo_placements'] as &$placement) {
+                    if (!empty($placement['color_url'])) $placement['color_url'] = $fixUrl($placement['color_url']);
+                    if (!empty($placement['white_url'])) $placement['white_url'] = $fixUrl($placement['white_url']);
+                }
+                unset($placement);
+            }
+
             foreach ($heroCarousel as &$slide) {
                 if (!empty($slide['image_url']))
                     $slide['image_url'] = $fixUrl($slide['image_url']);
@@ -647,12 +656,20 @@ class Home extends BaseController
     }
 
     /**
+     * Preview Template Hero Lama/Centered (Route: /preview-hero2)
+     */
+    public function previewHero2(): string
+    {
+        return $this->index(['heroView' => 'preview2']);
+    }
+
+    /**
      * Fetch related news from external B-Universe article APIs per portal
      * Default limit is 4 items per portal.
      */
     private function fetchNewsFromPortal(string $portal, int $limit = 4): ?array
     {
-        $cacheKey = 'ids_news_' . $portal . '_limit' . $limit . '_v8';
+        $cacheKey = 'ids_news_' . $portal . '_limit' . $limit . '_v1';
         $cached = cache($cacheKey);
         if ($cached !== null) {
             return !empty($cached) ? $cached : null;
@@ -789,6 +806,7 @@ class Home extends BaseController
     public function trackTicket()
     {
         $cmsUrls = [
+            // 'https://investordailysummit.com/backend/api/v1/tickets/click',
             'http://localhost:8081/api/v1/tickets/click',
             'http://127.0.0.1:8081/api/v1/tickets/click',
             'http://[::1]:8081/api/v1/tickets/click',

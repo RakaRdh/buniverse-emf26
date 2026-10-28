@@ -2,47 +2,43 @@
 $overviewData = $overview ?? $economicModel ?? [];
 $paragraphs = $overviewData['paragraphs'] ?? [];
 ?>
-<section class="about-us-section editorial-section" id="about-us">
+<section class="editorial-section" id="about-us">
   <?= view('partials/section_decorations', ['sectionKey' => 'about-us', 'decorations' => $sectionDecorations ?? []]) ?>
   <?= view('partials/custom_placements', ['sectionKey' => 'about-us', 'customPlacements' => $customPlacements ?? []]) ?>
+  <div class="container">
+    <div class="editorial-grid">
+      
+      <?php /* Left Column: Editorial Logo & Intro */ ?>
+      <div class="editorial-left">
+        <div class="editorial-logo">
+          <?php 
+            $overviewSlot = $site['logo_placements']['overview'] ?? null;
+            $overviewSlotActive = !isset($overviewSlot['is_active']) || !empty($overviewSlot['is_active']);
+            $overviewVariant = $overviewSlot['variant'] ?? 'auto';
 
-  <div class="about-ribbon-showcase-wrap" aria-hidden="true">
-    <div class="about-ribbon-showcase">
-      <?php /* Inner Framed Image: Selalu tegak (upright) dengan transisi rotate masuk searah jarum jam */ ?>
-      <div class="about-ribbon-viewport">
-        <div class="about-ribbon-rotor" id="aboutRibbonRotor">
-          <div class="about-ribbon-slide slide-0 active" data-index="0">
-            <img src="<?= base_url('assets/img/image1.png') ?>" alt="Event Showcase 1" loading="lazy">
-          </div>
-          <div class="about-ribbon-slide slide-1" data-index="1">
-            <img src="<?= base_url('assets/img/image2.jpg') ?>" alt="Event Showcase 2" loading="lazy">
-          </div>
-          <div class="about-ribbon-slide slide-2" data-index="2">
-            <img src="<?= base_url('assets/img/image3.jpg') ?>" alt="Event Showcase 3" loading="lazy">
-          </div>
-          <div class="about-ribbon-slide slide-3" data-index="3">
-            <img src="<?= base_url('assets/img/image1_sq.png') ?>" alt="Event Showcase 4" loading="lazy">
-          </div>
+            if (!empty($overviewSlot['color_url']) || !empty($overviewSlot['white_url'])) {
+                if ($overviewVariant === 'white') {
+                    $aboutLogo = !empty($overviewSlot['white_url']) ? $overviewSlot['white_url'] : $overviewSlot['color_url'];
+                } else {
+                    $aboutLogo = !empty($overviewSlot['color_url']) ? $overviewSlot['color_url'] : $overviewSlot['white_url'];
+                }
+            } elseif ($overviewVariant === 'white') {
+                $aboutLogo = !empty($site['logo_a_white']) ? $site['logo_a_white'] : base_url('assets/img/logo_green_emf26.webp');
+            } else {
+                $aboutLogo = !empty($site['logo_overview']) ? $site['logo_overview'] : (!empty($site['logo_a_color']) ? $site['logo_a_color'] : (!empty($site['logo_a']) ? $site['logo_a'] : base_url('assets/img/logo_green_emf26.webp'))); 
+            }
+            $aboutLogoTarget = !empty($site['logo_overview_target_url']) ? $site['logo_overview_target_url'] : null;
+          ?>
+          <?php if ($overviewSlotActive): ?>
+            <img src="<?= esc($aboutLogo) ?>" alt="<?= esc($site['title'] ?? 'Energi Mineral Festival 2026') ?>" class="editorial-brand-logo">
+          <?php endif; ?>
         </div>
       </div>
 
-      <?php /* Overlaid Ribbon Frame: Step rotation clockwise */ ?>
-      <div class="about-ribbon-frame" id="aboutRibbonFrame">
-        <img src="<?= base_url('assets/img/ribbon.png') ?>" alt="Ribbon Frame" class="about-ribbon-img">
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <div class="about-us-grid editorial-grid">
-
-      <?php /* Kolom Kiri Dikosongkan untuk tempat Ribbon Frame */ ?>
-      <div class="about-us-left-spacer" aria-hidden="true"></div>
-
-      <?php /* Kolom Kanan: Posisi Asli Tetap di Dalam Container */ ?>
-      <div class="about-us-right editorial-right">
+      <?php /* Right Column: Topic Badge & Editorial Paragraphs */ ?>
+      <div class="editorial-right">
         <div class="topic-badge">
-          <?= esc(!empty($overviewData['badge']) && $overviewData['badge'] !== "INDONESIA'S ECONOMIC MODEL" ? $overviewData['badge'] : "ABOUT US") ?>
+          <?= esc(!empty($overviewData['badge']) ? $overviewData['badge'] : "ABOUT US") ?>
         </div>
 
         <div class="editorial-paragraphs">
@@ -54,41 +50,27 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
 
     </div>
   </div>
+
+  <?php 
+    /* Slanted Photo Collage (Dinamis dari CMS: collage_images img_1 - img_4 dengan fallback galeri) */
+    $collageImgs = $overviewData['collage_images'] ?? [];
+    $img1 = !empty($collageImgs['img_1']) ? $collageImgs['img_1'] : base_url('assets/img/gallery1.webp');
+    $img2 = !empty($collageImgs['img_2']) ? $collageImgs['img_2'] : base_url('assets/img/gallery2.webp');
+    $img3 = !empty($collageImgs['img_3']) ? $collageImgs['img_3'] : base_url('assets/img/gallery3.webp');
+    $img4 = !empty($collageImgs['img_4']) ? $collageImgs['img_4'] : base_url('assets/img/gallery4.webp');
+  ?>
+  <div class="editorial-wave-mask-wrap" aria-hidden="true">
+    <div class="editorial-strip editorial-strip-1">
+      <img src="<?= esc($img1) ?>" alt="Overview collage 1" loading="lazy">
+    </div>
+    <div class="editorial-strip editorial-strip-2">
+      <img src="<?= esc($img2) ?>" alt="Overview collage 2" loading="lazy">
+    </div>
+    <div class="editorial-strip editorial-strip-3">
+      <img src="<?= esc($img3) ?>" alt="Overview collage 3" loading="lazy">
+    </div>
+    <div class="editorial-strip editorial-strip-4">
+      <img src="<?= esc($img4) ?>" alt="Overview collage 4" loading="lazy">
+    </div>
+  </div>
 </section>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var frame = document.getElementById('aboutRibbonFrame');
-    var slides = document.querySelectorAll('.about-ribbon-slide');
-    if (!frame || slides.length === 0) return;
-
-    var currentStep = 0;
-    var currentIndex = 0;
-    var total = slides.length;
-    var stepAngle = 90; // 90 derajat per step searah jarum jam (clockwise)
-
-    setInterval(function () {
-      currentStep++;
-      var prevIndex = currentIndex;
-      var nextIndex = currentStep % total;
-      var rotationDeg = currentStep * stepAngle;
-
-      // Ribbon berputar clockwise
-      frame.style.transform = 'rotate(' + rotationDeg + 'deg)';
-
-      // Gambar lama keluar berputar clockwise (+70deg)
-      slides[prevIndex].classList.remove('active');
-      slides[prevIndex].classList.add('leaving');
-
-      // Gambar baru masuk berputar clockwise mendarat tegak di 0deg (view asli)
-      slides[nextIndex].classList.remove('leaving');
-      slides[nextIndex].classList.add('active');
-
-      setTimeout(function () {
-        slides[prevIndex].classList.remove('leaving');
-      }, 900);
-
-      currentIndex = nextIndex;
-    }, 3500);
-  });
-</script>

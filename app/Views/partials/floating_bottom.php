@@ -10,10 +10,16 @@
   $floatingSlotActive = !isset($floatingSlot['is_active']) || !empty($floatingSlot['is_active']);
   $floatingVariant = $floatingSlot['variant'] ?? 'auto';
 
-  if ($floatingVariant === 'color') {
-      $floatingLogo = !empty($site['logo_a_color']) ? $site['logo_a_color'] : (!empty($site['logo_floating']) ? $site['logo_floating'] : base_url('assets/img/logo_ids26_color.webp'));
+  if (!empty($floatingSlot['color_url']) || !empty($floatingSlot['white_url'])) {
+      if ($floatingVariant === 'white') {
+          $floatingLogo = !empty($floatingSlot['white_url']) ? $floatingSlot['white_url'] : $floatingSlot['color_url'];
+      } else {
+          $floatingLogo = !empty($floatingSlot['color_url']) ? $floatingSlot['color_url'] : $floatingSlot['white_url'];
+      }
+  } elseif ($floatingVariant === 'color') {
+      $floatingLogo = !empty($site['logo_a_color']) ? $site['logo_a_color'] : (!empty($site['logo_floating']) ? $site['logo_floating'] : base_url('assets/img/logo_green_emf26.webp'));
   } else {
-      $floatingLogo = !empty($site['logo_floating']) ? $site['logo_floating'] : (!empty($site['logo_a_white']) ? $site['logo_a_white'] : base_url('assets/img/logo_ids26_white.webp'));
+      $floatingLogo = !empty($site['logo_floating']) ? $site['logo_floating'] : (!empty($site['logo_a_white']) ? $site['logo_a_white'] : base_url('assets/img/logo_green_emf26.webp'));
   }
 ?>
 <div class="floating-bottom-bar" id="floatingBottomBar" role="region" aria-label="Quick registration bar">

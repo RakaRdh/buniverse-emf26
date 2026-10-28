@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Q&A Dashboard | <?= esc($site['title'] ?? 'Investor Daily Summit 2026') ?></title>
+  <title>Live Q&A Dashboard | <?= esc($site['title'] ?? 'Energy & Mineral Festival 2026') ?></title>
   
   <!-- Favicon -->
   <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
   <link rel="icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
   
-  <!-- Google Fonts: Manrope & Playfair Display -->
+  <!-- Google Fonts: Manrope -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
@@ -29,12 +29,17 @@
   <?php endif; ?>
 
   <style>
-    body {
-      background-color: var(--primary-1, #010A2D);
-      color: #ffffff;
+    /* ==========================================================================
+       EMF QNA LIVE DASHBOARD — SOLID YELLOW & CLEAN FOREST GREEN PALETTE
+       ========================================================================== */
+    html, body {
+      background-color: var(--yellow-6, #f4d849) !important;
+      color: var(--green-10, #214415);
       min-height: 100vh;
       overflow-x: hidden;
       font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
     }
 
     .qna-dash-wrapper {
@@ -42,9 +47,90 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 30px 24px 60px;
+      padding: 36px 24px 60px;
+      background-color: var(--yellow-6, #f4d849);
+      overflow: hidden;
+      box-sizing: border-box;
     }
 
+    /* --------------------------------------------------------------------------
+       RIBBON DECORATIVE ASSETS (POJOK KIRI BAWAH & POJOK KANAN ATAS)
+       -------------------------------------------------------------------------- */
+    .qna-ribbon-deco {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      width: clamp(260px, 28vw, 380px);
+      height: clamp(260px, 28vw, 380px);
+      overflow: hidden;
+    }
+
+    .qna-ribbon-deco-left {
+      bottom: 0;
+      left: 0;
+      display: block;
+    }
+
+    .qna-ribbon-deco-right {
+      top: 0;
+      right: 0;
+      display: block;
+    }
+
+    .qna-ribbon-deco-left img {
+      position: absolute;
+      bottom: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      object-fit: contain;
+      opacity: 0.9;
+      animation: qnaRibbonSpin 32s linear infinite;
+    }
+
+    .qna-ribbon-deco-right img {
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      object-fit: contain;
+      opacity: 0.9;
+      animation: qnaRibbonSpinReverse 32s linear infinite;
+    }
+
+    @keyframes qnaRibbonSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    @keyframes qnaRibbonSpinReverse {
+      from { transform: rotate(360deg); }
+      to   { transform: rotate(0deg); }
+    }
+
+    @media (max-width: 768px) {
+      .qna-ribbon-deco-left {
+        display: none !important;
+      }
+      .qna-ribbon-deco-right {
+        width: 190px;
+        height: 190px;
+      }
+      .qna-ribbon-deco-right img {
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+      }
+      .qna-dash-wrapper {
+        padding: 24px 16px 50px 16px;
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       MAIN DASHBOARD CONTAINER
+       -------------------------------------------------------------------------- */
     .qna-dash-container {
       position: relative;
       z-index: 10;
@@ -60,9 +146,9 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 20px;
-      margin-bottom: 28px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid rgba(73, 152, 46, 0.25);
     }
 
     .qna-dash-brand {
@@ -80,50 +166,22 @@
     .qna-dash-title {
       font-size: 24px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--green-10, #214415);
       margin: 0;
       line-height: 1.2;
     }
 
     .qna-dash-subtitle {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.6);
-      margin: 2px 0 0 0;
-    }
-
-    .qna-live-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.35);
-      color: #4ade80;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .qna-live-dot {
-      width: 8px;
-      height: 8px;
-      background-color: #22c55e;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #22c55e;
-      animation: pulseLive 1.5s infinite ease-in-out;
-    }
-
-    @keyframes pulseLive {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.4); opacity: 0.6; }
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--green-8, #346c21);
+      margin: 3px 0 0 0;
     }
 
     /* Filters Section */
     .qna-filter-bar {
-      background: rgba(12, 47, 136, 0.25);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #ffffff;
+      border: 1px solid rgba(73, 152, 46, 0.25);
       border-radius: 16px;
       padding: 14px 20px;
       display: flex;
@@ -131,7 +189,7 @@
       justify-content: space-between;
       gap: 16px;
       margin-bottom: 28px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 6px 20px rgba(33, 68, 21, 0.06);
     }
 
     .qna-filter-group {
@@ -144,24 +202,24 @@
 
     .qna-filter-label {
       font-size: 12px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.6);
+      font-weight: 800;
+      color: var(--green-9, #2a571a);
       text-transform: uppercase;
       letter-spacing: 0.06em;
       flex-shrink: 0;
     }
 
     .qna-select {
-      background: rgba(1, 10, 45, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      color: #ffffff;
-      padding: 8px 14px;
+      background: #ffffff;
+      border: 1.5px solid rgba(73, 152, 46, 0.3);
+      color: #1a202c;
+      padding: 9px 14px;
       border-radius: 10px;
       font-size: 13.5px;
       font-weight: 600;
       outline: none;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     #filterDay {
@@ -178,13 +236,13 @@
     }
 
     .qna-select:focus {
-      border-color: #5e9cbf;
-      box-shadow: 0 0 0 2px rgba(201, 148, 0, 0.25);
+      border-color: var(--green-6, #49982e);
+      box-shadow: 0 0 0 3px rgba(73, 152, 46, 0.15);
     }
 
     .qna-select option {
-      background: #010a2d;
-      color: #ffffff;
+      background: #ffffff;
+      color: #1a202c;
     }
 
     @media (max-width: 960px) {
@@ -216,17 +274,15 @@
     }
 
     .qna-card {
-      background: rgba(12, 47, 136, 0.22);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #ffffff;
+      border: 1px solid rgba(73, 152, 46, 0.25);
       border-radius: 18px;
-      padding: 22px 24px;
+      padding: 24px 24px 20px 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       gap: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 24px rgba(33, 68, 21, 0.06);
       transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       position: relative;
       overflow: hidden;
@@ -239,15 +295,14 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #2e7eac, #5e9cbf, transparent);
-      opacity: 0.8;
+      height: 4px;
+      background: linear-gradient(90deg, var(--green-6, #49982e), var(--yellow-6, #f4d849));
     }
 
     .qna-card:hover {
       transform: translateY(-3px);
-      border-color: var(--primary-2-7);
-      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45);
+      border-color: var(--green-6, #49982e);
+      box-shadow: 0 12px 30px rgba(33, 68, 21, 0.12);
     }
 
     .qna-card-meta {
@@ -260,21 +315,21 @@
     .qna-asker-name {
       font-size: 16px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--green-10, #214415);
       line-height: 1.3;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .qna-asker-avatar {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #2e7eac, #5e9cbf);
-      color: #010a2d;
+      background: var(--green-6, #49982e);
+      color: #ffffff;
       font-weight: 800;
-      font-size: 13px;
+      font-size: 13.5px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -282,15 +337,15 @@
     }
 
     .qna-session-tag {
-      font-size: 11px;
-      padding: 3px 8px;
+      font-size: 11.5px;
+      padding: 4px 10px;
       border-radius: 6px;
-      background: rgba(201, 148, 0, 0.12);
-      border: 1px solid var(--primary-2-7);
-      color: #5e9cbf;
+      background: #f1f8ee;
+      border: 1px solid rgba(73, 152, 46, 0.3);
+      color: var(--green-8, #346c21);
       font-weight: 700;
       white-space: nowrap;
-      max-width: 160px;
+      max-width: 170px;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -298,31 +353,32 @@
     .qna-question-body {
       font-size: 15px;
       line-height: 1.6;
-      color: rgba(255, 255, 255, 0.95);
+      color: #1e293b;
       white-space: pre-line;
       word-break: break-word;
-      font-weight: 400;
+      font-weight: 500;
     }
 
     .qna-card-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.5);
+      padding-top: 14px;
+      border-top: 1px solid #f1f5f9;
+      font-size: 12.5px;
+      color: #64748b;
+      font-weight: 500;
     }
 
     /* View Switcher */
     .qna-view-switch {
       display: inline-flex;
       align-items: center;
-      background: rgba(1, 10, 45, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: #f8fafc;
+      border: 1.5px solid rgba(73, 152, 46, 0.3);
       border-radius: 10px;
       padding: 3px;
-      gap: 2px;
+      gap: 3px;
     }
 
     .qna-switch-btn {
@@ -333,7 +389,7 @@
       border-radius: 7px;
       border: none;
       background: transparent;
-      color: rgba(255, 255, 255, 0.65);
+      color: #64748b;
       font-size: 12.5px;
       font-weight: 700;
       cursor: pointer;
@@ -341,27 +397,25 @@
     }
 
     .qna-switch-btn:hover {
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.08);
+      color: var(--green-10, #214415);
+      background: #e2e8f0;
     }
 
     .qna-switch-btn.active {
-      background: var(--primary-2-4, #2e7eac);
-      color: #010a2d;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      background: var(--green-6, #49982e);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(33, 68, 21, 0.15);
     }
 
     /* Table View Layout */
     .qna-table-container {
       display: none;
       width: 100%;
-      background: rgba(12, 47, 136, 0.22);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #ffffff;
+      border: 1px solid rgba(73, 152, 46, 0.25);
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 24px rgba(33, 68, 21, 0.06);
     }
 
     .qna-table {
@@ -372,31 +426,31 @@
     }
 
     .qna-table th {
-      background: rgba(1, 10, 45, 0.85);
-      color: rgba(255, 255, 255, 0.65);
-      font-size: 11.5px;
-      font-weight: 700;
+      background: #f8fafc;
+      color: var(--green-9, #2a571a);
+      font-size: 12px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       padding: 14px 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      border-bottom: 2px solid #e2e8f0;
       white-space: nowrap;
     }
 
     .qna-table td {
       padding: 16px 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid #f1f5f9;
       vertical-align: middle;
-      color: rgba(255, 255, 255, 0.9);
+      color: #1e293b;
     }
 
     .qna-table tbody tr {
-      transition: background 0.18s ease, transform 0.18s ease;
+      transition: background 0.18s ease;
       cursor: pointer;
     }
 
     .qna-table tbody tr:hover {
-      background: rgba(94, 156, 191, 0.12);
+      background: #f1f8ee;
     }
 
     .qna-table tbody tr:last-child td {
@@ -412,7 +466,7 @@
 
     .qna-table-asker {
       font-weight: 700;
-      color: #ffffff;
+      color: var(--green-10, #214415);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -421,9 +475,9 @@
 
     .qna-btn-focus {
       padding: 6px 12px;
-      background: rgba(94, 156, 191, 0.15);
-      border: 1px solid var(--primary-2-7);
-      color: #5e9cbf;
+      background: #f1f8ee;
+      border: 1px solid rgba(73, 152, 46, 0.4);
+      color: var(--green-8, #346c21);
       border-radius: 8px;
       font-size: 12px;
       font-weight: 700;
@@ -435,8 +489,9 @@
     }
 
     .qna-btn-focus:hover {
-      background: var(--primary-2-4, #5e9cbf);
-      color: #010a2d;
+      background: var(--green-6, #49982e);
+      color: #ffffff;
+      border-color: var(--green-6, #49982e);
     }
 
     /* Spotlight / Zoom Modal */
@@ -447,9 +502,9 @@
       right: 0;
       bottom: 0;
       z-index: 9999;
-      background: rgba(1, 10, 45, 0.88);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -467,9 +522,9 @@
       position: relative;
       width: 100%;
       max-width: 860px;
-      background: rgba(12, 47, 136, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      background: #ffffff;
+      border: 1.5px solid rgba(73, 152, 46, 0.35);
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
       border-radius: 24px;
       padding: 36px 40px;
       display: flex;
@@ -490,9 +545,9 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #ffffff;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #64748b;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -501,8 +556,9 @@
     }
 
     .qna-spotlight-close:hover {
-      background: rgba(239, 68, 68, 0.3);
-      border-color: rgba(239, 68, 68, 0.6);
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #dc2626;
       transform: rotate(90deg);
     }
 
@@ -510,7 +566,7 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 2px solid #f1f5f9;
       padding-bottom: 20px;
     }
 
@@ -518,8 +574,8 @@
       width: 54px;
       height: 54px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #2e7eac, #5e9cbf);
-      color: #010a2d;
+      background: var(--green-6, #49982e);
+      color: #ffffff;
       font-size: 22px;
       font-weight: 800;
       display: flex;
@@ -531,27 +587,26 @@
     .qna-spotlight-asker {
       font-size: 22px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--green-10, #214415);
       margin: 0 0 4px 0;
     }
 
     .qna-spotlight-session {
       font-size: 13.5px;
-      color: #5e9cbf;
-      font-weight: 600;
+      color: var(--green-7, #3e8127);
+      font-weight: 700;
     }
 
     .qna-spotlight-body {
-      font-size: 26px;
+      font-size: 24px;
       line-height: 1.55;
       font-weight: 600;
-      color: #ffffff;
+      color: #1e293b;
       white-space: pre-line;
       word-break: break-word;
       max-height: 52vh;
       overflow-y: auto;
       padding-right: 10px;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
 
     @media (max-width: 768px) {
@@ -567,7 +622,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid #f1f5f9;
       padding-top: 20px;
       flex-wrap: wrap;
       gap: 14px;
@@ -581,10 +636,10 @@
 
     .qna-nav-btn {
       padding: 8px 16px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
       border-radius: 10px;
-      color: #ffffff;
+      color: var(--green-10, #214415);
       font-size: 13px;
       font-weight: 700;
       display: inline-flex;
@@ -595,99 +650,88 @@
     }
 
     .qna-nav-btn:hover:not(:disabled) {
-      background: var(--primary-2-4, #2e7eac);
-      color: #010a2d;
-      border-color: transparent;
+      background: var(--green-6, #49982e);
+      color: #ffffff;
+      border-color: var(--green-6, #49982e);
     }
 
     .qna-nav-btn:disabled {
-      opacity: 0.35;
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
     .qna-spotlight-counter {
       font-size: 13px;
       font-weight: 700;
-      color: rgba(255, 255, 255, 0.6);
+      color: #64748b;
     }
 
+    /* Empty State */
     .qna-empty-state {
       text-align: center;
-      padding: 80px 20px;
-      background: rgba(12, 47, 136, 0.15);
-      border-radius: 20px;
-      border: 1px dashed rgba(255, 255, 255, 0.15);
+      padding: 70px 20px;
+      background: #ffffff;
+      border-radius: 18px;
+      border: 2px dashed rgba(73, 152, 46, 0.35);
       grid-column: 1 / -1;
+      box-shadow: 0 6px 20px rgba(33, 68, 21, 0.04);
     }
 
     .qna-empty-icon {
       width: 56px;
       height: 56px;
       margin: 0 auto 16px;
-      color: rgba(255, 255, 255, 0.3);
+      color: var(--green-7, #3e8127);
     }
 
     .qna-empty-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #ffffff;
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--green-10, #214415);
       margin-bottom: 6px;
     }
 
     .qna-empty-desc {
-      font-size: 13.5px;
-      color: rgba(255, 255, 255, 0.6);
-      max-width: 420px;
+      font-size: 14px;
+      color: var(--green-8, #346c21);
+      max-width: 440px;
       margin: 0 auto;
+      line-height: 1.5;
     }
   </style>
 </head>
 <body>
 
   <div class="qna-dash-wrapper">
-    <?php /* 1. Pure CSS Hero Canvas Ambient Glow Background */ ?>
-    <div class="hero-bg-canvas" aria-hidden="true"></div>
-
-    <?php /* 2. Decorative Rotating Discs */ ?>
-    <div class="hero-deco-wrap" aria-hidden="true" style="opacity: 0.6;">
-      <div class="hero-deco-item hero-deco-topleft">
-        <img src="<?= base_url('assets/img/decoration.png') ?>" alt="" class="hero-deco-img">
-      </div>
-      <div class="hero-deco-main-mask">
-        <div class="hero-deco-item hero-deco-main-perspective">
-          <div class="hero-deco-tilt">
-            <div class="hero-deco-spin">
-              <img src="<?= base_url('assets/img/decoration.png') ?>" alt="" class="hero-deco-img">
-            </div>
-          </div>
-        </div>
-      </div>
+    
+    <?php /* 1. Ribbon Dekoratif Pojok Kiri Atas (Desktop) & Pojok Kanan Atas (Desktop + Mobile) */ ?>
+    <div class="qna-ribbon-deco qna-ribbon-deco-left" aria-hidden="true">
+      <img src="<?= base_url('assets/img/ribbon.webp') ?>" alt="">
+    </div>
+    <div class="qna-ribbon-deco qna-ribbon-deco-right" aria-hidden="true">
+      <img src="<?= base_url('assets/img/ribbon.webp') ?>" alt="">
     </div>
 
-    <?php /* 3. Main Dashboard Content */ ?>
+    <?php /* 2. Main Dashboard Content */ ?>
     <div class="qna-dash-container">
       
       <?php /* Top Brand Bar */ ?>
       <div class="qna-dash-header">
         <div class="qna-dash-brand">
-          <a href="<?= base_url('/') ?>"><img src="<?= base_url('assets/img/logo_theme.webp') ?>" alt="Logo" class="qna-dash-logo"></a>
+          <a href="<?= base_url('/') ?>">
+            <img src="<?= base_url('assets/img/logo_green_emf26.webp') ?>" alt="Logo EMF 2026" class="qna-dash-logo">
+          </a>
           <div>
             <h1 class="qna-dash-title">Q&A Live Dashboard</h1>
-            <p class="qna-dash-subtitle"><?= esc($site['title'] ?? 'Investor Daily Summit 2026') ?> &bull; Forum Pertanyaan Sesi</p>
+            <p class="qna-dash-subtitle"><?= esc($site['title'] ?? 'Energy & Mineral Festival 2026') ?> &bull; Forum Pertanyaan Sesi</p>
           </div>
         </div>
 
-        <?php /*
         <div style="display: flex; align-items: center; gap: 14px;">
-          <div class="qna-live-pill">
-            <span class="qna-live-dot"></span>
-            <span>Live Sync</span>
-          </div>
-          <div style="font-size: 13px; font-weight: 700; color: #5e9cbf;">
-            <span id="totalQuestionsCount"><?= count($questions) ?></span> Pertanyaan
+          <div style="font-size: 13.5px; font-weight: 700; color: var(--green-9, #2a571a);">
+            Total: <span id="totalQuestionsCount" style="font-size: 16px; font-weight: 800;"><?= count($questions) ?></span> Pertanyaan
           </div>
         </div>
-        */ ?>
       </div>
 
       <?php /* Filters Bar */ ?>
@@ -717,13 +761,11 @@
               <?php foreach ($days as $d): ?>
                 <?php if (!empty($d['sessions'])): ?>
                   <?php 
-                    // Group sessions within this day by room_name (from database)
                     $roomGroupedSessions = [];
                     foreach ($d['sessions'] as $s) {
                         $roomKey = !empty(trim($s['room_name'] ?? '')) ? trim($s['room_name']) : '';
                         $roomGroupedSessions[$roomKey][] = $s;
                     }
-
                     $dayPrefix = 'Day ' . esc($d['day_number']) . (!empty($d['formatted_date']) ? ' (' . esc($d['formatted_date']) . ')' : '');
                   ?>
                   <?php foreach ($roomGroupedSessions as $rName => $sessList): ?>
@@ -748,178 +790,167 @@
         </div>
 
         <?php /* View Switcher */ ?>
-        <div style="flex-shrink: 0;">
-          <div class="qna-view-switch">
-            <button type="button" id="viewCardBtn" class="qna-switch-btn active" title="Tampilan Kartu">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-              <span>Cards</span>
-            </button>
-            <button type="button" id="viewTableBtn" class="qna-switch-btn" title="Tampilan Tabel">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-              <span>Tabel</span>
-            </button>
-          </div>
+        <div class="qna-view-switch">
+          <button type="button" id="viewCardBtn" class="qna-switch-btn active" title="Tampilan Kartu">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>Cards</span>
+          </button>
+          <button type="button" id="viewTableBtn" class="qna-switch-btn" title="Tampilan Tabel">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            <span>Tabel</span>
+          </button>
         </div>
       </div>
 
-      <?php /* 1. Questions List Grid (Card View) */ ?>
-      <div class="qna-grid" id="qnaGrid">
-        <?php if (!empty($questions)): ?>
+      <?php /* 1. Card View Grid */ ?>
+      <div id="qnaGrid" class="qna-grid">
+        <?php if (empty($questions)): ?>
+          <div class="qna-empty-state" id="emptyStateCards">
+            <svg class="qna-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div class="qna-empty-title">Belum Ada Pertanyaan Masuk</div>
+            <div class="qna-empty-desc">Pertanyaan dari audiens yang mengirimkan formulir via barcode sesi akan otomatis muncul di sini.</div>
+          </div>
+        <?php else: ?>
           <?php foreach ($questions as $idx => $q): ?>
             <?php 
-              $initial = !empty($q['asker_name']) ? mb_strtoupper(mb_substr($q['asker_name'], 0, 1)) : '?';
+              $initial = strtoupper(mb_substr($q['asker_name'] ?? '?', 0, 1));
+              $sessionTitle = $q['session_title'] ?? '';
+              $dayLabel = !empty($q['day_number']) ? ('Day ' . esc($q['day_number']) . ' &bull; ') : '';
+              $timeLabel = !empty($q['session_time']) ? esc($q['session_time']) : '';
             ?>
-            <div class="qna-card" data-index="<?= $idx ?>" data-id="<?= $q['id'] ?>">
+            <div class="qna-card" data-index="<?= $idx ?>" data-id="<?= esc($q['id']) ?>">
               <div class="qna-card-meta">
                 <div class="qna-asker-name">
                   <span class="qna-asker-avatar"><?= esc($initial) ?></span>
                   <span><?= esc($q['asker_name']) ?></span>
                 </div>
-                <?php if (!empty($q['session_title'])): ?>
-                  <span class="qna-session-tag" title="<?= esc($q['session_title']) ?>">
-                    <?= esc(mb_strimwidth($q['session_title'], 0, 24, '...')) ?>
-                  </span>
+                <?php if (!empty($sessionTitle)): ?>
+                  <span class="qna-session-tag" title="<?= esc($sessionTitle) ?>"><?= esc(mb_strimwidth($sessionTitle, 0, 24, '...')) ?></span>
                 <?php endif; ?>
               </div>
-
-              <div class="qna-question-body">
-                <?= esc($q['question']) ?>
-              </div>
-
+              <div class="qna-question-body"><?= nl2br(esc($q['question'])) ?></div>
               <div class="qna-card-footer">
-                <span>
-                  <?php if (!empty($q['day_number'])): ?>
-                    Day <?= esc($q['day_number']) ?> &bull; 
-                  <?php endif; ?>
-                  <?= !empty($q['session_time']) ? esc($q['session_time']) : '' ?>
-                </span>
-                <span style="color: #5e9cbf; font-weight: 700;">
-                  <?= esc($q['time_ago'] ?? 'Baru saja') ?>
-                </span>
+                <span><?= $dayLabel ?><?= $timeLabel ?></span>
+                <span style="color: var(--green-7, #3e8127); font-weight: 700;"><?= esc($q['time_ago'] ?? 'Baru saja') ?></span>
               </div>
             </div>
           <?php endforeach; ?>
-        <?php else: ?>
-          <div class="qna-empty-state" id="emptyStateCards">
-            <svg class="qna-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-            <div class="qna-empty-title">Belum Ada Pertanyaan Masuk</div>
-            <div class="qna-empty-desc">Pertanyaan dari audiens yang mengirimkan formulir via barcode sesi akan otomatis muncul di sini.</div>
-          </div>
         <?php endif; ?>
       </div>
 
-      <?php /* 2. Questions Table Container (Table View) */ ?>
-      <div class="qna-table-container" id="qnaTableContainer">
-        <div style="overflow-x: auto;">
-          <table class="qna-table" id="qnaTable">
-            <thead>
+      <?php /* 2. Table View Container */ ?>
+      <div id="qnaTableContainer" class="qna-table-container">
+        <table class="qna-table">
+          <thead>
+            <tr>
+              <th style="width: 50px; text-align: center;">#</th>
+              <th style="width: 140px;">Waktu</th>
+              <th style="width: 220px;">Penanya</th>
+              <th style="width: 250px;">Sesi Acara</th>
+              <th>Isi Pertanyaan</th>
+              <th style="width: 90px; text-align: center;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="qnaTableBody">
+            <?php if (empty($questions)): ?>
               <tr>
-                <th style="width: 50px; text-align: center;">#</th>
-                <th style="width: 140px;">Waktu</th>
-                <th style="width: 200px;">Penanya</th>
-                <th style="width: 220px;">Sesi Acara</th>
-                <th>Pertanyaan</th>
-                <th style="width: 110px; text-align: center;">Aksi</th>
+                <td colspan="6" style="text-align: center; padding: 60px 20px;">
+                  <div class="qna-empty-title">Belum Ada Pertanyaan Masuk</div>
+                  <div class="qna-empty-desc">Pertanyaan dari audiens akan otomatis muncul di sini.</div>
+                </td>
               </tr>
-            </thead>
-            <tbody id="qnaTableBody">
-              <?php if (!empty($questions)): ?>
-                <?php foreach ($questions as $idx => $q): ?>
-                  <?php 
-                    $initial = !empty($q['asker_name']) ? mb_strtoupper(mb_substr($q['asker_name'], 0, 1)) : '?';
-                  ?>
-                  <tr data-index="<?= $idx ?>" data-id="<?= $q['id'] ?>">
-                    <td style="text-align: center; color: rgba(255,255,255,0.5); font-weight: 700;"><?= $idx + 1 ?></td>
-                    <td style="color: #5e9cbf; font-weight: 600; white-space: nowrap;"><?= esc($q['time_ago'] ?? 'Baru saja') ?></td>
-                    <td>
-                      <div class="qna-table-asker">
-                        <span class="qna-asker-avatar" style="width: 26px; height: 26px; font-size: 11px;"><?= esc($initial) ?></span>
-                        <span><?= esc($q['asker_name']) ?></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div style="font-weight: 600; font-size: 13px; color: #ffffff;"><?= esc($q['session_title'] ?? '-') ?></div>
-                      <div style="font-size: 11.5px; color: rgba(255,255,255,0.5);">
-                        <?= !empty($q['day_number']) ? 'Day ' . esc($q['day_number']) . ' &bull; ' : '' ?><?= esc($q['session_time'] ?? '') ?>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="qna-table-question"><?= esc($q['question']) ?></div>
-                    </td>
-                    <td style="text-align: center;">
-                      <button type="button" class="qna-btn-focus" data-index="<?= $idx ?>" title="Focus Zoom Pertanyaan">
-                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg>
-                        <span>Focus</span>
-                      </button>
-                    </td>
-                  </tr>
-                <?php endforeach; ?>
-              <?php else: ?>
-                <tr>
-                  <td colspan="6" style="text-align: center; padding: 60px 20px;">
-                    <div class="qna-empty-title">Belum Ada Pertanyaan Masuk</div>
-                    <div class="qna-empty-desc">Pertanyaan dari audiens akan otomatis muncul di sini.</div>
+            <?php else: ?>
+              <?php foreach ($questions as $idx => $q): ?>
+                <?php 
+                  $initial = strtoupper(mb_substr($q['asker_name'] ?? '?', 0, 1));
+                  $dayText = !empty($q['day_number']) ? ('Day ' . esc($q['day_number']) . ' &bull; ') : '';
+                  $sessionTime = !empty($q['session_time']) ? esc($q['session_time']) : '';
+                ?>
+                <tr data-index="<?= $idx ?>" data-id="<?= esc($q['id']) ?>">
+                  <td style="text-align: center; color: #94a3b8; font-weight: 700;"><?= $idx + 1 ?></td>
+                  <td style="color: var(--green-7, #3e8127); font-weight: 600; white-space: nowrap;"><?= esc($q['time_ago'] ?? 'Baru saja') ?></td>
+                  <td>
+                    <div class="qna-table-asker">
+                      <span class="qna-asker-avatar" style="width: 28px; height: 28px; font-size: 11.5px;"><?= esc($initial) ?></span>
+                      <span><?= esc($q['asker_name']) ?></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="font-weight: 700; font-size: 13.5px; color: var(--green-10, #214415);"><?= esc($q['session_title'] ?? '-') ?></div>
+                    <div style="font-size: 12px; color: #64748b;"><?= $dayText ?><?= $sessionTime ?></div>
+                  </td>
+                  <td>
+                    <div class="qna-table-question"><?= nl2br(esc($q['question'])) ?></div>
+                  </td>
+                  <td style="text-align: center;">
+                    <button type="button" class="qna-btn-focus" data-index="<?= $idx ?>" title="Focus Zoom Pertanyaan">
+                      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg>
+                      <span>Focus</span>
+                    </button>
                   </td>
                 </tr>
-              <?php endif; ?>
-            </tbody>
-          </table>
-        </div>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </tbody>
+        </table>
       </div>
 
     </div>
   </div>
 
-  <?php /* 4. Spotlight / Zoom Focus Modal for Moderator */ ?>
-  <div class="qna-spotlight-modal" id="qnaSpotlightModal" role="dialog" aria-modal="true" aria-labelledby="modalAskerName">
-    <div class="qna-spotlight-card" id="qnaSpotlightCard">
-      <?php /* Close Button */ ?>
-      <button type="button" class="qna-spotlight-close" id="btnSpotlightClose" aria-label="Tutup Mode Fokus">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  <?php /* Spotlight Focus Zoom Modal */ ?>
+  <div id="qnaSpotlightModal" class="qna-spotlight-modal" aria-hidden="true">
+    <div class="qna-spotlight-card">
+      <button type="button" id="modalCloseBtn" class="qna-spotlight-close" title="Tutup (Esc)">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
       </button>
 
-      <?php /* Moderator Header */ ?>
       <div class="qna-spotlight-header">
-        <div class="qna-spotlight-avatar" id="modalAskerAvatar">?</div>
+        <div id="modalAskerAvatar" class="qna-spotlight-avatar">?</div>
         <div>
-          <h2 class="qna-spotlight-asker" id="modalAskerName">Nama Penanya</h2>
-          <div class="qna-spotlight-session" id="modalSessionInfo">Sesi Acara &bull; Waktu</div>
+          <h2 id="modalAskerName" class="qna-spotlight-asker">Nama Penanya</h2>
+          <div id="modalSessionInfo" class="qna-spotlight-session">Sesi Acara</div>
         </div>
       </div>
 
-      <?php /* Large Question Body */ ?>
-      <div class="qna-spotlight-body" id="modalQuestionText">
-        Isi pertanyaan audiens akan tampil di sini dengan ukuran teks yang besar dan mudah dibaca oleh moderator.
+      <div id="modalQuestionText" class="qna-spotlight-body">
+        Isi teks pertanyaan...
       </div>
 
-      <?php /* Navigation & Controls */ ?>
       <div class="qna-spotlight-footer">
-        <div class="qna-spotlight-nav">
-          <button type="button" class="qna-nav-btn" id="btnPrevQuestion">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            <span>Sebelumnya</span>
-          </button>
-          <button type="button" class="qna-nav-btn" id="btnNextQuestion">
-            <span>Berikutnya</span>
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </button>
+        <div class="qna-spotlight-counter">
+          <span id="modalCounter">Pertanyaan 1 dari 1</span>
         </div>
-
-        <div style="display: flex; align-items: center; gap: 16px;">
-          <div class="qna-spotlight-counter" id="modalCounter">
-            Pertanyaan 1 dari 10
-          </div>
-          <div style="font-size: 11.5px; color: rgba(255,255,255,0.4); display: none; @media(min-width: 640px){display: block;}">
-            Shortcut: <kbd style="background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px;">&larr;</kbd> <kbd style="background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px;">&rarr;</kbd> Navigasi &bull; <kbd style="background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px;">Esc</kbd> Tutup
-          </div>
+        <div class="qna-spotlight-nav">
+          <button type="button" id="btnPrevQuestion" class="qna-nav-btn">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <span>Prev</span>
+          </button>
+          <button type="button" id="btnNextQuestion" class="qna-nav-btn">
+            <span>Next</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
         </div>
       </div>
     </div>
   </div>
 
+  <?php /* Dashboard Interactive Logic */ ?>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Elements
+      let currentQuestions = <?= json_encode($questions ?? []) ?>;
+      let activeIndex = -1;
+      let currentView = 'cards';
+      let currentDayId = '<?= esc($filterDay ?? '') ?>';
+      let currentSessionId = '<?= esc($filterSession ?? '') ?>';
+
       const qnaGrid = document.getElementById('qnaGrid');
       const qnaTableContainer = document.getElementById('qnaTableContainer');
       const qnaTableBody = document.getElementById('qnaTableBody');
@@ -927,11 +958,10 @@
       const filterSession = document.getElementById('filterSession');
       const viewCardBtn = document.getElementById('viewCardBtn');
       const viewTableBtn = document.getElementById('viewTableBtn');
+      const totalCount = document.getElementById('totalQuestionsCount');
 
-      // Spotlight Modal Elements
       const modal = document.getElementById('qnaSpotlightModal');
-      const modalCard = document.getElementById('qnaSpotlightCard');
-      const modalCloseBtn = document.getElementById('btnSpotlightClose');
+      const modalCloseBtn = document.getElementById('modalCloseBtn');
       const modalAskerAvatar = document.getElementById('modalAskerAvatar');
       const modalAskerName = document.getElementById('modalAskerName');
       const modalSessionInfo = document.getElementById('modalSessionInfo');
@@ -940,37 +970,19 @@
       const btnPrevQuestion = document.getElementById('btnPrevQuestion');
       const btnNextQuestion = document.getElementById('btnNextQuestion');
 
-      // State
-      let currentQuestions = <?= json_encode($questions ?? []) ?>;
-      let activeIndex = -1;
-      let currentDayId = filterDay ? filterDay.value : '';
-      let currentSessionId = filterSession ? filterSession.value : '';
-      let currentView = localStorage.getItem('qna_dash_view_mode') || 'cards';
-
-      // Anti-XSS Sanitizer
       function escapeHtml(text) {
-        if (text === null || text === undefined) return '';
-        const map = {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;',
-          '/': '&#x2F;'
-        };
-        return String(text).replace(/[&<>"'/]/g, m => map[m]);
+        if (!text) return '';
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        return text.toString().replace(/[&<>"']/g, m => map[m]);
       }
 
       function truncate(str, max) {
         if (!str) return '';
-        return str.length > max ? str.substring(0, max) + '...' : str;
+        return str.length > max ? str.substr(0, max - 3) + '...' : str;
       }
 
-      // View Mode Toggle
       function setViewMode(mode) {
         currentView = mode;
-        localStorage.setItem('qna_dash_view_mode', mode);
-
         if (mode === 'table') {
           viewTableBtn.classList.add('active');
           viewCardBtn.classList.remove('active');
@@ -990,7 +1002,6 @@
         setViewMode(currentView);
       }
 
-      // Render Card HTML
       function createCardHtml(q, idx) {
         const initial = (q.asker_name || '?').charAt(0).toUpperCase();
         const sessionTag = q.session_title 
@@ -1011,13 +1022,12 @@
             <div class="qna-question-body">${escapeHtml(q.question)}</div>
             <div class="qna-card-footer">
               <span>${dayText}${escapeHtml(timeText)}</span>
-              <span style="color: #5e9cbf; font-weight: 700;">${escapeHtml(q.time_ago || 'Baru saja')}</span>
+              <span style="color: var(--green-7, #3e8127); font-weight: 700;">${escapeHtml(q.time_ago || 'Baru saja')}</span>
             </div>
           </div>
         `;
       }
 
-      // Render Table Row HTML
       function createTableRowHtml(q, idx) {
         const initial = (q.asker_name || '?').charAt(0).toUpperCase();
         const dayText = q.day_number ? `Day ${escapeHtml(q.day_number)} &bull; ` : '';
@@ -1025,17 +1035,17 @@
 
         return `
           <tr data-index="${idx}" data-id="${escapeHtml(q.id)}">
-            <td style="text-align: center; color: rgba(255,255,255,0.5); font-weight: 700;">${idx + 1}</td>
-            <td style="color: #5e9cbf; font-weight: 600; white-space: nowrap;">${escapeHtml(q.time_ago || 'Baru saja')}</td>
+            <td style="text-align: center; color: #94a3b8; font-weight: 700;">${idx + 1}</td>
+            <td style="color: var(--green-7, #3e8127); font-weight: 600; white-space: nowrap;">${escapeHtml(q.time_ago || 'Baru saja')}</td>
             <td>
               <div class="qna-table-asker">
-                <span class="qna-asker-avatar" style="width: 26px; height: 26px; font-size: 11px;">${escapeHtml(initial)}</span>
+                <span class="qna-asker-avatar" style="width: 28px; height: 28px; font-size: 11.5px;">${escapeHtml(initial)}</span>
                 <span>${escapeHtml(q.asker_name)}</span>
               </div>
             </td>
             <td>
-              <div style="font-weight: 600; font-size: 13px; color: #ffffff;">${escapeHtml(q.session_title || '-')}</div>
-              <div style="font-size: 11.5px; color: rgba(255,255,255,0.5);">${dayText}${sessionTimeText}</div>
+              <div style="font-weight: 700; font-size: 13.5px; color: var(--green-10, #214415);">${escapeHtml(q.session_title || '-')}</div>
+              <div style="font-size: 12px; color: #64748b;">${dayText}${sessionTimeText}</div>
             </td>
             <td>
               <div class="qna-table-question">${escapeHtml(q.question)}</div>
@@ -1050,14 +1060,18 @@
         `;
       }
 
-      // Render All Views
       function renderAllViews(list) {
         currentQuestions = list;
+        if (totalCount) totalCount.textContent = list.length;
 
         if (list.length === 0) {
           qnaGrid.innerHTML = `
             <div class="qna-empty-state" id="emptyStateCards">
-              <svg class="qna-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              <svg class="qna-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
               <div class="qna-empty-title">Belum Ada Pertanyaan Masuk</div>
               <div class="qna-empty-desc">Pertanyaan dari audiens yang mengirimkan formulir via barcode sesi akan otomatis muncul di sini.</div>
             </div>
@@ -1073,20 +1087,15 @@
           return;
         }
 
-        // Render Cards
         qnaGrid.innerHTML = list.map((q, idx) => createCardHtml(q, idx)).join('');
-
-        // Render Table
         qnaTableBody.innerHTML = list.map((q, idx) => createTableRowHtml(q, idx)).join('');
 
-        // If spotlight modal is open, refresh its counter and state
         if (modal.classList.contains('show') && activeIndex >= 0) {
           if (activeIndex >= list.length) activeIndex = list.length - 1;
           showSpotlight(activeIndex);
         }
       }
 
-      // Spotlight / Zoom Modal Logic
       function showSpotlight(index) {
         if (!currentQuestions || currentQuestions.length === 0) return;
         if (index < 0 || index >= currentQuestions.length) return;
@@ -1119,7 +1128,6 @@
         document.body.style.overflow = '';
       }
 
-      // Event Delegation for Opening Spotlight from Cards or Table
       qnaGrid.addEventListener('click', (e) => {
         const card = e.target.closest('.qna-card');
         if (card) {
@@ -1154,20 +1162,13 @@
         });
       }
 
-      // Keyboard Accessibility for Spotlight
       document.addEventListener('keydown', (e) => {
         if (!modal.classList.contains('show')) return;
-
-        if (e.key === 'Escape') {
-          closeSpotlight();
-        } else if (e.key === 'ArrowLeft' && activeIndex > 0) {
-          showSpotlight(activeIndex - 1);
-        } else if (e.key === 'ArrowRight' && activeIndex < currentQuestions.length - 1) {
-          showSpotlight(activeIndex + 1);
-        }
+        if (e.key === 'Escape') closeSpotlight();
+        else if (e.key === 'ArrowLeft' && activeIndex > 0) showSpotlight(activeIndex - 1);
+        else if (e.key === 'ArrowRight' && activeIndex < currentQuestions.length - 1) showSpotlight(activeIndex + 1);
       });
 
-      // Polling from API
       async function pollQuestions() {
         try {
           const params = new URLSearchParams();
@@ -1186,7 +1187,6 @@
         }
       }
 
-      // Filter Change Events
       if (filterDay) {
         filterDay.addEventListener('change', () => {
           currentDayId = filterDay.value;
@@ -1201,7 +1201,6 @@
         });
       }
 
-      // Auto poll every 6 seconds
       setInterval(pollQuestions, 6000);
     });
   </script>

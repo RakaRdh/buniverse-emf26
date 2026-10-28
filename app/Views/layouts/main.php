@@ -19,10 +19,10 @@
   <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
   <link rel="icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
   
-  <?php /* Google Fonts: Manrope & Playfair Display */ ?>
+  <?php /* Google Fonts: Anton, Manrope & Playfair Display */ ?>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
   
   <?php /* Core Vanilla CSS */ ?>
   <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>?v=<?= file_exists(FCPATH . 'assets/css/style.css') ? filemtime(FCPATH . 'assets/css/style.css') : time() ?>">
@@ -47,8 +47,18 @@
 
   <?php /* Main Content Body */ ?>
   <main id="mainContent">
-    <?php /* 2. Hero Section (Mendukung Preview Template Baru via Route /preview-hero) */ ?>
-    <?= $this->include(!empty($heroView) && $heroView === 'preview' ? 'partials/hero_preview' : 'partials/hero') ?>
+    <?php /* 2. Hero Section (Mendukung Preview Template Baru via Route /preview-hero & /preview-hero2) */ ?>
+    <?php
+      $heroTemplate = 'partials/hero';
+      if (!empty($heroView)) {
+        if ($heroView === 'preview') {
+          $heroTemplate = 'partials/hero_preview';
+        } elseif ($heroView === 'preview2') {
+          $heroTemplate = 'partials/hero_preview2';
+        }
+      }
+    ?>
+    <?= $this->include($heroTemplate) ?>
 
     <?php /* 3. About Us Section (Energi & Mineral Festival) */ ?>
     <?= $this->include('partials/about_us') ?>
