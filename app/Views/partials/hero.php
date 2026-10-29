@@ -5,9 +5,14 @@
   <?php /* 1. Pure Hero Background Canvas with Warm Yellow Base Gradient */ ?>
   <div class="hero-festival-bg" aria-hidden="true"></div>
 
-  <?php /* 2. Hero Partner / Kementerian Logo (Sisi Kiri Atas Hero) */ ?>
-  <div class="hero-partner-badge">
-    <img src="<?= base_url('assets/img/esdm.webp') ?>" alt="Kementerian Energi dan Sumber Daya Mineral" class="hero-partner-img">
+  <?php /* 2. Hero Partner / Kementerian Logo (Sisi Kiri Atas Hero) & Investor Daily Logo (Sisi Kanan Berlawanan) */ ?>
+  <div class="hero-partner-badge hero-partner-badge-left">
+    <img src="<?= base_url('assets/img/esdm.webp') ?>" alt="Kementerian Energi dan Sumber Daya Mineral" class="hero-partner-img hero-partner-img-esdm">
+  </div>
+  <div class="hero-partner-badge hero-partner-badge-right">
+    <a href="https://investor.id" target="_blank" rel="noopener noreferrer" aria-label="Investor Daily Indonesia">
+      <img src="<?= base_url('assets/img/logo_id_color.webp') ?>" alt="Investor Daily Indonesia" class="hero-partner-img hero-partner-img-id">
+    </a>
   </div>
 
   <?php /* 3. Main Hero Content Grid (Left: Spinning Ribbon + EMF Text; Right: Typography & Countdown) */ ?>

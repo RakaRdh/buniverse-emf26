@@ -88,24 +88,29 @@
           </svg>
         </button>
 
-        <!-- Thumbnails Container (Spotlight paten di posisi tengah slot 2) -->
-        <div class="gallery-thumb-list" id="galleryThumbList" role="tablist" aria-label="Navigasi Thumbnail Gallery">
-          <?php 
-            $activeSlot = 2; // Paten di tengah (1 2 [3/spotlight] 4 5)
-            for ($slot = 0; $slot < 5; $slot++): 
-              $offset = $slot - 2; // -2, -1, 0, 1, 2
-              $itemIdx = (($offset % $totalCount) + $totalCount) % $totalCount;
-          ?>
-            <button type="button" 
-                    role="tab" 
-                    class="gallery-thumb-item <?= $slot === $activeSlot ? 'is-active' : '' ?>" 
-                    data-slot="<?= $slot ?>" 
-                    data-gallery-index="<?= $itemIdx ?>" 
-                    aria-selected="<?= $slot === $activeSlot ? 'true' : 'false' ?>"
-                    aria-label="Pilih foto <?= $itemIdx + 1 ?>">
-              <img src="<?= esc($items[$itemIdx]['image_url'] ?? '') ?>" alt="<?= esc($items[$itemIdx]['caption'] ?? '') ?>" loading="eager" decoding="async">
-            </button>
-          <?php endfor; ?>
+        <!-- Thumbnails Viewport & Sliding Strip Container -->
+        <div class="gallery-thumb-viewport">
+          <!-- Permanent Center Spotlight Frame (Selalu paten mengunci di tengah) -->
+          <div class="gallery-thumb-spotlight-frame" aria-hidden="true"></div>
+
+          <div class="gallery-thumb-list" id="galleryThumbList" role="tablist" aria-label="Navigasi Thumbnail Gallery">
+            <?php 
+              $activeSlot = 4; // Center slot of 9 buffer items (-4, -3, -2, -1, [0 / SPOTLIGHT], 1, 2, 3, 4)
+              for ($slot = 0; $slot < 9; $slot++): 
+                $offset = $slot - 4; // -4 to 4
+                $itemIdx = (($offset % $totalCount) + $totalCount) % $totalCount;
+            ?>
+              <button type="button" 
+                      role="tab" 
+                      class="gallery-thumb-item <?= $slot === $activeSlot ? 'is-active' : '' ?>" 
+                      data-slot="<?= $slot ?>" 
+                      data-gallery-index="<?= $itemIdx ?>" 
+                      aria-selected="<?= $slot === $activeSlot ? 'true' : 'false' ?>"
+                      aria-label="Pilih foto <?= $itemIdx + 1 ?>">
+                <img src="<?= esc($items[$itemIdx]['image_url'] ?? '') ?>" alt="<?= esc($items[$itemIdx]['caption'] ?? '') ?>" loading="eager" decoding="async">
+              </button>
+            <?php endfor; ?>
+          </div>
         </div>
 
         <!-- Next Button (Down on Desktop, Right on Mobile) -->

@@ -223,44 +223,32 @@ document.addEventListener('DOMContentLoaded', () => {
       // 7-card rotating architecture (-3 to 3) for continuous 60fps CSS hardware-accelerated movement
       const POSITIONS = [-3, -2, -1, 0, 1, 2, 3];
       let cardList = stage ? Array.from(stage.querySelectorAll('.gallery-cascade-card')) : [];
-      const thumbListItems = thumbList ? Array.from(thumbList.querySelectorAll('.gallery-thumb-item')) : [];
+      let thumbSlotList = thumbList ? Array.from(thumbList.querySelectorAll('.gallery-thumb-item')) : [];
       let isAnimating = false;
 
-      // Update active state: Spotlight foto aktif selalu PATEN berada di tengah
-      // Desktop: 5 slot -> [i-2, i-1, i(spotlight), i+1, i+2] (active slot selalu 2)
-      // Mobile: 3 slot -> [i-1, i(spotlight), i+1] (active slot selalu 1)
-      const updateThumbnails = () => {
-        const isMobile = window.innerWidth <= 768;
-        let activeSlot = 2;
-        let slotIndices = [];
+      // 9 Thumbnail Slot conveyor architecture (-4 to 4, active spotlight always at index 4)
+      const THUMB_OFFSETS = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
+      const ACTIVE_THUMB_SLOT = 4;
 
-        if (isMobile) {
-          activeSlot = 1; // Posisi tengah dari 3 slot mobile
-          slotIndices = [-1, 0, 1].map(offset => getNormalizedIndex(currentIndex + offset));
-          // Pad slot 3 & 4 agar aman di DOM
-          slotIndices.push(getNormalizedIndex(currentIndex + 2), getNormalizedIndex(currentIndex + 3));
-        } else {
-          activeSlot = 2; // Posisi tengah dari 5 slot desktop: 1, 2, [3 / SPOTLIGHT], 4, 5
-          slotIndices = [-2, -1, 0, 1, 2].map(offset => getNormalizedIndex(currentIndex + offset));
-        }
-
-        thumbListItems.forEach((thumb, slot) => {
-          const itemIdx = slotIndices[slot];
-          const item = galleryItems[itemIdx];
-          if (!item) return;
-
-          thumb.setAttribute('data-gallery-index', itemIdx);
-          thumb.setAttribute('aria-label', `Pindah ke foto ${itemIdx + 1}: ${item.caption || ''}`);
-
-          const img = thumb.querySelector('img');
-          if (img) {
-            if (img.getAttribute('src') !== item.image_url) {
-              img.src = item.image_url;
-            }
-            img.alt = item.caption || `Thumbnail ${itemIdx + 1}`;
+      const setThumbContent = (thumb, itemIdx) => {
+        const item = galleryItems[itemIdx];
+        if (!item) return;
+        thumb.setAttribute('data-gallery-index', itemIdx);
+        thumb.setAttribute('aria-label', `Pindah ke foto ${itemIdx + 1}: ${item.caption || ''}`);
+        const img = thumb.querySelector('img');
+        if (img) {
+          if (img.getAttribute('src') !== item.image_url) {
+            img.src = item.image_url;
           }
+          img.alt = item.caption || `Thumbnail ${itemIdx + 1}`;
+        }
+      };
 
-          if (slot === activeSlot) {
+      const renderInitialThumbnails = () => {
+        thumbSlotList.forEach((thumb, slot) => {
+          const itemIdx = getNormalizedIndex(currentIndex + THUMB_OFFSETS[slot]);
+          setThumbContent(thumb, itemIdx);
+          if (slot === ACTIVE_THUMB_SLOT) {
             thumb.classList.add('is-active');
             thumb.setAttribute('aria-selected', 'true');
           } else {
@@ -268,11 +256,92 @@ document.addEventListener('DOMContentLoaded', () => {
             thumb.setAttribute('aria-selected', 'false');
           }
         });
+
+        if (thumbList) {
+          thumbList.style.transition = 'none';
+          thumbList.style.transform = 'translate3d(0, 0, 0)';
+        }
+      };
+
+      // Animate thumbnail conveyor belt sliding in exact sync with stepGallery
+      const animateThumbnails = (steps, duration) => {
+        if (!thumbList || thumbSlotList.length === 0 || steps === 0) return;
+        const isMobile = window.innerWidth <= 768;
+        const dir = steps > 0 ? 1 : -1;
+        const count = Math.abs(steps);
+
+        // Calculate pitch (item size + gap) for sliding distance
+        const firstThumb = thumbSlotList[0];
+        const secondThumb = thumbSlotList[1];
+        let pitch = 0;
+        if (isMobile) {
+          pitch = secondThumb ? (secondThumb.offsetLeft - firstThumb.offsetLeft) : (firstThumb.offsetWidth + 8);
+        } else {
+          pitch = secondThumb ? (secondThumb.offsetTop - firstThumb.offsetTop) : (firstThumb.offsetHeight + 8);
+        }
+
+        const delta = -steps * pitch;
+
+        // Immediately transfer active state to the item sliding INTO the center spotlight
+        // so the opacity smoothly transitions into the center frame in real time!
+        const targetActiveSlot = ACTIVE_THUMB_SLOT + steps;
+        thumbSlotList.forEach((thumb, slot) => {
+          if (slot === targetActiveSlot) {
+            thumb.classList.add('is-active');
+            thumb.setAttribute('aria-selected', 'true');
+          } else {
+            thumb.classList.remove('is-active');
+            thumb.setAttribute('aria-selected', 'false');
+          }
+        });
+
+        // Slide the thumbnail container
+        thumbList.style.transition = `transform ${duration}ms cubic-bezier(0.25, 1, 0.35, 1)`;
+        if (isMobile) {
+          thumbList.style.transform = `translate3d(${delta}px, 0, 0)`;
+        } else {
+          thumbList.style.transform = `translate3d(0, ${delta}px, 0)`;
+        }
+
+        // After slide finishes: recycle elements, reset transform to 0 without transition, update data
+        setTimeout(() => {
+          thumbList.style.transition = 'none';
+          thumbList.style.transform = 'translate3d(0, 0, 0)';
+
+          if (dir === 1) {
+            for (let s = 0; s < count; s++) {
+              const shifted = thumbSlotList.shift();
+              thumbSlotList.push(shifted);
+              thumbList.appendChild(shifted);
+            }
+          } else {
+            for (let s = 0; s < count; s++) {
+              const popped = thumbSlotList.pop();
+              thumbSlotList.unshift(popped);
+              thumbList.insertBefore(popped, thumbList.firstChild);
+            }
+          }
+
+          // Re-populate all 9 thumbnail slots around new currentIndex
+          thumbSlotList.forEach((thumb, slot) => {
+            thumb.setAttribute('data-slot', slot);
+            const itemIdx = getNormalizedIndex(currentIndex + THUMB_OFFSETS[slot]);
+            setThumbContent(thumb, itemIdx);
+
+            if (slot === ACTIVE_THUMB_SLOT) {
+              thumb.classList.add('is-active');
+              thumb.setAttribute('aria-selected', 'true');
+            } else {
+              thumb.classList.remove('is-active');
+              thumb.setAttribute('aria-selected', 'false');
+            }
+          });
+        }, duration);
       };
 
       // Ensure thumbnails update if resizing between mobile and desktop
       window.addEventListener('resize', () => {
-        updateThumbnails();
+        renderInitialThumbnails();
       });
 
       // Initial layout setup: assign positions and initial images to all 7 cards
@@ -297,41 +366,54 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.cursor = 'pointer';
           }
         });
-        updateThumbnails();
+        renderInitialThumbnails();
       };
 
       // Core Step Function: Rotates cards continuously with pure GPU CSS transforms
-      const stepGallery = (dir) => {
-        if (isAnimating || cardList.length < 7) return;
+      // Supports steps: 1, -1, or multi-step (e.g. 2, -2) in one single sweeping smooth glide
+      const stepGallery = (steps = 1) => {
+        if (isAnimating || cardList.length < 7 || steps === 0) return;
         isAnimating = true;
 
-        currentIndex = getNormalizedIndex(currentIndex + dir);
+        const count = Math.abs(steps);
+        const dir = steps > 0 ? 1 : -1;
+        const total = totalItems;
+        currentIndex = getNormalizedIndex(currentIndex + steps);
+
+        // Slightly longer duration for multi-step (e.g. 620ms) so the sweeping motion feels luxurious & smooth
+        const duration = count > 1 ? 620 : 500;
+        const transitionStyle = count > 1
+          ? `transform ${duration}ms cubic-bezier(0.25, 1, 0.35, 1), opacity ${duration}ms cubic-bezier(0.25, 1, 0.35, 1), box-shadow ${duration}ms cubic-bezier(0.25, 1, 0.35, 1), border-color ${duration}ms cubic-bezier(0.25, 1, 0.35, 1)`
+          : '';
 
         if (dir === 1) {
-          // FORWARD / NEXT
-          // cardList[0] is currently offscreen at pos -3. Pop from start, push to end.
-          const exitingCard = cardList.shift();
-          cardList.push(exitingCard);
+          // FORWARD / NEXT (count steps)
+          // cardList[0..count-1] exit to top buffer, recycled to bottom
+          for (let s = 0; s < count; s++) {
+            const exitingCard = cardList.shift();
+            cardList.push(exitingCard);
 
-          // Place exitingCard at pos 3 instantly without transition
-          exitingCard.style.transition = 'none';
-          exitingCard.className = 'gallery-cascade-card card-pos-3';
-          exitingCard.setAttribute('data-rel-pos', '3');
-          exitingCard.removeAttribute('aria-current');
+            const bufferPos = 3 - (count - 1 - s); // e.g. for count=2: s=0->pos 2, s=1->pos 3
+            exitingCard.style.transition = 'none';
+            exitingCard.className = `gallery-cascade-card card-pos-3`;
+            exitingCard.setAttribute('data-rel-pos', '3');
+            exitingCard.removeAttribute('aria-current');
 
-          const nextItem = galleryItems[getNormalizedIndex(currentIndex + 3)];
-          const nextImg = exitingCard.querySelector('img');
-          if (nextImg && nextItem) {
-            nextImg.src = nextItem.image_url;
-            nextImg.alt = nextItem.caption || '';
+            const nextTargetIndex = getNormalizedIndex(currentIndex + (3 - (count - 1 - s)));
+            const nextItem = galleryItems[nextTargetIndex];
+            const nextImg = exitingCard.querySelector('img');
+            if (nextImg && nextItem) {
+              nextImg.src = nextItem.image_url;
+              nextImg.alt = nextItem.caption || '';
+            }
           }
-          void exitingCard.offsetHeight; // Force browser layout flush
-          exitingCard.style.transition = '';
 
-          // Transition the other 6 cards smoothly to their new positions (-3, -2, -1, 0, 1, 2)
+          void stage.offsetHeight; // Layout flush
+
+          // Animate all cards into their new relative positions
           cardList.forEach((card, idx) => {
-            if (idx === 6) return; // already placed at pos 3
             const newPos = idx - 3;
+            card.style.transition = transitionStyle;
             card.className = `gallery-cascade-card card-pos-${newPos}`;
             card.setAttribute('data-rel-pos', newPos);
             if (newPos === 0) {
@@ -340,31 +422,33 @@ document.addEventListener('DOMContentLoaded', () => {
               card.removeAttribute('aria-current');
             }
           });
-        } else if (dir === -1) {
-          // BACKWARD / PREV
-          // cardList[6] is currently offscreen at pos 3. Pop from end, unshift to start.
-          const exitingCard = cardList.pop();
-          cardList.unshift(exitingCard);
+        } else {
+          // BACKWARD / PREV (count steps)
+          // cardList[end-count..end] exit to bottom buffer, recycled to top
+          for (let s = 0; s < count; s++) {
+            const exitingCard = cardList.pop();
+            cardList.unshift(exitingCard);
 
-          // Place exitingCard at pos -3 instantly without transition
-          exitingCard.style.transition = 'none';
-          exitingCard.className = 'gallery-cascade-card card-pos--3';
-          exitingCard.setAttribute('data-rel-pos', '-3');
-          exitingCard.removeAttribute('aria-current');
+            exitingCard.style.transition = 'none';
+            exitingCard.className = `gallery-cascade-card card-pos--3`;
+            exitingCard.setAttribute('data-rel-pos', '-3');
+            exitingCard.removeAttribute('aria-current');
 
-          const prevItem = galleryItems[getNormalizedIndex(currentIndex - 3)];
-          const prevImg = exitingCard.querySelector('img');
-          if (prevImg && prevItem) {
-            prevImg.src = prevItem.image_url;
-            prevImg.alt = prevItem.caption || '';
+            const prevTargetIndex = getNormalizedIndex(currentIndex - (3 - (count - 1 - s)));
+            const prevItem = galleryItems[prevTargetIndex];
+            const prevImg = exitingCard.querySelector('img');
+            if (prevImg && prevItem) {
+              prevImg.src = prevItem.image_url;
+              prevImg.alt = prevItem.caption || '';
+            }
           }
-          void exitingCard.offsetHeight; // Force browser layout flush
-          exitingCard.style.transition = '';
 
-          // Transition the other 6 cards smoothly to their new positions (-2, -1, 0, 1, 2, 3)
+          void stage.offsetHeight; // Layout flush
+
+          // Animate all cards into their new relative positions
           cardList.forEach((card, idx) => {
-            if (idx === 0) return; // already placed at pos -3
             const newPos = idx - 3;
+            card.style.transition = transitionStyle;
             card.className = `gallery-cascade-card card-pos-${newPos}`;
             card.setAttribute('data-rel-pos', newPos);
             if (newPos === 0) {
@@ -375,11 +459,15 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
 
-        updateThumbnails();
+        // Animate thumbnail strip conveyor belt in exact lockstep with stage cards
+        animateThumbnails(steps, duration);
 
         setTimeout(() => {
+          if (transitionStyle) {
+            cardList.forEach(card => card.style.transition = '');
+          }
           isAnimating = false;
-        }, 500);
+        }, duration);
       };
 
       const goToPrev = () => {
@@ -392,39 +480,33 @@ document.addEventListener('DOMContentLoaded', () => {
         resetAutoSlideTimer();
       };
 
+      // Direct multi-step smooth glide (one continuous sweeping motion)
       const goToIndex = (targetIndex) => {
-        if (targetIndex === currentIndex || isAnimating) return;
+        if (targetIndex === currentIndex || isAnimating || cardList.length < 7) return;
         const total = totalItems;
         let diff = (targetIndex - currentIndex + total) % total;
         if (diff > total / 2) diff -= total;
+        if (diff === 0) return;
 
-        if (diff === 1) {
-          goToNext();
-        } else if (diff === -1) {
-          goToPrev();
-        } else if (diff > 0) {
-          stepGallery(1);
-          resetAutoSlideTimer();
-          setTimeout(() => {
-            if (currentIndex !== targetIndex) {
-              goToIndex(targetIndex);
-            }
-          }, 320);
+        resetAutoSlideTimer();
+
+        // If distance is within buffer range (<= 3 steps), do 1 smooth continuous sweeping glide!
+        if (Math.abs(diff) <= 3) {
+          stepGallery(diff);
         } else {
-          stepGallery(-1);
-          resetAutoSlideTimer();
+          // Fallback for large jumps: 2 sweeping steps
+          const step1 = diff > 0 ? 3 : -3;
+          stepGallery(step1);
           setTimeout(() => {
-            if (currentIndex !== targetIndex) {
-              goToIndex(targetIndex);
-            }
-          }, 320);
+            goToIndex(targetIndex);
+          }, 640);
         }
       };
 
       // Click on cards in stage:
       // - Center card (relPos === 0): Open lightbox modal!
-      // - Below center (relPos > 0): Advance forward!
-      // - Above center (relPos < 0): Advance backward!
+      // - Below center (relPos > 0): Jump to clicked card!
+      // - Above center (relPos < 0): Jump to clicked card!
       if (stage) {
         stage.addEventListener('click', (e) => {
           const card = e.target.closest('.gallery-cascade-card');
@@ -433,10 +515,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (relPos === 0) {
             const activeItem = galleryItems[currentIndex];
             openModal(activeItem);
-          } else if (relPos > 0) {
-            goToNext();
-          } else if (relPos < 0) {
-            goToPrev();
+          } else if (!isNaN(relPos)) {
+            goToIndex(getNormalizedIndex(currentIndex + relPos));
           }
         });
       }

@@ -2212,18 +2212,46 @@ button {
   outline-offset: 3px;
 }
 
-/* 5 Vertical Thumbnails List */
+/* Desktop Thumbnail Viewport: window for exactly 5 visible items */
+.gallery-thumb-viewport {
+  position: relative;
+  width: 100%;
+  height: 570px; /* (104px item height + 8px gap) * 5 + 8px padding */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 0;
+}
+
+/* Permanent Center Spotlight Frame (Paten selalu di tengah viewport) */
+.gallery-thumb-spotlight-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 8px);
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  border: 2.5px solid var(--yellow-6, #f4d849);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 12px rgba(244, 216, 73, 0.4);
+  pointer-events: none;
+  z-index: 15;
+}
+
+/* 9-slot Vertical Thumbnails List (Continuous conveyor belt) */
 .gallery-thumb-list {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
   width: 100%;
-  overflow: visible;
+  will-change: transform;
 }
 
 .gallery-thumb-item {
   position: relative;
-  width: 100%;
+  width: calc(100% - 8px);
   aspect-ratio: 16 / 9;
   border-radius: 12px;
   overflow: hidden;
@@ -2232,11 +2260,9 @@ button {
   margin: 0;
   background: transparent;
   cursor: pointer;
-  opacity: 0.42;
+  opacity: 0.45;
   transition: opacity 0.35s ease,
-    transform 0.35s ease,
-    border-color 0.35s ease,
-    box-shadow 0.35s ease;
+    transform 0.35s ease;
   outline: none;
   flex-shrink: 0;
 }
@@ -2252,14 +2278,10 @@ button {
 /* Active thumbnail */
 .gallery-thumb-item.is-active {
   opacity: 1;
-  transform: scale(1.05);
-  border-color: var(--yellow-6, #f4d849);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 .gallery-thumb-item:hover:not(.is-active) {
   opacity: 0.8;
-  transform: scale(1.02);
 }
 
 .gallery-thumb-item:focus-visible {
@@ -4220,17 +4242,44 @@ button {
     display: block !important;
   }
 
+  .gallery-thumb-viewport {
+    position: relative;
+    /* Exactly 3 visible thumbnails (clamp(80px, 23vw, 94px) * 3 + 16px) */
+    width: min(calc(3 * clamp(80px, 23vw, 94px) + 16px), 100%);
+    height: auto;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 0;
+  }
+
+  /* Permanent Center Spotlight Frame on Mobile (Selalu mengunci di item tengah) */
+  .gallery-thumb-spotlight-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(80px, 23vw, 94px);
+    aspect-ratio: 16 / 9;
+    border-radius: 10px;
+    border: 2.5px solid var(--yellow-6, #f4d849);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55), 0 0 10px rgba(244, 216, 73, 0.4);
+    pointer-events: none;
+    z-index: 15;
+  }
+
   .gallery-thumb-list {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    width: auto;
-    overflow: visible;
+    width: max-content;
+    will-change: transform;
   }
 
-  /* Enlarged 3 Thumbnails visible on mobile: < 1 2 3 > */
+  /* Enlarged Thumbnails on mobile: 3 visible in viewport window */
   .gallery-thumb-item {
     width: clamp(80px, 23vw, 94px);
     height: auto;
@@ -4240,20 +4289,11 @@ button {
     flex-shrink: 0;
     opacity: 0.45;
     background: rgba(0, 0, 0, 0.3);
-    transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: opacity 0.35s ease, transform 0.35s ease;
   }
 
   .gallery-thumb-item.is-active {
     opacity: 1;
-    transform: scale(1.05);
-    border-color: var(--yellow-6, #f4d849);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
-  }
-
-  /* Hide thumbnail slots 4 and 5 on mobile */
-  .gallery-thumb-item[data-slot="3"],
-  .gallery-thumb-item[data-slot="4"] {
-    display: none !important;
   }
 
   /* 2. Main Slider Viewport on Mobile: Flush with bottom edge */
@@ -4953,7 +4993,7 @@ button {
   }
 }
 
-/* Hero Partner / Kementerian Logo (Sisi Kiri Atas Hero) */
+/* Hero Partner / Kementerian Logo (Sisi Kiri Atas Hero) & Investor Daily Logo (Sisi Kanan) */
 .hero-partner-badge {
   position: absolute;
   top: 110px;
@@ -4964,6 +5004,16 @@ button {
   pointer-events: auto;
   user-select: none;
   transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.hero-partner-badge.hero-partner-badge-right {
+  left: auto !important;
+  right: max(32px, calc((100vw - 1240px) / 2 + 24px)) !important;
+}
+
+.hero-partner-badge.hero-partner-badge-left {
+  left: max(32px, calc((100vw - 1240px) / 2 + 24px)) !important;
+  right: auto !important;
 }
 
 .hero-partner-img {
@@ -5964,22 +6014,48 @@ button {
   pointer-events: none;
 }
 
-/* 2. Partner Logo ESDM (Top Left) */
+/* 2. Partner Logos (Top Left: ESDM, Top Right: Investor Daily) */
 .hero-festival-section .hero-partner-badge {
   position: absolute;
-  top: 96px;
-  left: max(32px, calc((100vw - 1280px) / 2 + 32px));
+  top: 92px;
+  height: 60px;
   z-index: 10;
   display: flex;
   align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.hero-festival-section .hero-partner-badge-left {
+  left: max(32px, calc((100vw - 1280px) / 2 + 32px)) !important;
+  right: auto !important;
+}
+
+.hero-festival-section .hero-partner-badge-right {
+  left: auto !important;
+  right: max(32px, calc((100vw - 1280px) / 2 + 32px)) !important;
+}
+
+.hero-festival-section .hero-partner-badge a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
 .hero-festival-section .hero-partner-img {
-  height: 38px;
   width: auto;
   object-fit: contain;
   display: block;
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.12));
+}
+
+.hero-festival-section .hero-partner-img-esdm {
+  height: 54px;
+}
+
+.hero-festival-section .hero-partner-img-id {
+  height: 42px;
 }
 
 /* 3. Main Grid Container */
@@ -6178,7 +6254,21 @@ button {
 
   .hero-festival-section .hero-partner-badge {
     top: 86px;
-    left: 24px;
+    height: 50px;
+  }
+  .hero-festival-section .hero-partner-badge-left {
+    left: 20px !important;
+    right: auto !important;
+  }
+  .hero-festival-section .hero-partner-badge-right {
+    left: auto !important;
+    right: 20px !important;
+  }
+  .hero-festival-section .hero-partner-img-esdm {
+    height: 44px;
+  }
+  .hero-festival-section .hero-partner-img-id {
+    height: 32px;
   }
 
   .hero-festival-bottom-img {
