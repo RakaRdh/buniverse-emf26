@@ -145,14 +145,47 @@
       color: var(--green-10, #214415);
     }
 
+    .scanner-controls-area {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        "title toggle"
+        "camera camera"
+        "form form";
+      align-items: center;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 16px;
+    }
+
+    .scanner-title {
+      grid-area: title;
+      font-size: 13.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--green-9, #2a571a);
+      margin-bottom: 12px;
+    }
+
+    .camera-toggle-btn {
+      grid-area: toggle;
+      justify-self: end;
+      margin-bottom: 12px;
+    }
+
     #reader {
+      grid-area: camera;
       width: 100%;
       max-width: 500px;
-      margin: 0 auto 16px auto;
+      margin: 0 auto;
       border-radius: 12px;
       overflow: hidden;
       background: #000000;
       position: relative;
+    }
+
+    #reader:not(:empty) {
+      margin-bottom: 16px;
     }
 
     #reader span[style*="position: absolute"],
@@ -185,6 +218,11 @@
     .btn-manual-in.active-cam {
       background: #dc2626 !important;
       border-color: #b91c1c !important;
+    }
+
+    .scanner-manual-form {
+      grid-area: form;
+      width: 100%;
     }
 
     .scan-input-group {
@@ -226,6 +264,74 @@
 
     .scan-submit-btn:hover {
       background: var(--green-7, #3e8127);
+    }
+
+    @media (max-width: 768px) {
+      .scanner-controls-area {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .scanner-title {
+        order: 1;
+        margin-bottom: 12px;
+      }
+
+      #reader {
+        order: 2;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+      }
+
+      #reader:not(:empty) {
+        margin-bottom: 12px;
+      }
+
+      .camera-toggle-btn {
+        order: 3;
+        width: 100% !important;
+        justify-content: center;
+        padding: 12px 18px;
+        font-size: 14px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        margin-bottom: 12px;
+      }
+
+      .scanner-manual-form {
+        order: 4;
+        width: 100%;
+        margin: 0;
+      }
+
+      .scan-input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 0;
+        width: 100%;
+      }
+
+      .scan-text-input {
+        width: 100% !important;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        font-size: 14px;
+        border-radius: 10px;
+      }
+
+      .scan-submit-btn {
+        width: 100% !important;
+        box-sizing: border-box;
+        padding: 12px 20px;
+        font-size: 14px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
 
     /* GAMBAR 4: FEEDBACK BANNER (AUTO HIDE & SMOOTH FADE OUT) */
@@ -566,24 +672,25 @@
           </div>
         </div>
 
-        <!-- Scanner Section Header & Camera Toggle -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-top: 1px solid #f1f5f9; padding-top: 16px;">
-          <div style="font-size: 13.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--green-9, #2a571a);">Pemindai QR Tiket</div>
-          <button id="toggleCameraBtn" class="btn-manual-in">
+        <!-- Scanner Controls Area (Desktop: Title + Toggle button row, Camera, Input row; Mobile: Camera -> Button Kamera full -> Field Kode Tiket full -> Button Verif full) -->
+        <div class="scanner-controls-area">
+          <div class="scanner-title">Pemindai QR Tiket</div>
+
+          <button id="toggleCameraBtn" class="btn-manual-in camera-toggle-btn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
             <span>Nyalakan Kamera</span>
           </button>
+
+          <div id="reader"></div>
+
+          <!-- Manual Barcode / Ticket Code Input -->
+          <form id="manualCheckinForm" class="scanner-manual-form">
+            <div class="scan-input-group">
+              <input type="text" id="manualTicketCode" class="scan-text-input" placeholder="Scan barcode USB / ketik 16-digit kode tiket..." autocomplete="off">
+              <button type="submit" class="scan-submit-btn">Verifikasi</button>
+            </div>
+          </form>
         </div>
-
-        <div id="reader"></div>
-
-        <!-- Manual Barcode / Ticket Code Input -->
-        <form id="manualCheckinForm">
-          <div class="scan-input-group">
-            <input type="text" id="manualTicketCode" class="scan-text-input" placeholder="Scan barcode USB / ketik 16-digit kode tiket..." autocomplete="off">
-            <button type="submit" class="scan-submit-btn">Verifikasi</button>
-          </div>
-        </form>
 
         <!-- Feedback Alert Container (GAMBAR 4: Auto-hide setelah 4 detik) -->
         <div id="scanFeedback" class="scan-feedback">

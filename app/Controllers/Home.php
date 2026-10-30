@@ -210,35 +210,13 @@ class Home extends BaseController
                 '--footer-border-color' => 'rgba(73, 152, 46, 0.25)',
             ];
 
-            // If BackendCMS returned live theme_properties, merge them EXCEPT for protected EMF theme tokens
-            $protectedEmfTokens = [
-                '--footer-bg',
-                '--footer-social-bg',
-                '--footer-social-color',
-                '--footer-text-color',
-                '--footer-border-color',
-                '--bg-page',
-                '--bg-section-alt',
-                '--bg-card',
-                '--text-primary',
-                '--text-secondary',
-                '--text-dark',
-                '--accent-cyan',
-                '--accent-blue',
-                '--accent-light',
-                '--navbar-cta-bg',
-                '--navbar-cta-text',
-                '--navbar-cta-hover-bg',
-                '--navbar-cta-hover-text',
-                '--navbar-cta-hover-outline',
-            ];
-
+            // If BackendCMS returned live theme_properties, merge them
             if (!empty($live['theme_properties']) && is_array($live['theme_properties'])) {
                 foreach ($live['theme_properties'] as $tp) {
-                    if (!empty($tp['property']) && isset($tp['value'])) {
-                        if (!in_array($tp['property'], $protectedEmfTokens, true)) {
-                            $emfThemeTokens[$tp['property']] = $tp['value'];
-                        }
+                    $propKey = $tp['property'] ?? $tp['css_property'] ?? null;
+                    $propVal = $tp['value'] ?? $tp['css_value'] ?? null;
+                    if (!empty($propKey) && isset($propVal)) {
+                        $emfThemeTokens[$propKey] = $propVal;
                     }
                 }
             }
@@ -340,7 +318,7 @@ class Home extends BaseController
                         'slug' => $slug,
                         'name' => $sp['name'],
                         'role' => $sp['role'],
-                        'photo' => 'placeholder.png',
+                        'photo' => $sp['photo'] ?: 'placeholder.png',
                         'bio' => $sp['bio'] ?? '',
                         'featured' => ($idx < 4),
                     ];

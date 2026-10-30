@@ -53,13 +53,28 @@
     }
 
     .reg-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
       margin-bottom: 32px;
+      width: 100%;
+    }
+
+    .reg-logo-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px auto;
+      text-decoration: none;
     }
 
     .reg-logo {
-      max-height: 52px;
-      margin-bottom: 20px;
+      display: block;
+      max-height: 54px;
+      width: auto;
+      margin: 0 auto;
     }
 
     .reg-title {
@@ -68,14 +83,22 @@
       color: var(--green-9, #2a571a);
       margin: 0 0 8px 0;
       letter-spacing: -0.01em;
+      text-align: center;
     }
 
     .reg-subtitle {
       font-size: 14px;
       color: var(--green-8, #346c21);
-      margin: 0;
-      line-height: 1.5;
-      font-weight: 500;
+      margin: 0 auto;
+      line-height: 1.6;
+      font-weight: 600;
+      text-align: center;
+      max-width: 480px;
+    }
+
+    .reg-subtitle-line {
+      display: block;
+      text-align: center;
     }
 
     .reg-card {
@@ -251,11 +274,14 @@
   <div class="reg-container">
     
     <div class="reg-header">
-      <a href="<?= base_url('/') ?>">
+      <a href="<?= base_url('/') ?>" class="reg-logo-link">
         <img src="<?= base_url('assets/img/logo_green_emf26.webp') ?>" alt="<?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?>" class="reg-logo">
       </a>
       <h1 class="reg-title">Formulir Registrasi</h1>
-      <p class="reg-subtitle"><?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?> &bull; <?= esc($site['dates'] ?? '10 - 11 November 2026') ?><br><?= esc($site['venue'] ?? 'Jakarta') ?></p>
+      <div class="reg-subtitle">
+        <span class="reg-subtitle-line"><?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?></span>
+        <span class="reg-subtitle-line" style="margin-top: 4px;"><?= esc($site['dates'] ?? '10–11 November 2026') ?><?= !empty($site['venue']) ? ' &bull; ' . esc($site['venue']) : '' ?></span>
+      </div>
     </div>
 
     <div class="reg-card">

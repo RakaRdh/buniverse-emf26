@@ -6018,7 +6018,7 @@ button {
 .hero-festival-section .hero-partner-badge {
   position: absolute;
   top: 92px;
-  height: 60px;
+  height: 50px;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -6045,17 +6045,21 @@ button {
 
 .hero-festival-section .hero-partner-img {
   width: auto;
+  height: 46px;
+  max-height: 46px;
   object-fit: contain;
   display: block;
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.12));
 }
 
 .hero-festival-section .hero-partner-img-esdm {
-  height: 54px;
+  height: 46px;
+  max-height: 46px;
 }
 
 .hero-festival-section .hero-partner-img-id {
-  height: 42px;
+  height: 46px;
+  max-height: 46px;
 }
 
 /* 3. Main Grid Container */
@@ -6253,8 +6257,8 @@ button {
   }
 
   .hero-festival-section .hero-partner-badge {
-    top: 86px;
-    height: 50px;
+    top: 80px;
+    height: 42px;
   }
   .hero-festival-section .hero-partner-badge-left {
     left: 20px !important;
@@ -6265,10 +6269,12 @@ button {
     right: 20px !important;
   }
   .hero-festival-section .hero-partner-img-esdm {
-    height: 44px;
+    height: 38px;
+    max-height: 38px;
   }
   .hero-festival-section .hero-partner-img-id {
-    height: 32px;
+    height: 38px;
+    max-height: 38px;
   }
 
   .hero-festival-bottom-img {
@@ -6279,7 +6285,7 @@ button {
 
 @media (max-width: 640px) {
   .hero-festival-section {
-    padding: 95px 16px 90px 16px;
+    padding: 135px 16px 90px 16px;
   }
 
   .hero-festival-container {
@@ -6301,8 +6307,30 @@ button {
     padding: 12px 14px 14px 14px !important;
   }
 
+  .hero-festival-section .hero-partner-badge {
+    top: 76px;
+    height: 34px;
+  }
+  .hero-festival-section .hero-partner-badge-left {
+    left: 16px !important;
+    right: auto !important;
+  }
+  .hero-festival-section .hero-partner-badge-right {
+    left: auto !important;
+    right: 16px !important;
+  }
+
   .hero-festival-section .hero-partner-img {
-    height: 30px;
+    height: 34px !important;
+    max-height: 34px !important;
+  }
+  .hero-festival-section .hero-partner-img-esdm {
+    height: 34px !important;
+    max-height: 34px !important;
+  }
+  .hero-festival-section .hero-partner-img-id {
+    height: 34px !important;
+    max-height: 34px !important;
   }
 
   .hero-festival-bottom-img {
