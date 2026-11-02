@@ -123,6 +123,7 @@ class RegistrationController extends BaseController
             'address'         => trim(strip_tags((string)$this->request->getPost('address'))),
             'job_title'       => trim(strip_tags((string)$this->request->getPost('job_title'))),
             'company_name'    => trim(strip_tags((string)$this->request->getPost('company_name'))),
+            'company_email'   => trim(strip_tags((string)$this->request->getPost('company_email'))),
             'visit_day'       => trim(strip_tags((string)$this->request->getPost('visit_day'))),
             'ticket_quantity' => min(5, max(1, (int)$this->request->getPost('ticket_quantity') ?: 1)),
             'force_duplicate' => (int)$this->request->getPost('force_duplicate') ?: 0,
@@ -533,6 +534,7 @@ class RegistrationController extends BaseController
             'address'         => trim(strip_tags((string)$this->request->getPost('address'))),
             'job_title'       => trim(strip_tags((string)$this->request->getPost('job_title'))),
             'company_name'    => trim(strip_tags((string)$this->request->getPost('company_name'))),
+            'company_email'   => trim(strip_tags((string)$this->request->getPost('company_email'))),
             'visit_day'       => trim(strip_tags((string)$this->request->getPost('visit_day'))),
             'ticket_quantity' => 1, // OTS individual pass
             'event_slug'      => $this->eventSlug,

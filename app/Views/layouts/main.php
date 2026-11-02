@@ -13,7 +13,15 @@
   <meta property="og:title" content="<?= esc($metaTitle) ?>">
   <meta property="og:description" content="<?= esc($metaDesc) ?>">
   <meta property="og:image" content="<?= esc($ogImage) ?>">
+  <meta property="og:image:secure_url" content="<?= esc($ogImage) ?>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/png">
   <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<?= esc($metaTitle) ?>">
+  <meta name="twitter:description" content="<?= esc($metaDesc) ?>">
+  <meta name="twitter:image" content="<?= esc($ogImage) ?>">
   
   <?php /* Favicon */ ?>
   <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">

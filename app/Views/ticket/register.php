@@ -387,21 +387,27 @@
         </div>
 
         <!-- SEKSI 4: PIC (OPSIONAL) -->
-        <div class="reg-section-title" style="margin-top: 28px;">4. Kontak Narahubung / PIC</div>
-
-        <div class="reg-form-group">
-          <label class="reg-label" for="pic_name">Nama PIC / Pendamping</label>
-          <input type="text" id="pic_name" name="pic_name" class="reg-input" placeholder="Nama narahubung jika didaftarkan pihak lain" value="<?= old('pic_name') ?>">
-        </div>
+        <div class="reg-section-title" style="margin-top: 28px;">4. Kontak Narahubung / PIC (Opsional)</div>
 
         <div class="reg-grid-2">
           <div class="reg-form-group">
-            <label class="reg-label" for="pic_email">Email PIC</label>
-            <input type="email" id="pic_email" name="pic_email" class="reg-input" placeholder="pic@example.com" value="<?= old('pic_email') ?>">
+            <label class="reg-label" for="pic_name">Nama PIC / Pendamping</label>
+            <input type="text" id="pic_name" name="pic_name" class="reg-input" placeholder="Nama narahubung jika didaftarkan pihak lain" value="<?= old('pic_name') ?>">
           </div>
           <div class="reg-form-group">
             <label class="reg-label" for="pic_phone">No. Telp / WhatsApp PIC</label>
             <input type="tel" id="pic_phone" name="pic_phone" class="reg-input" placeholder="081987654321" value="<?= old('pic_phone') ?>">
+          </div>
+        </div>
+
+        <div class="reg-grid-2">
+          <div class="reg-form-group">
+            <label class="reg-label" for="company_email">Email Perusahaan / Kantor</label>
+            <input type="email" id="company_email" name="company_email" class="reg-input" placeholder="corporate@perusahaan.co.id" value="<?= old('company_email') ?>">
+          </div>
+          <div class="reg-form-group">
+            <label class="reg-label" for="pic_email">Email PIC</label>
+            <input type="email" id="pic_email" name="pic_email" class="reg-input" placeholder="pic@example.com" value="<?= old('pic_email') ?>">
           </div>
         </div>
 
