@@ -116,25 +116,102 @@ class RegistrationController extends BaseController
      */
     public function submit()
     {
-        $postData = [
-            'full_name'       => trim(strip_tags((string)$this->request->getPost('full_name'))),
-            'email'           => trim(strip_tags((string)$this->request->getPost('email'))),
-            'phone'           => trim(strip_tags((string)$this->request->getPost('phone'))),
-            'address'         => trim(strip_tags((string)$this->request->getPost('address'))),
-            'job_title'       => trim(strip_tags((string)$this->request->getPost('job_title'))),
-            'company_name'    => trim(strip_tags((string)$this->request->getPost('company_name'))),
-            'company_email'   => trim(strip_tags((string)$this->request->getPost('company_email'))),
-            'visit_day'       => trim(strip_tags((string)$this->request->getPost('visit_day'))),
-            'ticket_quantity' => min(5, max(1, (int)$this->request->getPost('ticket_quantity') ?: 1)),
-            'force_duplicate' => (int)$this->request->getPost('force_duplicate') ?: 0,
-            'pic_name'        => trim(strip_tags((string)$this->request->getPost('pic_name'))),
-            'pic_email'       => trim(strip_tags((string)$this->request->getPost('pic_email'))),
-            'pic_phone'       => trim(strip_tags((string)$this->request->getPost('pic_phone'))),
-            'source_info'     => trim(strip_tags((string)$this->request->getPost('source_info'))),
-            'event_slug'      => $this->eventSlug,
-        ];
+        $registrationType = trim(strip_tags((string)$this->request->getPost('registration_type') ?: 'personal'));
+        if (!in_array($registrationType, ['personal', 'company'])) {
+            $registrationType = 'personal';
+        }
+
+        $ticketQuantity = min(5, max(1, (int)$this->request->getPost('ticket_quantity') ?: 1));
+
+        $additionalNamesRaw = $this->request->getPost('additional_names');
+        $additionalNames = [];
+        if (is_array($additionalNamesRaw)) {
+            foreach ($additionalNamesRaw as $an) {
+                $clean = trim(strip_tags((string)$an));
+                if ($clean !== '') {
+                    $additionalNames[] = $clean;
+                }
+            }
+        }
+
+        // Penanganan PIC sesuai kategori (Pribadi vs Company)
+        $picName      = '';
+        $picPhone     = '';
+        $companyEmail = '';
 
         $isAjax = $this->request->isAJAX() || $this->request->getHeaderLine('Accept') === 'application/json';
+
+        if ($registrationType === 'company') {
+            $picName      = trim(strip_tags((string)$this->request->getPost('pic_name')));
+            $picPhone     = trim(strip_tags((string)$this->request->getPost('pic_phone')));
+            $companyEmail = trim(strip_tags((string)$this->request->getPost('company_email')));
+
+            if (empty($picName) || empty($picPhone) || empty($companyEmail)) {
+                $err = 'Untuk kategori Instansi / Perusahaan, kolom Nama PIC, No. Telp PIC, dan Email Perusahaan wajib diisi.';
+                if ($isAjax) {
+                    return $this->response->setStatusCode(422)->setJSON(['success' => false, 'message' => $err]);
+                }
+                return redirect()->back()->withInput()->with('error', $err);
+            }
+
+            if (!filter_var($companyEmail, FILTER_VALIDATE_EMAIL)) {
+                $err = 'Format alamat email perusahaan tidak valid (contoh: corporate@perusahaan.co.id).';
+                if ($isAjax) {
+                    return $this->response->setStatusCode(422)->setJSON(['success' => false, 'message' => $err]);
+                }
+                return redirect()->back()->withInput()->with('error', $err);
+            }
+
+            $picPhoneVal = \App\Helpers\PhoneHelper::validate($picPhone);
+            if (!$picPhoneVal['valid']) {
+                $err = 'Nomor telepon PIC tidak valid: ' . $picPhoneVal['message'];
+                if ($isAjax) {
+                    return $this->response->setStatusCode(422)->setJSON(['success' => false, 'message' => $err]);
+                }
+                return redirect()->back()->withInput()->with('error', $err);
+            }
+            $picPhone = $picPhoneVal['normalized'];
+        }
+
+        // Validasi Nama Tambahan jika Tiket > 1
+        if ($ticketQuantity > 1) {
+            if (count($additionalNames) < ($ticketQuantity - 1)) {
+                $err = 'Mohon lengkapi nama seluruh pemegang tiket tambahan (' . ($ticketQuantity - 1) . ' orang).';
+                if ($isAjax) {
+                    return $this->response->setStatusCode(422)->setJSON(['success' => false, 'message' => $err]);
+                }
+                return redirect()->back()->withInput()->with('error', $err);
+            }
+
+            foreach ($additionalNames as $idx => $addName) {
+                if (mb_strlen($addName) < 3) {
+                    $err = 'Nama lengkap pemegang tiket #' . ($idx + 2) . ' minimal harus terdiri dari 3 karakter.';
+                    if ($isAjax) {
+                        return $this->response->setStatusCode(422)->setJSON(['success' => false, 'message' => $err]);
+                    }
+                    return redirect()->back()->withInput()->with('error', $err);
+                }
+            }
+        }
+
+        $postData = [
+            'full_name'         => trim(strip_tags((string)$this->request->getPost('full_name'))),
+            'email'             => trim(strip_tags((string)$this->request->getPost('email'))),
+            'phone'             => trim(strip_tags((string)$this->request->getPost('phone'))),
+            'address'           => trim(strip_tags((string)$this->request->getPost('address'))),
+            'job_title'         => trim(strip_tags((string)$this->request->getPost('job_title'))),
+            'company_name'      => trim(strip_tags((string)$this->request->getPost('company_name'))),
+            'company_email'     => $companyEmail,
+            'visit_day'         => trim(strip_tags((string)$this->request->getPost('visit_day'))),
+            'ticket_quantity'   => $ticketQuantity,
+            'force_duplicate'   => (int)$this->request->getPost('force_duplicate') ?: 0,
+            'registration_type' => $registrationType,
+            'additional_names'  => $additionalNames,
+            'pic_name'          => $picName,
+            'pic_phone'         => $picPhone,
+            'source_info'       => trim(strip_tags((string)$this->request->getPost('source_info'))),
+            'event_slug'        => $this->eventSlug,
+        ];
 
         // Validasi required
         if (empty($postData['full_name']) || empty($postData['email']) || empty($postData['phone']) || 
@@ -420,9 +497,26 @@ class RegistrationController extends BaseController
      */
     public function gatePortal()
     {
+        return $this->renderGatePortal('scanner', 'Desk Presence Terminal');
+    }
+
+    /**
+     * Halaman Presensi Undangan (Tanpa Scanner, Card Stats & List Tabel)
+     */
+    public function gateInvitations()
+    {
+        return $this->renderGatePortal('invitations', 'Presensi Undangan — Desk Ops');
+    }
+
+    /**
+     * Helper render terminal portal (Mendukung Tab Scanner vs Presensi Undangan)
+     */
+    protected function renderGatePortal(string $tab = 'scanner', string $pageTitle = 'Desk Presence Terminal')
+    {
         $data = $this->getCommonData();
-        $data['isUnlocked'] = true;
-        $data['pageTitle']  = 'Desk Presence Terminal';
+        $data['isUnlocked']    = true;
+        $data['pageTitle']     = $pageTitle;
+        $data['activeGateTab'] = $tab;
 
         // Pre-query data awal (20 data pertama) & telemetri agar halaman langsung tampil instan (tanpa jeda kosong AJAX)
         $db = \Config\Database::connect();
@@ -516,8 +610,9 @@ class RegistrationController extends BaseController
     public function gateRegistration()
     {
         $data = $this->getCommonData();
-        $data['isUnlocked'] = true;
-        $data['pageTitle']  = 'Registrasi OTS Pengunjung — Desk Ops';
+        $data['isUnlocked']    = true;
+        $data['pageTitle']     = 'Registrasi OTS Pengunjung — Desk Ops';
+        $data['activeGateTab'] = 'registration';
 
         return view('ticket/gate_registration', $data);
     }
@@ -527,19 +622,60 @@ class RegistrationController extends BaseController
      */
     public function submitGateRegistration()
     {
+        $registrationType = trim(strip_tags((string)$this->request->getPost('registration_type') ?: 'personal'));
+        if (!in_array($registrationType, ['personal', 'company'])) {
+            $registrationType = 'personal';
+        }
+
+        $picName      = '';
+        $picPhone     = '';
+        $companyEmail = '';
+
+        if ($registrationType === 'company') {
+            $picName      = trim(strip_tags((string)$this->request->getPost('pic_name')));
+            $picPhone     = trim(strip_tags((string)$this->request->getPost('pic_phone')));
+            $companyEmail = trim(strip_tags((string)$this->request->getPost('company_email')));
+
+            if (empty($picName) || empty($picPhone) || empty($companyEmail)) {
+                return $this->response->setStatusCode(422)->setJSON([
+                    'success' => false,
+                    'message' => 'Untuk kategori Instansi / Perusahaan, kolom Nama PIC, No. Telp PIC, dan Email Perusahaan wajib diisi.',
+                ]);
+            }
+
+            if (!filter_var($companyEmail, FILTER_VALIDATE_EMAIL)) {
+                return $this->response->setStatusCode(422)->setJSON([
+                    'success' => false,
+                    'message' => 'Format email perusahaan tidak valid (contoh: corporate@perusahaan.co.id).',
+                ]);
+            }
+
+            $picPhoneVal = \App\Helpers\PhoneHelper::validate($picPhone);
+            if (!$picPhoneVal['valid']) {
+                return $this->response->setStatusCode(422)->setJSON([
+                    'success' => false,
+                    'message' => 'Nomor telepon PIC tidak valid: ' . $picPhoneVal['message'],
+                ]);
+            }
+            $picPhone = $picPhoneVal['normalized'];
+        }
+
         $postData = [
-            'full_name'       => trim(strip_tags((string)$this->request->getPost('full_name'))),
-            'email'           => trim(strip_tags((string)$this->request->getPost('email'))),
-            'phone'           => trim(strip_tags((string)$this->request->getPost('phone'))),
-            'address'         => trim(strip_tags((string)$this->request->getPost('address'))),
-            'job_title'       => trim(strip_tags((string)$this->request->getPost('job_title'))),
-            'company_name'    => trim(strip_tags((string)$this->request->getPost('company_name'))),
-            'company_email'   => trim(strip_tags((string)$this->request->getPost('company_email'))),
-            'visit_day'       => trim(strip_tags((string)$this->request->getPost('visit_day'))),
-            'ticket_quantity' => 1, // OTS individual pass
-            'event_slug'      => $this->eventSlug,
-            'auto_checkin'    => 1, // Model A: Langsung berstatus Checked-In
-            'checkin_note'    => 'Registrasi OTS Desk Terminal (' . date('d M Y H:i:s') . ')',
+            'full_name'         => trim(strip_tags((string)$this->request->getPost('full_name'))),
+            'email'             => trim(strip_tags((string)$this->request->getPost('email'))),
+            'phone'             => trim(strip_tags((string)$this->request->getPost('phone'))),
+            'address'           => trim(strip_tags((string)$this->request->getPost('address'))),
+            'job_title'         => trim(strip_tags((string)$this->request->getPost('job_title'))),
+            'company_name'      => trim(strip_tags((string)$this->request->getPost('company_name'))),
+            'company_email'     => $companyEmail,
+            'visit_day'         => trim(strip_tags((string)$this->request->getPost('visit_day'))),
+            'ticket_quantity'   => 1, // OTS individual pass
+            'registration_type' => $registrationType,
+            'pic_name'          => $picName,
+            'pic_phone'         => $picPhone,
+            'event_slug'        => $this->eventSlug,
+            'auto_checkin'      => 1, // Model A: Langsung berstatus Checked-In
+            'checkin_note'      => 'Registrasi OTS Desk Terminal (' . date('d M Y H:i:s') . ')',
         ];
 
         // Validasi wajib

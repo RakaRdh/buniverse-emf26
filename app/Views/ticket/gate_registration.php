@@ -35,9 +35,10 @@
       background-color: var(--yellow-6, #f4d849);
     }
 
+    /* Container fluid 1280px */
     .terminal-container {
       width: 100%;
-      max-width: 900px;
+      max-width: 1280px;
       margin: 0 auto;
     }
 
@@ -51,7 +52,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
       gap: 12px;
     }
@@ -219,6 +220,79 @@
       margin-bottom: 20px;
       display: none;
     }
+
+    /* Tab Switch Kategori Pengunjung (Pribadi vs Company) */
+    .reg-type-tab-wrapper {
+      margin-bottom: 24px;
+    }
+
+    .reg-type-tabs {
+      display: flex;
+      background: #f1f5f9;
+      padding: 5px;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+      gap: 6px;
+    }
+
+    .reg-type-tab-btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 16px;
+      font-size: 13.5px;
+      font-weight: 700;
+      font-family: inherit;
+      color: #64748b;
+      background: transparent;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      user-select: none;
+    }
+
+    .reg-type-tab-btn:hover:not(.active) {
+      color: var(--green-9, #2a571a);
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .reg-type-tab-btn.active {
+      background: var(--green-6, #49982e);
+      color: #ffffff;
+      box-shadow: 0 3px 8px rgba(73, 152, 46, 0.28);
+    }
+
+    .reg-type-footnote {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #475569;
+      margin-top: 10px;
+      line-height: 1.45;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border-left: 3.5px solid var(--green-6, #49982e);
+      border-radius: 0 8px 8px 0;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    .reg-type-footnote .footnote-icon {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #e6f4ea;
+      color: var(--green-7, #3e8127);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
   </style>
 </head>
 <body>
@@ -226,7 +300,7 @@
 <div class="terminal-wrapper">
   <div class="terminal-container">
 
-    <!-- TOP NAVIGATION BAR -->
+    <!-- TOP NAVIGATION BAR (3 TABS) -->
     <div class="gate-nav-bar">
       <div class="gate-nav-brand">
         <div>
@@ -239,6 +313,10 @@
         <a href="<?= base_url('gate/portal_desk_ops_access_verify') ?>" class="gate-tab-link">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10" rx="1"></rect></svg>
           <span>Scanner & Presensi</span>
+        </a>
+        <a href="<?= base_url('gate/portal_desk_ops_access_verify/invitations') ?>" class="gate-tab-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <span>Presensi Undangan</span>
         </a>
         <a href="<?= base_url('gate/portal_desk_ops_access_verify/registration') ?>" class="gate-tab-link active">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
@@ -267,6 +345,34 @@
 
       <form id="otsForm">
         <?= csrf_field() ?>
+
+        <!-- TAB KATEGORI PENGUNJUNG (PRIBADI VS COMPANY) -->
+        <div class="reg-type-tab-wrapper">
+          <label class="reg-label" style="margin-bottom: 8px;">Kategori Pengunjung <span class="req">*</span></label>
+          <div class="reg-type-tabs" role="tablist">
+            <button type="button" class="reg-type-tab-btn active" id="tabPribadi" data-type="personal" role="tab" aria-selected="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 7px; flex-shrink: 0;">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Pribadi / Perorangan
+            </button>
+            <button type="button" class="reg-type-tab-btn" id="tabCompany" data-type="company" role="tab" aria-selected="false">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 7px; flex-shrink: 0;">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+              Instansi / Perusahaan
+            </button>
+          </div>
+          <input type="hidden" name="registration_type" id="registration_type" value="personal">
+          
+          <!-- Footnote tepat di bawah tab switch -->
+          <div id="regTypeFootnote" class="reg-type-footnote">
+            <span class="footnote-icon">&#9432;</span>
+            <span id="regTypeFootnoteText">Pendaftaran perorangan / umum. Tidak memerlukan data kontak narahubung (PIC).</span>
+          </div>
+        </div>
 
         <div class="reg-form-group">
           <label class="reg-label" for="full_name">Nama Lengkap Tamu <span class="req">*</span></label>
@@ -310,6 +416,32 @@
           <div class="reg-form-group">
             <label class="reg-label" for="address">Alamat Domisili Tamu <span class="req">*</span></label>
             <input type="text" id="address" name="address" class="reg-input" required placeholder="Kota domisili atau alamat kantor..." value="Jakarta">
+          </div>
+        </div>
+
+        <!-- GRUP FIELD PIC (KHUSUS INSTANSI / PERUSAHAAN) -->
+        <div id="picSectionWrapper" style="display: none; margin-top: 18px; padding-top: 18px; border-top: 1px dashed rgba(73, 152, 46, 0.35);">
+          <div style="font-size: 13.5px; font-weight: 800; color: var(--green-9, #2a571a); margin-bottom: 4px;">
+            Kontak Narahubung / PIC Perusahaan <span class="req">*</span>
+          </div>
+          <div style="font-size: 12px; color: #64748b; margin-bottom: 14px;">
+            Wajib diisi untuk tamu delegasi instansi / perusahaan.
+          </div>
+
+          <div class="reg-grid-2">
+            <div class="reg-form-group">
+              <label class="reg-label" for="pic_name">Nama PIC / Narahubung <span class="req">*</span></label>
+              <input type="text" id="pic_name" name="pic_name" class="reg-input" placeholder="Nama narahubung penanggung jawab" disabled>
+            </div>
+            <div class="reg-form-group">
+              <label class="reg-label" for="pic_phone">No. Telp / WhatsApp PIC <span class="req">*</span></label>
+              <input type="tel" id="pic_phone" name="pic_phone" class="reg-input" placeholder="081987654321" disabled>
+            </div>
+          </div>
+
+          <div class="reg-form-group">
+            <label class="reg-label" for="company_email">Email Perusahaan / Kantor <span class="req">*</span></label>
+            <input type="email" id="company_email" name="company_email" class="reg-input" placeholder="corporate@perusahaan.co.id" disabled>
           </div>
         </div>
 
@@ -367,9 +499,90 @@ const btnSubmitOts = document.getElementById('btnSubmitOts');
 const otsErrorBox = document.getElementById('otsErrorBox');
 const otsSuccessModal = document.getElementById('otsSuccessModal');
 
+// Tab Switch Kategori Pengunjung (Pribadi vs Company)
+const tabPribadi = document.getElementById('tabPribadi');
+const tabCompany = document.getElementById('tabCompany');
+const regTypeInput = document.getElementById('registration_type');
+const picSection = document.getElementById('picSectionWrapper');
+const footnoteText = document.getElementById('regTypeFootnoteText');
+
+function setRegistrationType(type) {
+  if (type === 'company') {
+    tabCompany.classList.add('active');
+    tabCompany.setAttribute('aria-selected', 'true');
+    tabPribadi.classList.remove('active');
+    tabPribadi.setAttribute('aria-selected', 'false');
+    if (regTypeInput) regTypeInput.value = 'company';
+    if (footnoteText) {
+      footnoteText.textContent = 'Pendaftaran delegasi instansi / perusahaan. Wajib menyertakan data narahubung (PIC) penanggung jawab.';
+    }
+    
+    // Tampilkan & aktifkan PIC fields (mandatory)
+    if (picSection) {
+      picSection.style.display = 'block';
+      const picInputs = picSection.querySelectorAll('input');
+      picInputs.forEach(inp => {
+        inp.disabled = false;
+        inp.required = true;
+      });
+    }
+  } else {
+    // Default: personal
+    tabPribadi.classList.add('active');
+    tabPribadi.setAttribute('aria-selected', 'true');
+    tabCompany.classList.remove('active');
+    tabCompany.setAttribute('aria-selected', 'false');
+    if (regTypeInput) regTypeInput.value = 'personal';
+    if (footnoteText) {
+      footnoteText.textContent = 'Pendaftaran perorangan / umum. Tidak memerlukan data kontak narahubung (PIC).';
+    }
+    
+    // Sembunyikan & non-aktifkan PIC fields
+    if (picSection) {
+      picSection.style.display = 'none';
+      const picInputs = picSection.querySelectorAll('input');
+      picInputs.forEach(inp => {
+        inp.disabled = true;
+        inp.required = false;
+        inp.value = '';
+      });
+    }
+  }
+}
+
+if (tabPribadi) {
+  tabPribadi.addEventListener('click', () => setRegistrationType('personal'));
+}
+if (tabCompany) {
+  tabCompany.addEventListener('click', () => setRegistrationType('company'));
+}
+
 otsForm.addEventListener('submit', async function(e) {
   e.preventDefault();
   otsErrorBox.style.display = 'none';
+
+  // Validasi Kategori Company: PIC wajib lengkap
+  const currentRegType = regTypeInput ? regTypeInput.value : 'personal';
+  if (currentRegType === 'company') {
+    const picNameVal = (document.getElementById('pic_name')?.value || '').trim();
+    const picPhoneVal = (document.getElementById('pic_phone')?.value || '').trim();
+    const companyEmailVal = (document.getElementById('company_email')?.value || '').trim();
+
+    if (!picNameVal || !picPhoneVal || !companyEmailVal) {
+      otsErrorBox.textContent = 'Untuk kategori Instansi / Perusahaan, kolom Nama PIC, No. Telp PIC, dan Email Perusahaan wajib diisi.';
+      otsErrorBox.style.display = 'block';
+      otsErrorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(companyEmailVal)) {
+      otsErrorBox.textContent = 'Format email perusahaan tidak valid (contoh: corporate@perusahaan.co.id).';
+      otsErrorBox.style.display = 'block';
+      document.getElementById('company_email')?.focus();
+      return;
+    }
+  }
 
   btnSubmitOts.disabled = true;
   btnSubmitOts.innerHTML = `<span>Menyimpan & Check-In...</span>`;
@@ -412,6 +625,7 @@ otsForm.addEventListener('submit', async function(e) {
 document.getElementById('btnNextOts').addEventListener('click', function() {
   otsSuccessModal.style.display = 'none';
   otsForm.reset();
+  setRegistrationType('personal');
   document.getElementById('address').value = 'Jakarta';
   document.getElementById('full_name').focus();
 });

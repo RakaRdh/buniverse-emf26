@@ -266,6 +266,89 @@
       color: var(--green-10, #214415);
       text-decoration: underline;
     }
+
+    /* Tab Switch Kategori Pengunjung (Pribadi vs Company) */
+    .reg-type-tab-wrapper {
+      margin-bottom: 26px;
+    }
+
+    .reg-type-tabs {
+      display: flex;
+      background: #f1f5f9;
+      padding: 5px;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+      gap: 6px;
+    }
+
+    .reg-type-tab-btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      color: #64748b;
+      background: transparent;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      user-select: none;
+    }
+
+    .reg-type-tab-btn:hover:not(.active) {
+      color: var(--green-9, #2a571a);
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .reg-type-tab-btn.active {
+      background: var(--green-6, #49982e);
+      color: #ffffff;
+      box-shadow: 0 3px 8px rgba(73, 152, 46, 0.28);
+    }
+
+    .reg-type-footnote {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #475569;
+      margin-top: 10px;
+      line-height: 1.45;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border-left: 3.5px solid var(--green-6, #49982e);
+      border-radius: 0 8px 8px 0;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    .reg-type-footnote .footnote-icon {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #e6f4ea;
+      color: var(--green-7, #3e8127);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    /* Box Input Nama Tambahan (Multi-Tiket) */
+    .additional-names-box {
+      background: #f8fafc;
+      border: 1.5px dashed var(--green-6, #49982e);
+      border-radius: 12px;
+      padding: 18px 16px;
+      box-sizing: border-box;
+      animation: modalIn 0.25s ease;
+    }
   </style>
 </head>
 <body>
@@ -302,6 +385,34 @@
       <form id="regForm" method="POST" action="<?= base_url('register/submit') ?>">
         <?= csrf_field() ?>
         <fieldset <?= !empty($isSoldOut) ? 'disabled style="border:none; padding:0; margin:0; opacity:0.6;"' : 'style="border:none; padding:0; margin:0;"' ?>>
+
+        <!-- TAB KATEGORI PENGUNJUNG (PRIBADI VS COMPANY) -->
+        <div class="reg-type-tab-wrapper">
+          <label class="reg-label" style="margin-bottom: 8px;">Kategori Pengunjung <span class="req">*</span></label>
+          <div class="reg-type-tabs" role="tablist">
+            <button type="button" class="reg-type-tab-btn active" id="tabPribadi" data-type="personal" role="tab" aria-selected="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 7px; flex-shrink: 0;">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Pribadi / Perorangan
+            </button>
+            <button type="button" class="reg-type-tab-btn" id="tabCompany" data-type="company" role="tab" aria-selected="false">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 7px; flex-shrink: 0;">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+              Instansi / Perusahaan
+            </button>
+          </div>
+          <input type="hidden" name="registration_type" id="registration_type" value="personal">
+          
+          <!-- Footnote tepat di bawah tab switch -->
+          <div id="regTypeFootnote" class="reg-type-footnote">
+            <span class="footnote-icon">&#9432;</span>
+            <span id="regTypeFootnoteText">Pendaftaran perorangan / umum. Tidak memerlukan data kontak narahubung (PIC).</span>
+          </div>
+        </div>
 
         <!-- SEKSI 1: DATA DIRI -->
         <div class="reg-section-title">1. Data Diri & Kontak</div>
@@ -367,6 +478,11 @@
           </div>
         </div>
 
+        <!-- CONTAINER NAMA TIKET TAMBAHAN (DITAMPILKAN JIKA JUMLAH TIKET > 1) -->
+        <div id="additionalParticipantsWrapper" style="display: none; margin-top: 4px; margin-bottom: 20px;">
+          <!-- Di-generate otomatis via JavaScript jika tiket > 1 -->
+        </div>
+
         <div class="reg-form-group">
           <label class="reg-label" for="address">Alamat Domisili <span class="req">*</span></label>
           <textarea id="address" name="address" class="reg-textarea" required placeholder="Alamat lengkap domisili atau kantor..."><?= old('address') ?></textarea>
@@ -386,33 +502,33 @@
           </div>
         </div>
 
-        <!-- SEKSI 4: PIC (OPSIONAL) -->
-        <div class="reg-section-title" style="margin-top: 28px;">4. Kontak Narahubung / PIC (Opsional)</div>
+        <!-- SEKSI 4: PIC (MANDATORY JIKA TAB INSTANSI / PERUSAHAAN TERPILIH) -->
+        <div id="picSectionWrapper" style="display: none; margin-top: 28px;">
+          <div class="reg-section-title">4. Kontak Narahubung / PIC Perusahaan <span class="req">*</span></div>
+          <p style="font-size: 12.5px; color: #64748b; margin: -14px 0 16px 0; line-height: 1.5;">
+            Wajib diisi untuk pendaftaran delegasi instansi / perusahaan.
+          </p>
 
-        <div class="reg-grid-2">
-          <div class="reg-form-group">
-            <label class="reg-label" for="pic_name">Nama PIC / Pendamping</label>
-            <input type="text" id="pic_name" name="pic_name" class="reg-input" placeholder="Nama narahubung jika didaftarkan pihak lain" value="<?= old('pic_name') ?>">
+          <div class="reg-grid-2">
+            <div class="reg-form-group">
+              <label class="reg-label" for="pic_name">Nama PIC / Narahubung <span class="req">*</span></label>
+              <input type="text" id="pic_name" name="pic_name" class="reg-input" placeholder="Nama narahubung penanggung jawab" value="<?= old('pic_name') ?>" disabled>
+            </div>
+            <div class="reg-form-group">
+              <label class="reg-label" for="pic_phone">No. Telp / WhatsApp PIC <span class="req">*</span></label>
+              <input type="tel" id="pic_phone" name="pic_phone" class="reg-input" placeholder="081987654321" value="<?= old('pic_phone') ?>" disabled>
+            </div>
           </div>
+
           <div class="reg-form-group">
-            <label class="reg-label" for="pic_phone">No. Telp / WhatsApp PIC</label>
-            <input type="tel" id="pic_phone" name="pic_phone" class="reg-input" placeholder="081987654321" value="<?= old('pic_phone') ?>">
+            <label class="reg-label" for="company_email">Email Perusahaan / Kantor <span class="req">*</span></label>
+            <input type="email" id="company_email" name="company_email" class="reg-input" placeholder="corporate@perusahaan.co.id" value="<?= old('company_email') ?>" disabled>
+            <div class="reg-hint-text" style="font-size: 11px; color: #64748b; margin-top: 4px;">Alamat email resmi instansi / PIC penanggung jawab.</div>
           </div>
         </div>
 
-        <div class="reg-grid-2">
-          <div class="reg-form-group">
-            <label class="reg-label" for="company_email">Email Perusahaan / Kantor</label>
-            <input type="email" id="company_email" name="company_email" class="reg-input" placeholder="corporate@perusahaan.co.id" value="<?= old('company_email') ?>">
-          </div>
-          <div class="reg-form-group">
-            <label class="reg-label" for="pic_email">Email PIC</label>
-            <input type="email" id="pic_email" name="pic_email" class="reg-input" placeholder="pic@example.com" value="<?= old('pic_email') ?>">
-          </div>
-        </div>
-
-        <!-- SEKSI 5: SUMBER INFORMASI (OPSIONAL) -->
-        <div class="reg-section-title" style="margin-top: 28px;">5. Informasi Tambahan</div>
+        <!-- SEKSI INFORMASI TAMBAHAN (PENOMORAN DINAMIS SESUAI TAB) -->
+        <div id="sourceInfoSectionTitle" class="reg-section-title" style="margin-top: 28px;">4. Informasi Tambahan</div>
 
         <div class="reg-form-group">
           <label class="reg-label" for="source_info">Mengetahui Acara Ini Dari Mana?</label>
@@ -765,6 +881,147 @@ function syncFullPhoneNumber() {
 document.getElementById('country_dial').addEventListener('change', handlePhoneInput);
 document.getElementById('phone_number').addEventListener('input', handlePhoneInput);
 
+// ==========================================
+// 1. Tab Switch Kategori Pengunjung (Pribadi vs Company)
+// ==========================================
+const tabPribadi = document.getElementById('tabPribadi');
+const tabCompany = document.getElementById('tabCompany');
+const regTypeInput = document.getElementById('registration_type');
+const picSection = document.getElementById('picSectionWrapper');
+const footnoteText = document.getElementById('regTypeFootnoteText');
+const sourceInfoTitle = document.getElementById('sourceInfoSectionTitle');
+
+function setRegistrationType(type) {
+  if (type === 'company') {
+    tabCompany.classList.add('active');
+    tabCompany.setAttribute('aria-selected', 'true');
+    tabPribadi.classList.remove('active');
+    tabPribadi.setAttribute('aria-selected', 'false');
+    if (regTypeInput) regTypeInput.value = 'company';
+    if (footnoteText) {
+      footnoteText.textContent = 'Pendaftaran delegasi instansi / perusahaan. Wajib menyertakan data narahubung (PIC) penanggung jawab.';
+    }
+    // Update nomor seksi berikutnya menjadi 5
+    if (sourceInfoTitle) {
+      sourceInfoTitle.textContent = '5. Informasi Tambahan';
+    }
+    
+    // Tampilkan & aktifkan PIC fields (mandatory)
+    if (picSection) {
+      picSection.style.display = 'block';
+      const picInputs = picSection.querySelectorAll('input');
+      picInputs.forEach(inp => {
+        inp.disabled = false;
+        inp.required = true;
+      });
+    }
+  } else {
+    // Default: personal
+    tabPribadi.classList.add('active');
+    tabPribadi.setAttribute('aria-selected', 'true');
+    tabCompany.classList.remove('active');
+    tabCompany.setAttribute('aria-selected', 'false');
+    if (regTypeInput) regTypeInput.value = 'personal';
+    if (footnoteText) {
+      footnoteText.textContent = 'Pendaftaran perorangan / umum. Tidak memerlukan data kontak narahubung (PIC).';
+    }
+    // Update nomor seksi berikutnya menjadi 4 (karena seksi PIC ditiadakan)
+    if (sourceInfoTitle) {
+      sourceInfoTitle.textContent = '4. Informasi Tambahan';
+    }
+    
+    // Sembunyikan & non-aktifkan PIC fields
+    if (picSection) {
+      picSection.style.display = 'none';
+      const picInputs = picSection.querySelectorAll('input');
+      picInputs.forEach(inp => {
+        inp.disabled = true;
+        inp.required = false;
+        inp.value = '';
+      });
+    }
+  }
+}
+
+if (tabPribadi) {
+  tabPribadi.addEventListener('click', () => setRegistrationType('personal'));
+}
+if (tabCompany) {
+  tabCompany.addEventListener('click', () => setRegistrationType('company'));
+}
+
+// ==========================================
+// 2. Dynamic Field Nama Tambahan jika Jumlah Tiket > 1
+// ==========================================
+const ticketQtySelect = document.getElementById('ticket_quantity');
+const addPartWrapper = document.getElementById('additionalParticipantsWrapper');
+
+function updateAdditionalNames() {
+  if (!ticketQtySelect || !addPartWrapper) return;
+  const qty = parseInt(ticketQtySelect.value) || 1;
+
+  if (qty <= 1) {
+    addPartWrapper.style.display = 'none';
+    addPartWrapper.innerHTML = '';
+    return;
+  }
+
+  // Simpan nilai input yang sudah sempat diketik sebelumnya agar tidak hilang saat dropdown diganti
+  const currentInputs = Array.from(addPartWrapper.querySelectorAll('.additional-name-input'));
+  const existingValues = currentInputs.map(inp => inp.value);
+
+  let html = `
+    <div class="additional-names-box">
+      <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px;">
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: #e8f5e9; color: var(--green-7, #3e8127); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div>
+          <div style="font-size: 13.5px; font-weight: 800; color: var(--green-10, #214415); line-height: 1.3;">
+            Data Pemegang Tiket Tambahan (${qty - 1} Orang)
+          </div>
+          <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+            Tiket #1 atas nama pemesan utama di atas. Masukkan nama lengkap untuk tiket lainnya:
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+  `;
+
+  for (let i = 2; i <= qty; i++) {
+    const prevVal = existingValues[i - 2] || '';
+    html += `
+      <div class="reg-form-group" style="margin-bottom: 0;">
+        <label class="reg-label" for="additional_name_${i}">
+          Nama Lengkap Pemegang Tiket #${i} <span class="req">*</span>
+        </label>
+        <input type="text" id="additional_name_${i}" name="additional_names[]" class="reg-input additional-name-input" required minlength="3" placeholder="Contoh: Nama Lengkap Tiket #${i}" value="${prevVal.replace(/"/g, '&quot;')}">
+        <div class="reg-hint-text" style="font-size: 11px; color: #64748b; margin-top: 3px;">Nama lengkap peserta untuk verifikasi e-badge.</div>
+      </div>
+    `;
+  }
+
+  html += `
+      </div>
+    </div>
+  `;
+
+  addPartWrapper.innerHTML = html;
+  addPartWrapper.style.display = 'block';
+}
+
+if (ticketQtySelect) {
+  ticketQtySelect.addEventListener('change', updateAdditionalNames);
+}
+
+// Inisialisasi awal
+updateAdditionalNames();
+
 let isForceDuplicate = false;
 
 document.getElementById('btnCancelDuplicate').addEventListener('click', function() {
@@ -792,6 +1049,46 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
   if (!phoneVal) {
     showErrorModal('Nomor Telepon Diperlukan', 'Mohon masukkan nomor telepon/WhatsApp Anda.');
     return;
+  }
+
+  // Validasi Nama Tambahan jika Tiket > 1
+  const additionalInputs = Array.from(document.querySelectorAll('.additional-name-input'));
+  for (let idx = 0; idx < additionalInputs.length; idx++) {
+    const val = (additionalInputs[idx].value || '').trim();
+    if (val.length < 3) {
+      showErrorModal(
+        'Nama Peserta Tambahan Diperlukan',
+        `Mohon lengkapi nama lengkap pemegang tiket #${idx + 2} (minimal 3 karakter).`
+      );
+      additionalInputs[idx].focus();
+      return;
+    }
+  }
+
+  // Validasi Kategori Company: PIC wajib lengkap
+  const currentRegType = regTypeInput ? regTypeInput.value : 'personal';
+  if (currentRegType === 'company') {
+    const picNameVal = (document.getElementById('pic_name')?.value || '').trim();
+    const picPhoneVal = (document.getElementById('pic_phone')?.value || '').trim();
+    const companyEmailVal = (document.getElementById('company_email')?.value || '').trim();
+
+    if (!picNameVal || !picPhoneVal || !companyEmailVal) {
+      showErrorModal(
+        'Data PIC Perusahaan Belum Lengkap',
+        'Untuk kategori Instansi / Perusahaan, kolom Nama PIC, No. Telp PIC, dan Email Perusahaan wajib diisi.'
+      );
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(companyEmailVal)) {
+      showErrorModal(
+        'Format Email Perusahaan Tidak Valid',
+        'Mohon masukkan format alamat email perusahaan yang valid (contoh: corporate@perusahaan.co.id).'
+      );
+      document.getElementById('company_email')?.focus();
+      return;
+    }
   }
 
   const btn = document.getElementById('btnSubmitReg');
@@ -867,6 +1164,8 @@ document.getElementById('regForm').addEventListener('submit', async function(e) 
       // Reset form
       document.getElementById('regForm').reset();
       document.getElementById('phone').value = '';
+      setRegistrationType('personal');
+      updateAdditionalNames();
       btn.disabled = false;
       btn.textContent = 'Kirim Pendaftaran';
     } else if (res.status === 409 && json.requires_confirmation) {

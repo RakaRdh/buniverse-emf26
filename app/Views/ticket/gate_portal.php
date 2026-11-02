@@ -639,11 +639,15 @@
       </div>
 
       <div class="gate-nav-tabs">
-        <a href="<?= base_url('gate/portal_desk_ops_access_verify') ?>" class="gate-tab-link active">
+        <a href="<?= base_url('gate/portal_desk_ops_access_verify') ?>" class="gate-tab-link <?= (($activeGateTab ?? 'scanner') === 'scanner') ? 'active' : '' ?>">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10" rx="1"></rect></svg>
           <span>Scanner & Presensi</span>
         </a>
-        <a href="<?= base_url('gate/portal_desk_ops_access_verify/registration') ?>" class="gate-tab-link">
+        <a href="<?= base_url('gate/portal_desk_ops_access_verify/invitations') ?>" class="gate-tab-link <?= (($activeGateTab ?? 'scanner') === 'invitations') ? 'active' : '' ?>">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <span>Presensi Undangan</span>
+        </a>
+        <a href="<?= base_url('gate/portal_desk_ops_access_verify/registration') ?>" class="gate-tab-link <?= (($activeGateTab ?? 'scanner') === 'registration') ? 'active' : '' ?>">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
           <span>Registrasi OTS</span>
         </a>
@@ -653,11 +657,23 @@
     <!-- FULL WIDTH VERTICAL STACK (GAMBAR 1 & GAMBAR 2 SAMA-SAMA FULL WIDTH) -->
     <div class="terminal-fullwidth-stack">
 
-      <!-- ELEMEN GAMBAR 1: TELEMETRI & SCANNER CARD (FULL WIDTH) -->
+      <!-- ELEMEN TELEMETRI CARD (FULL WIDTH) -->
       <div class="scanner-fullwidth-card" id="scannerSection">
         
+        <?php if (($activeGateTab ?? 'scanner') === 'invitations'): ?>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1.5px solid #f1f5f9; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--green-7, #3e8127); letter-spacing: 0.08em;">Buku Kehadiran Tamu</div>
+            <h2 style="margin: 0; font-size: 18px; font-weight: 800; color: var(--green-10, #214415);">Presensi Undangan</h2>
+          </div>
+          <div style="background: #e8f5e9; color: var(--green-8, #346c21); border: 1px solid #a5d6a7; padding: 4px 12px; border-radius: 999px; font-size: 11.5px; font-weight: 700;">
+            Data Realtime Terhubung
+          </div>
+        </div>
+        <?php endif; ?>
+
         <!-- Telemetry row -->
-        <div class="telemetry-badges">
+        <div class="telemetry-badges" <?= (($activeGateTab ?? 'scanner') === 'invitations') ? 'style="margin-bottom: 0;"' : '' ?>>
           <div class="stat-badge">
             <div class="lbl">Terdaftar</div>
             <div class="num" id="statRegistered"><?= (int)($initialStats['total_registered'] ?? 0) ?></div>
@@ -672,6 +688,7 @@
           </div>
         </div>
 
+        <?php if (($activeGateTab ?? 'scanner') !== 'invitations'): ?>
         <!-- Scanner Controls Area (Desktop: Title + Toggle button row, Camera, Input row; Mobile: Camera -> Button Kamera full -> Field Kode Tiket full -> Button Verif full) -->
         <div class="scanner-controls-area">
           <div class="scanner-title">Pemindai QR Tiket</div>
@@ -697,6 +714,7 @@
           <div id="feedbackTitle" style="font-weight: 800; font-size: 15px; margin-bottom: 2px;"></div>
           <div id="feedbackDesc" style="font-size: 13px; line-height: 1.4;"></div>
         </div>
+        <?php endif; ?>
 
       </div>
 
@@ -707,7 +725,7 @@
         <div class="desk-toolbar">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
             <div style="font-size: 14.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--green-9, #2a571a);">
-              DAFTAR PESERTA & PRESENSI
+              <?= (($activeGateTab ?? 'scanner') === 'invitations') ? 'DAFTAR PRESENSI UNDANGAN' : 'DAFTAR PESERTA & PRESENSI' ?>
             </div>
             <button type="button" onclick="loadParticipantsData(1)" style="font-size: 12.5px; color: var(--green-8, #346c21); cursor: pointer; text-decoration: underline; background: none; border: none; font-weight: 700;">
               Muat Ulang Data
@@ -1120,49 +1138,57 @@ async function verifyTicketCode(code) {
   }
 }
 
-document.getElementById('manualCheckinForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const input = document.getElementById('manualTicketCode');
-  const val = input.value.trim();
-  if (val) {
-    verifyTicketCode(val);
-    input.value = '';
-  }
-});
+const manualCheckinFormEl = document.getElementById('manualCheckinForm');
+if (manualCheckinFormEl) {
+  manualCheckinFormEl.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const input = document.getElementById('manualTicketCode');
+    const val = input ? input.value.trim() : '';
+    if (val) {
+      verifyTicketCode(val);
+      input.value = '';
+    }
+  });
+}
 
 // Camera Toggle
-document.getElementById('toggleCameraBtn').addEventListener('click', function() {
-  const btn = this;
-  const scannerCard = document.getElementById('scannerSection');
+const toggleCameraBtnEl = document.getElementById('toggleCameraBtn');
+if (toggleCameraBtnEl) {
+  toggleCameraBtnEl.addEventListener('click', function() {
+    const btn = this;
+    const scannerCard = document.getElementById('scannerSection');
 
-  if (!isCameraRunning) {
-    html5QrCode = new Html5Qrcode("reader");
-    html5QrCode.start(
-      { facingMode: "environment" },
-      { fps: 15, qrbox: { width: 260, height: 260 } },
-      (decodedText) => {
-        if (!isScanLocked) {
-          isScanLocked = true;
-          verifyTicketCode(decodedText.trim());
+    if (!isCameraRunning) {
+      html5QrCode = new Html5Qrcode("reader");
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 15, qrbox: { width: 260, height: 260 } },
+        (decodedText) => {
+          if (!isScanLocked) {
+            isScanLocked = true;
+            verifyTicketCode(decodedText.trim());
+          }
+        },
+        () => {}
+      ).then(() => {
+        isCameraRunning = true;
+        btn.classList.add('active-cam');
+        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg> <span>Matikan Kamera</span>`;
+        if (scannerCard) {
+          setTimeout(() => scannerCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
         }
-      },
-      () => {}
-    ).then(() => {
-      isCameraRunning = true;
-      btn.classList.add('active-cam');
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg> <span>Matikan Kamera</span>`;
-      setTimeout(() => scannerCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
-    }).catch(err => {
-      alert("Tidak dapat mengakses kamera: " + err);
-    });
-  } else {
-    html5QrCode.stop().then(() => {
-      isCameraRunning = false;
-      btn.classList.remove('active-cam');
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> <span>Nyalakan Kamera</span>`;
-    });
-  }
-});
+      }).catch(err => {
+        alert("Tidak dapat mengakses kamera: " + err);
+      });
+    } else {
+      html5QrCode.stop().then(() => {
+        isCameraRunning = false;
+        btn.classList.remove('active-cam');
+        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> <span>Nyalakan Kamera</span>`;
+      });
+    }
+  });
+}
 
 // LOAD PARTICIPANTS DATA (VLC AJAX FILTER, SORTING, PAGINATION)
 async function loadParticipantsData(page = 1) {

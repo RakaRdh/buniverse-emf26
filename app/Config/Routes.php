@@ -53,6 +53,7 @@ $routes->get('register/success/(:segment)', 'RegistrationController::success/$1'
 
 // Disguised Receptionist Desk Portal (with 6-Digit Passcode Session)
 $routes->get('gate/portal_desk_ops_access_verify', 'RegistrationController::gatePortal');
+$routes->get('gate/portal_desk_ops_access_verify/invitations', 'RegistrationController::gateInvitations');
 $routes->post('gate/portal_desk_ops_access_verify/verify', 'RegistrationController::verifyGatePasscode');
 $routes->get('gate/portal_desk_ops_access_verify/lock', 'RegistrationController::lockGatePortal');
 $routes->post('gate/portal_desk_ops_access_verify/checkin', 'RegistrationController::proxyCheckin');
