@@ -84,11 +84,13 @@
     .gate-tab-link.active {
       background: var(--green-6, #49982e);
       color: #ffffff !important;
+      box-shadow: 0 2px 8px rgba(73, 152, 46, 0.25);
     }
 
     .gate-tab-link:not(.active) {
       background: #f1f5f9;
       color: var(--green-10, #214415);
+      border: 1px solid #e2e8f0;
     }
 
     .gate-tab-link:not(.active):hover {
@@ -117,8 +119,11 @@
     .telemetry-badges {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
+      gap: 12px;
       margin-bottom: 20px;
+      align-items: stretch;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .stat-badge {
@@ -126,23 +131,105 @@
       border: 1px solid rgba(73, 152, 46, 0.25);
       box-shadow: 0 4px 12px rgba(33, 68, 21, 0.05);
       border-radius: 12px;
-      padding: 16px;
+      padding: 14px 10px;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      min-height: 86px;
+      box-sizing: border-box;
     }
 
     .stat-badge .lbl {
       font-size: 11px;
       text-transform: uppercase;
       font-weight: 800;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
       color: var(--green-8, #346c21);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.2;
+      width: 100%;
     }
 
     .stat-badge .num {
       font-size: 28px;
       font-weight: 800;
       color: var(--green-10, #214415);
+      line-height: 1;
+      margin: 0;
+    }
+
+    @media (max-width: 768px) {
+      .gate-nav-bar {
+        padding: 14px;
+        gap: 12px;
+      }
+      .gate-nav-brand {
+        width: 100%;
+        text-align: left;
+      }
+      .gate-nav-tabs {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+      .gate-tab-link {
+        width: 100%;
+        height: 100%;
+        min-height: 56px;
+        padding: 8px 4px;
+        font-size: 11px;
+        font-weight: 700;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+        line-height: 1.25;
+        gap: 4px;
+        box-sizing: border-box;
+      }
+      .gate-tab-link svg {
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
+      }
+      .gate-tab-link span {
+        display: block;
+        text-align: center;
+      }
+      .scanner-fullwidth-card {
+        padding: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .telemetry-badges {
+        gap: 8px;
+      }
+      .stat-badge {
+        padding: 10px 4px;
+        min-height: 78px;
+        border-radius: 10px;
+      }
+      .stat-badge .lbl {
+        font-size: 10px;
+        letter-spacing: 0.02em;
+        min-height: 26px;
+        margin-bottom: 4px;
+      }
+      .stat-badge .num {
+        font-size: 24px;
+      }
     }
 
     .scanner-controls-area {
@@ -547,6 +634,37 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
 
+    .btn-mobile-checkin {
+      width: 100% !important;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px !important;
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      border-radius: 8px !important;
+      box-sizing: border-box !important;
+      text-align: center;
+      margin: 0 !important;
+    }
+
+    .mobile-checked-in-tag {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 8px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
     /* VLC PAGINATION BAR */
     .vlc-pagination-bar {
       display: flex;
@@ -641,7 +759,7 @@
       <div class="gate-nav-tabs">
         <a href="<?= base_url('gate/portal_desk_ops_access_verify') ?>" class="gate-tab-link <?= (($activeGateTab ?? 'scanner') === 'scanner') ? 'active' : '' ?>">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10" rx="1"></rect></svg>
-          <span>Scanner & Presensi</span>
+          <span>Scanner &amp;&nbsp;Presensi</span>
         </a>
         <a href="<?= base_url('gate/portal_desk_ops_access_verify/invitations') ?>" class="gate-tab-link <?= (($activeGateTab ?? 'scanner') === 'invitations') ? 'active' : '' ?>">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
@@ -744,9 +862,15 @@
             <input type="text" id="searchInput" class="scan-text-input" style="font-family: inherit; font-size: 13.5px;" placeholder="Cari nama, email, telp, instansi, atau kode tiket...">
             <select id="filterVisitDay" class="scan-text-input" style="font-family: inherit; font-size: 13px; padding: 11px 10px;">
               <option value="">Semua Hari Kunjungan</option>
-              <option value="day_1">Hari 1 (10 Nov)</option>
-              <option value="day_2">Hari 2 (11 Nov)</option>
-              <option value="all_days">2-Day Pass (Semua Hari)</option>
+              <?php if (!empty($scheduleDaysList)): ?>
+                <?php foreach ($scheduleDaysList as $sd): ?>
+                  <option value="<?= esc($sd['key']) ?>"><?= esc($sd['badge_label']) ?></option>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <option value="day_1">Hari 1 (10 Nov)</option>
+                <option value="day_2">Hari 2 (11 Nov)</option>
+              <?php endif; ?>
+              <option value="all_days"><?= esc($scheduleDaysMap['all_days']['badge_label'] ?? 'Semua Hari (Multi-Pass)') ?></option>
             </select>
           </div>
         </div>
@@ -785,14 +909,15 @@
               <?php else: ?>
                 <?php foreach ($initialParticipants as $idx => $item): 
                   $rowNum = $idx + 1;
-                  $dayBadge = '<span style="background:#f0fdf4; color:#15803d; font-size:11px; font-weight:700; padding:3px 7px; border-radius:5px;">Semua Hari</span>';
-                  $dayLabel = 'Semua Hari';
-                  if (($item['visit_day'] ?? '') === 'day_1') {
-                    $dayBadge = '<span style="background:#e0f2fe; color:#0369a1; font-size:11px; font-weight:700; padding:3px 7px; border-radius:5px;">Hari 1 (10 Nov)</span>';
-                    $dayLabel = 'Hari 1 (10 Nov 2026)';
-                  } elseif (($item['visit_day'] ?? '') === 'day_2') {
-                    $dayBadge = '<span style="background:#fef3c7; color:#b45309; font-size:11px; font-weight:700; padding:3px 7px; border-radius:5px;">Hari 2 (11 Nov)</span>';
-                    $dayLabel = 'Hari 2 (11 Nov 2026)';
+                  $dayInfo = $scheduleDaysMap[$item['visit_day'] ?? ''] ?? null;
+                  if ($dayInfo && ($item['visit_day'] ?? '') !== 'all_days') {
+                    $bg = (($item['visit_day'] ?? '') === 'day_1') ? '#e0f2fe' : ((($item['visit_day'] ?? '') === 'day_2') ? '#fef3c7' : '#ede9fe');
+                    $fg = (($item['visit_day'] ?? '') === 'day_1') ? '#0369a1' : ((($item['visit_day'] ?? '') === 'day_2') ? '#b45309' : '#6d28d9');
+                    $dayBadge = '<span style="background:' . $bg . '; color:' . $fg . '; font-size:11px; font-weight:700; padding:3px 7px; border-radius:5px;">' . esc($dayInfo['badge_label']) . '</span>';
+                    $dayLabel = $dayInfo['full_label'];
+                  } else {
+                    $dayBadge = '<span style="background:#f0fdf4; color:#15803d; font-size:11px; font-weight:700; padding:3px 7px; border-radius:5px;">Semua Hari</span>';
+                    $dayLabel = $scheduleDaysMap['all_days']['full_label'] ?? 'Semua Hari';
                   }
                   $isChecked = (int)($item['is_checked_in'] ?? 0) === 1 || (int)($item['checkin_count'] ?? 0) > 0;
                   $safeName = esc($item['full_name'] ?? '', 'js');
@@ -840,7 +965,8 @@
             </div>
           <?php else: ?>
             <?php foreach ($initialParticipants as $item): 
-              $dayTag = (($item['visit_day'] ?? '') === 'day_1') ? 'Hari 1 (10 Nov)' : ((($item['visit_day'] ?? '') === 'day_2') ? 'Hari 2 (11 Nov)' : 'Semua Hari');
+              $dayInfo = $scheduleDaysMap[$item['visit_day'] ?? ''] ?? null;
+              $dayTag = $dayInfo ? $dayInfo['badge_label'] : 'Semua Hari';
               $isChecked = (int)($item['is_checked_in'] ?? 0) === 1 || (int)($item['checkin_count'] ?? 0) > 0;
               $safeName = esc($item['full_name'] ?? '', 'js');
               $safeCompany = esc(($item['company_name'] ?? 'Umum') . (!empty($item['job_title']) ? ' (' . $item['job_title'] . ')' : ''), 'js');
@@ -856,13 +982,18 @@
                     <?= $isChecked ? '<span class="badge-hadir">Hadir</span>' : '<span class="badge-belum-masuk">Belum Hadir</span>' ?>
                   </div>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:8px; border-top:1px dashed #e2e8f0; font-size:12px;">
-                  <div style="font-family:monospace; color:#334155; font-weight:700;"><?= esc($item['ticket_code'] ?? '-') ?> &bull; <?= $dayTag ?></div>
+                <div style="margin-top:10px; padding-top:10px; border-top:1px dashed #e2e8f0;">
+                  <div style="font-family:monospace; color:#334155; font-weight:700; font-size:12px; line-height:1.4; margin-bottom:8px;">
+                    <?= esc($item['ticket_code'] ?? '-') ?> &bull; <?= $dayTag ?>
+                  </div>
                   <div>
                     <?php if (!$isChecked): ?>
-                      <button type="button" class="btn-action-checkin" onclick="openConfirmModal('<?= $safeCode ?>', '<?= $safeName ?>', '<?= $safeCompany ?>', '<?= esc($dayTag, 'js') ?>')">Check-In</button>
+                      <button type="button" class="btn-action-checkin btn-mobile-checkin" onclick="openConfirmModal('<?= $safeCode ?>', '<?= $safeName ?>', '<?= $safeCompany ?>', '<?= esc($dayTag, 'js') ?>')">Check-In</button>
                     <?php else: ?>
-                      <span style="color:#15803d; font-weight:700;">Masuk</span>
+                      <div class="mobile-checked-in-tag">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>Sudah Masuk</span>
+                      </div>
                     <?php endif; ?>
                   </div>
                 </div>
@@ -956,6 +1087,7 @@
 </div>
 
 <script>
+window.GATE_SCHEDULE_MAP = <?= json_encode($scheduleDaysMap ?? []) ?>;
 let html5QrCode = null;
 let isCameraRunning = false;
 let isScanLocked = false;
@@ -1240,14 +1372,14 @@ function renderTableRows(list, startIndex) {
 
   tbody.innerHTML = list.map((item, idx) => {
     const rowNum = (startIndex || 1) + idx;
+    const dayInfo = (window.GATE_SCHEDULE_MAP && window.GATE_SCHEDULE_MAP[item.visit_day]) ? window.GATE_SCHEDULE_MAP[item.visit_day] : null;
     let dayBadge = '<span style="background:#f0fdf4; color:#15803d; font-size:11px; font-weight:700; padding:3px 7px; border-radius:5px;">Semua Hari</span>';
-    let dayLabel = 'Semua Hari';
-    if (item.visit_day === 'day_1') {
-      dayBadge = '<span style="background:#e0f2fe; color:#0369a1; font-size:11px; font-weight:700; padding:3px 7px; border-radius:5px;">Hari 1 (10 Nov)</span>';
-      dayLabel = 'Hari 1 (10 Nov 2026)';
-    } else if (item.visit_day === 'day_2') {
-      dayBadge = '<span style="background:#fef3c7; color:#b45309; font-size:11px; font-weight:700; padding:3px 7px; border-radius:5px;">Hari 2 (11 Nov)</span>';
-      dayLabel = 'Hari 2 (11 Nov 2026)';
+    let dayLabel = (window.GATE_SCHEDULE_MAP && window.GATE_SCHEDULE_MAP['all_days']) ? window.GATE_SCHEDULE_MAP['all_days'].full_label : 'Semua Hari';
+    if (dayInfo && item.visit_day !== 'all_days') {
+      const bg = (item.visit_day === 'day_1') ? '#e0f2fe' : ((item.visit_day === 'day_2') ? '#fef3c7' : '#ede9fe');
+      const fg = (item.visit_day === 'day_1') ? '#0369a1' : ((item.visit_day === 'day_2') ? '#b45309' : '#6d28d9');
+      dayBadge = `<span style="background:${bg}; color:${fg}; font-size:11px; font-weight:700; padding:3px 7px; border-radius:5px;">${dayInfo.badge_label}</span>`;
+      dayLabel = dayInfo.full_label;
     }
 
     const isChecked = parseInt(item.is_checked_in || 0, 10) === 1;
@@ -1295,7 +1427,8 @@ function renderMobileCards(list) {
   }
 
   mBox.innerHTML = list.map(item => {
-    let dayTag = (item.visit_day === 'day_1') ? 'Hari 1 (10 Nov)' : ((item.visit_day === 'day_2') ? 'Hari 2 (11 Nov)' : 'Semua Hari');
+    const dayInfo = (window.GATE_SCHEDULE_MAP && window.GATE_SCHEDULE_MAP[item.visit_day]) ? window.GATE_SCHEDULE_MAP[item.visit_day] : null;
+    let dayTag = dayInfo ? dayInfo.badge_label : 'Semua Hari';
     const isChecked = parseInt(item.is_checked_in || 0, 10) === 1;
 
     const safeName = (item.full_name || '').replace(/'/g, "\\'");
@@ -1312,10 +1445,12 @@ function renderMobileCards(list) {
             ${isChecked ? '<span class="badge-hadir">Hadir</span>' : '<span class="badge-belum-masuk">Belum Hadir</span>'}
           </div>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:8px; border-top:1px dashed #e2e8f0; font-size:12px;">
-          <div style="font-family:monospace; color:#334155; font-weight:700;">${item.ticket_code} &bull; ${dayTag}</div>
+        <div style="margin-top:10px; padding-top:10px; border-top:1px dashed #e2e8f0;">
+          <div style="font-family:monospace; color:#334155; font-weight:700; font-size:12px; line-height:1.4; margin-bottom:8px;">
+            ${item.ticket_code} &bull; ${dayTag}
+          </div>
           <div>
-            ${!isChecked ? `<button type="button" class="btn-action-checkin" onclick="openConfirmModal('${item.ticket_code}', '${safeName}', '${safeCompany}', '${dayTag}')">Check-In</button>` : '<span style="color:#15803d; font-weight:700;">Masuk</span>'}
+            ${!isChecked ? `<button type="button" class="btn-action-checkin btn-mobile-checkin" onclick="openConfirmModal('${item.ticket_code}', '${safeName}', '${safeCompany}', '${dayTag}')">Check-In</button>` : `<div class="mobile-checked-in-tag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Sudah Masuk</span></div>`}
           </div>
         </div>
       </div>

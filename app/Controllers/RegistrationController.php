@@ -53,6 +53,230 @@ class RegistrationController extends BaseController
         return null;
     }
 
+    /**
+     * Format tanggal ke bahasa Indonesia
+     */
+    protected function formatIndonesianDate(?string $dateStr, bool $includeDayName = true, bool $shortMonth = true): string
+    {
+        if (empty($dateStr)) {
+            return '';
+        }
+        $ts = strtotime($dateStr);
+        if ($ts === false) {
+            return $dateStr;
+        }
+
+        $hariMap = [0 => 'Minggu', 1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu'];
+        $bulanMap = [
+            1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun',
+            7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des'
+        ];
+        $bulanFullMap = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni',
+            7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        $dayIndex = (int)date('w', $ts);
+        $dayNum   = (int)date('j', $ts);
+        $monthNum = (int)date('n', $ts);
+        $year     = date('Y', $ts);
+
+        $dayName   = $hariMap[$dayIndex] ?? '';
+        $monthName = $shortMonth ? ($bulanMap[$monthNum] ?? '') : ($bulanFullMap[$monthNum] ?? '');
+
+        if ($includeDayName) {
+            return "{$dayName}, {$dayNum} {$monthName} {$year}";
+        }
+        return "{$dayNum} {$monthName} {$year}";
+    }
+
+    /**
+     * Resolusi dinamis daftar hari kunjungan dari Jadwal / Schedule CMS & Event
+     */
+    protected function resolveScheduleDays(?array $live = null, ?array $eventDb = null): array
+    {
+        $db = \Config\Database::connect();
+        if ($eventDb === null) {
+            $eventDb = $db->table('events')->where('slug', $this->eventSlug)->get()->getRowArray();
+        }
+
+        $days = [];
+
+        // 1. Coba ambil dari tabel schedule_days di database lokal jika event ditemukan
+        if (!empty($eventDb['id'])) {
+            try {
+                $daysDb = $db->table('schedule_days')
+                    ->where('event_id', $eventDb['id'])
+                    ->orderBy('day_number', 'ASC')
+                    ->get()
+                    ->getResultArray();
+
+                if (!empty($daysDb)) {
+                    foreach ($daysDb as $d) {
+                        $rawDate = $d['event_date'] ?? null;
+                        $dayNum  = (int)($d['day_number'] ?? (count($days) + 1));
+                        $days[] = [
+                            'day_number' => $dayNum,
+                            'label'      => !empty($d['label']) ? $d['label'] : ('Hari ' . $dayNum),
+                            'date'       => $rawDate,
+                        ];
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Failover jika tabel schedule_days tidak ada
+            }
+        }
+
+        // 2. Fallback: Ambil dari CMS Live payload ($live['schedule'])
+        if (empty($days) && !empty($live['schedule'])) {
+            $sched = $live['schedule'];
+            if (!empty($sched['days']) && is_array($sched['days'])) {
+                foreach ($sched['days'] as $idx => $ld) {
+                    $dayNum = (int)($ld['day_number'] ?? ($idx + 1));
+                    $days[] = [
+                        'day_number' => $dayNum,
+                        'label'      => $ld['label'] ?? ('Hari ' . $dayNum),
+                        'date'       => $ld['date'] ?? ($ld['event_date'] ?? null),
+                    ];
+                }
+            } else {
+                foreach ($sched as $k => $val) {
+                    if (str_starts_with($k, 'day_') && is_array($val)) {
+                        $num = (int)str_replace('day_', '', $k);
+                        $days[] = [
+                            'day_number' => $num ?: (count($days) + 1),
+                            'label'      => $val['label'] ?? ('Hari ' . ($num ?: (count($days) + 1))),
+                            'date'       => $val['date'] ?? null,
+                        ];
+                    }
+                }
+            }
+        }
+
+        // 3. Fallback: Ambil dari MockData config
+        if (empty($days)) {
+            $mock = config(MockData::class);
+            if (!empty($mock->schedule) && is_array($mock->schedule)) {
+                foreach ($mock->schedule as $k => $val) {
+                    if (str_starts_with($k, 'day_') && is_array($val)) {
+                        $num = (int)str_replace('day_', '', $k);
+                        $days[] = [
+                            'day_number' => $num ?: (count($days) + 1),
+                            'label'      => $val['label'] ?? ('Hari ' . ($num ?: (count($days) + 1))),
+                            'date'       => $val['date'] ?? null,
+                        ];
+                    }
+                }
+            }
+        }
+
+        // 4. Default Fallback jika semua data kosong sama sekali
+        if (empty($days)) {
+            $defaultStart = $eventDb['event_date_start'] ?? '2026-11-10';
+            $defaultEnd   = $eventDb['event_date_end'] ?? '2026-11-11';
+            $days = [
+                ['day_number' => 1, 'label' => 'Hari 1', 'date' => $defaultStart],
+                ['day_number' => 2, 'label' => 'Hari 2', 'date' => $defaultEnd],
+            ];
+        }
+
+        // Susun struktur rapi untuk options dan map
+        $options  = [];
+        $map      = [];
+        $list     = [];
+        $datesYmd = [];
+
+        foreach ($days as $d) {
+            $num = (int)($d['day_number'] ?? 1);
+            $key = 'day_' . $num;
+
+            // Bersihkan label e.g. "Day 1" -> "Hari 1"
+            $rawLabel = trim($d['label'] ?? ('Hari ' . $num));
+            if (preg_match('/^Day\s+(\d+)$/i', $rawLabel, $m)) {
+                $cleanLabel = 'Hari ' . $m[1];
+            } else {
+                $cleanLabel = $rawLabel;
+            }
+
+            // Normalisasi tanggal
+            $rawDate = $d['date'] ?? null;
+            $ts = $rawDate ? strtotime((string)$rawDate) : null;
+            $dateYmd = $ts ? date('Y-m-d', $ts) : null;
+            if ($dateYmd) {
+                $datesYmd[] = $dateYmd;
+            }
+
+            $formattedDate = $dateYmd ? $this->formatIndonesianDate($dateYmd, true, true) : '';
+            $shortDate     = $dateYmd ? $this->formatIndonesianDate($dateYmd, false, true) : '';
+            $monthShort    = $dateYmd ? date('M', $ts) : '';
+            $dayOnly       = $dateYmd ? date('j', $ts) : '';
+            $veryShort     = ($dayOnly && $monthShort) ? "{$dayOnly} {$monthShort}" : $shortDate;
+
+            $dropdownLabel = $cleanLabel . ($formattedDate ? " — {$formattedDate}" : '');
+            $badgeLabel    = $cleanLabel . ($veryShort ? " ({$veryShort})" : '');
+            $fullLabel     = $cleanLabel . ($shortDate ? " ({$shortDate})" : '');
+
+            $item = [
+                'day_number'     => $num,
+                'key'            => $key,
+                'date_ymd'       => $dateYmd,
+                'raw_date'       => $rawDate,
+                'label'          => $cleanLabel,
+                'formatted_date' => $formattedDate,
+                'short_date'     => $shortDate,
+                'very_short'     => $veryShort,
+                'dropdown_label' => $dropdownLabel,
+                'badge_label'    => $badgeLabel,
+                'full_label'     => $fullLabel,
+            ];
+
+            $options[] = [
+                'value' => $key,
+                'label' => $dropdownLabel,
+            ];
+            $map[$key] = $item;
+            $list[] = $item;
+        }
+
+        // Tambahkan opsi "all_days" jika ada 2 hari atau lebih
+        if (count($list) >= 2) {
+            $allDaysText = 'Semua Hari';
+            if (count($datesYmd) >= 2) {
+                $firstTs = strtotime(min($datesYmd));
+                $lastTs  = strtotime(max($datesYmd));
+                $firstDay = date('j', $firstTs);
+                $lastDay  = date('j', $lastTs);
+                $lastMonth = $this->formatIndonesianDate(date('Y-m-d', $lastTs), false, true);
+                $allDaysText = "Semua Hari ({$firstDay} - {$lastMonth})";
+            }
+
+            $options[] = [
+                'value' => 'all_days',
+                'label' => $allDaysText,
+            ];
+
+            $map['all_days'] = [
+                'day_number'     => 0,
+                'key'            => 'all_days',
+                'date_ymd'       => null,
+                'raw_date'       => null,
+                'label'          => 'Semua Hari',
+                'formatted_date' => $allDaysText,
+                'short_date'     => $allDaysText,
+                'very_short'     => 'Semua Hari',
+                'dropdown_label' => $allDaysText,
+                'badge_label'    => 'Semua Hari',
+                'full_label'     => $allDaysText,
+            ];
+        }
+
+        return [
+            'options' => $options,
+            'map'     => $map,
+            'list'    => $list,
+        ];
+    }
+
     protected function getCommonData(): array
     {
         $mock = config(MockData::class);
@@ -92,13 +316,19 @@ class RegistrationController extends BaseController
         $isSoldOut = ($quota > 0 && $confirmedCount >= $quota);
         $remainingQuota = ($quota > 0) ? max(0, $quota - $confirmedCount) : 9999;
 
+        // Dapatkan data schedule hari kunjungan yang dinamis
+        $scheduleData = $this->resolveScheduleDays($live, $eventDb);
+
         return [
-            'site'            => $site,
-            'themeProperties' => $live['theme_properties'] ?? [],
-            'event'           => $live ?? [],
-            'isSoldOut'       => $isSoldOut,
-            'remainingQuota'  => $remainingQuota,
-            'totalQuota'      => $quota,
+            'site'             => $site,
+            'themeProperties'  => $live['theme_properties'] ?? [],
+            'event'            => $live ?? [],
+            'isSoldOut'        => $isSoldOut,
+            'remainingQuota'   => $remainingQuota,
+            'totalQuota'       => $quota,
+            'visitDayOptions'  => $scheduleData['options'],
+            'scheduleDaysMap'  => $scheduleData['map'],
+            'scheduleDaysList' => $scheduleData['list'],
         ];
     }
 
@@ -343,14 +573,20 @@ class RegistrationController extends BaseController
         $ticketCount = count($tickets);
         $emailService = \Config\Services::email();
 
+        $scheduleInfo = $this->resolveScheduleDays();
+        $scheduleDaysMap = $scheduleInfo['map'];
+
         foreach ($tickets as $idx => $t) {
             $tCode = $t['ticket_code'] ?? '';
             $tName = $t['full_name'] ?? $participant['full_name'];
             $vDay  = $t['visit_day'] ?? 'all_days';
             
-            $dayLabel = 'Semua Hari (10 - 11 Nov 2026)';
-            if ($vDay === 'day_1') $dayLabel = 'Hari 1 — Selasa, 10 Nov 2026';
-            if ($vDay === 'day_2') $dayLabel = 'Hari 2 — Rabu, 11 Nov 2026';
+            $dayInfo = $scheduleDaysMap[$vDay] ?? null;
+            if ($dayInfo) {
+                $dayLabel = $dayInfo['dropdown_label'] ?? $dayInfo['full_label'];
+            } else {
+                $dayLabel = ($vDay === 'day_1') ? 'Hari 1' : (($vDay === 'day_2') ? 'Hari 2' : 'Semua Hari');
+            }
 
             // QR Server API (Aktif, Bebas Rate Limit, Format PNG 180x180)
             $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=1&data=' . urlencode($tCode);
@@ -812,9 +1048,11 @@ class RegistrationController extends BaseController
          $visitDay = $participant['visit_day'] ?? 'all_days';
          $isDevelopment = (ENVIRONMENT === 'development');
          $currentDate = date('Y-m-d');
-         $eventDay1 = '2026-11-10';
-         $eventDay2 = '2026-11-11';
          $now = date('Y-m-d H:i:s');
+
+         // Resolusi dinamis jadwal hari & tanggal event
+         $scheduleInfo = $this->resolveScheduleDays();
+         $scheduleDaysMap = $scheduleInfo['map'];
 
          // 2. Ambil seluruh riwayat check-in peserta ini dari tabel log participant_checkins
          $checkinLogs = $db->table('participant_checkins')
@@ -843,8 +1081,8 @@ class RegistrationController extends BaseController
          }
 
          // 3. Validasi Hak Akses Tiket: 1-Day Pass vs Multi-Day Pass (all_days)
-         if ($visitDay === 'day_1' || $visitDay === 'day_2') {
-             // TIKET 1-DAY PASS:
+         if ($visitDay !== 'all_days') {
+             // TIKET 1-DAY PASS (day_1, day_2, day_3, dst):
              // Syarat 1: Jika sudah pernah check-in 1 kali saja seumur hidup -> LANGSUNG TOLAK (Maksimal 1x pakai)
              if ($totalCheckins >= 1) {
                  $firstLog = $checkinLogs[0];
@@ -863,26 +1101,18 @@ class RegistrationController extends BaseController
                  ]);
              }
 
-             // Syarat 2: Keselarasan Tanggal (Hanya diaktifkan saat bukan development)
-             if (!$isDevelopment) {
-                 if ($visitDay === 'day_1' && $currentDate !== $eventDay1) {
+             // Syarat 2: Keselarasan Tanggal Dinamis (Hanya diaktifkan saat bukan development)
+             $dayInfo = $scheduleDaysMap[$visitDay] ?? null;
+             $targetDate = $dayInfo['date_ymd'] ?? null;
+             $targetLabel = $dayInfo['label'] ?? ('Hari ' . str_replace('day_', '', $visitDay));
+             $targetFormatted = $dayInfo['short_date'] ?? $targetDate;
+
+             if (!$isDevelopment && !empty($targetDate)) {
+                 if ($currentDate !== $targetDate) {
                      return $this->response->setStatusCode(422)->setJSON([
                          'success'     => false,
                          'status'      => 'invalid_day',
-                         'message'     => 'Tiket ini terdaftar khusus untuk HARI 1 (10 Nov 2026). Tidak dapat digunakan pada tanggal ' . date('d M Y') . '.',
-                         'participant' => [
-                             'full_name'    => $participant['full_name'],
-                             'company_name' => $participant['company_name'],
-                             'ticket_code'  => $participant['ticket_code'],
-                             'visit_day'    => $visitDay,
-                         ],
-                     ]);
-                 }
-                 if ($visitDay === 'day_2' && $currentDate !== $eventDay2) {
-                     return $this->response->setStatusCode(422)->setJSON([
-                         'success'     => false,
-                         'status'      => 'invalid_day',
-                         'message'     => 'Tiket ini terdaftar khusus untuk HARI 2 (11 Nov 2026). Tidak dapat digunakan pada tanggal ' . date('d M Y') . '.',
+                         'message'     => 'Tiket ini terdaftar khusus untuk ' . $targetLabel . ' (' . $targetFormatted . '). Tidak dapat digunakan pada tanggal ' . $this->formatIndonesianDate($currentDate, false, true) . '.',
                          'participant' => [
                              'full_name'    => $participant['full_name'],
                              'company_name' => $participant['company_name'],
@@ -893,8 +1123,7 @@ class RegistrationController extends BaseController
                  }
              }
 
-             $dayLabel = ($visitDay === 'day_1') ? 'Hari 1' : 'Hari 2';
-             $successMsg = 'Check-in ' . $dayLabel . ' Berhasil! (Tiket 1-Day Digunakan)';
+             $successMsg = 'Check-in ' . $targetLabel . ' Berhasil! (Tiket 1-Day Digunakan)';
          } else {
              // TIKET MULTI-DAY / ALL-DAYS PASS:
              // Syarat 1: Cek apakah hari ini sudah pernah check-in

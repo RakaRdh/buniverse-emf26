@@ -58,23 +58,31 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
       width: 100%;
+    }
+
+    .reg-header-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
 
     .reg-logo-link {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 20px auto;
       text-decoration: none;
+      flex-shrink: 0;
+      margin-bottom: 18px;
     }
 
     .reg-logo {
       display: block;
-      max-height: 54px;
+      height: 76px;
       width: auto;
-      margin: 0 auto;
+      object-fit: contain;
     }
 
     .reg-title {
@@ -83,22 +91,56 @@
       color: var(--green-9, #2a571a);
       margin: 0 0 8px 0;
       letter-spacing: -0.01em;
-      text-align: center;
+      line-height: 1.25;
     }
 
     .reg-subtitle {
-      font-size: 14px;
+      font-size: 14.5px;
       color: var(--green-8, #346c21);
-      margin: 0 auto;
-      line-height: 1.6;
+      margin: 0;
+      line-height: 1.5;
       font-weight: 600;
-      text-align: center;
-      max-width: 480px;
     }
 
     .reg-subtitle-line {
       display: block;
-      text-align: center;
+    }
+
+    @media (min-width: 640px) {
+      .reg-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        text-align: left;
+      }
+
+      .reg-logo-link {
+        margin-bottom: 0;
+      }
+
+      .reg-logo {
+        height: 84px;
+      }
+
+      .reg-header-content {
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      .reg-title {
+        text-align: left;
+        font-size: 28px;
+        margin-bottom: 4px;
+      }
+
+      .reg-subtitle {
+        text-align: left;
+      }
+
+      .reg-subtitle-line {
+        text-align: left;
+      }
     }
 
     .reg-card {
@@ -358,12 +400,14 @@
     
     <div class="reg-header">
       <a href="<?= base_url('/') ?>" class="reg-logo-link">
-        <img src="<?= base_url('assets/img/logo_green_emf26.webp') ?>" alt="<?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?>" class="reg-logo">
+        <img src="<?= base_url('assets/img/logo-green.webp') ?>" alt="<?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?>" class="reg-logo">
       </a>
-      <h1 class="reg-title">Formulir Registrasi</h1>
-      <div class="reg-subtitle">
-        <span class="reg-subtitle-line"><?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?></span>
-        <span class="reg-subtitle-line" style="margin-top: 4px;"><?= esc($site['dates'] ?? '10–11 November 2026') ?><?= !empty($site['venue']) ? ' &bull; ' . esc($site['venue']) : '' ?></span>
+      <div class="reg-header-content">
+        <h1 class="reg-title">Formulir Registrasi</h1>
+        <div class="reg-subtitle">
+          <span class="reg-subtitle-line"><?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?></span>
+          <span class="reg-subtitle-line" style="margin-top: 2px;"><?= esc($site['dates'] ?? '10–11 November 2026') ?><?= !empty($site['venue']) ? ' &bull; ' . esc($site['venue']) : '' ?></span>
+        </div>
       </div>
     </div>
 
@@ -453,9 +497,17 @@
           <div class="reg-form-group">
             <label class="reg-label" for="visit_day">Hari Kunjungan <span class="req">*</span></label>
             <select id="visit_day" name="visit_day" class="reg-select" required>
-              <option value="day_1">Hari 1 — Selasa, 10 Nov 2026</option>
-              <option value="day_2">Hari 2 — Rabu, 11 Nov 2026</option>
-              <option value="all_days">Semua Hari (10 - 11 Nov 2026)</option>
+              <?php if (!empty($visitDayOptions)): ?>
+                <?php foreach ($visitDayOptions as $opt): ?>
+                  <option value="<?= esc($opt['value']) ?>" <?= old('visit_day') === $opt['value'] ? 'selected' : '' ?>>
+                    <?= esc($opt['label']) ?>
+                  </option>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <option value="day_1">Hari 1 — Selasa, 10 Nov 2026</option>
+                <option value="day_2">Hari 2 — Rabu, 11 Nov 2026</option>
+                <option value="all_days">Semua Hari (10 - 11 Nov 2026)</option>
+              <?php endif; ?>
             </select>
           </div>
           <div class="reg-form-group">

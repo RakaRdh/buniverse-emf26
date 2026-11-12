@@ -84,15 +84,60 @@
     .gate-tab-link.active {
       background: var(--green-6, #49982e);
       color: #ffffff !important;
+      box-shadow: 0 2px 8px rgba(73, 152, 46, 0.25);
     }
 
     .gate-tab-link:not(.active) {
       background: #f1f5f9;
       color: var(--green-10, #214415);
+      border: 1px solid #e2e8f0;
     }
 
     .gate-tab-link:not(.active):hover {
       background: #e2e8f0;
+    }
+
+    @media (max-width: 768px) {
+      .gate-nav-bar {
+        padding: 14px;
+        gap: 12px;
+      }
+      .gate-nav-brand {
+        width: 100%;
+        text-align: left;
+      }
+      .gate-nav-tabs {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+      .gate-tab-link {
+        width: 100%;
+        height: 100%;
+        min-height: 56px;
+        padding: 8px 4px;
+        font-size: 11px;
+        font-weight: 700;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+        line-height: 1.25;
+        gap: 4px;
+        box-sizing: border-box;
+      }
+      .gate-tab-link svg {
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
+      }
+      .gate-tab-link span {
+        display: block;
+        text-align: center;
+      }
     }
 
     /* FORM OTS CARD */
@@ -312,7 +357,7 @@
       <div class="gate-nav-tabs">
         <a href="<?= base_url('gate/portal_desk_ops_access_verify') ?>" class="gate-tab-link">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10" rx="1"></rect></svg>
-          <span>Scanner & Presensi</span>
+          <span>Scanner &amp;&nbsp;Presensi</span>
         </a>
         <a href="<?= base_url('gate/portal_desk_ops_access_verify/invitations') ?>" class="gate-tab-link">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
@@ -408,9 +453,17 @@
           <div class="reg-form-group">
             <label class="reg-label" for="visit_day">Hari Kunjungan OTS <span class="req">*</span></label>
             <select id="visit_day" name="visit_day" class="reg-select" required>
-              <option value="day_1">Hari 1 — Selasa, 10 Nov 2026</option>
-              <option value="day_2">Hari 2 — Rabu, 11 Nov 2026</option>
-              <option value="all_days" selected>2-Day Pass (Semua Hari)</option>
+              <?php if (!empty($visitDayOptions)): ?>
+                <?php foreach ($visitDayOptions as $opt): ?>
+                  <option value="<?= esc($opt['value']) ?>" <?= ($opt['value'] === 'all_days') ? 'selected' : '' ?>>
+                    <?= esc($opt['label']) ?>
+                  </option>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <option value="day_1">Hari 1 — Selasa, 10 Nov 2026</option>
+                <option value="day_2">Hari 2 — Rabu, 11 Nov 2026</option>
+                <option value="all_days" selected>Semua Hari (10 - 11 Nov 2026)</option>
+              <?php endif; ?>
             </select>
           </div>
           <div class="reg-form-group">

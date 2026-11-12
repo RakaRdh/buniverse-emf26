@@ -47,10 +47,10 @@ class Home extends BaseController
         if ($live === null) {
             $apiUrls = [
                 // 'https://investordailysummit.com/backend/api/v1/event/emf-2026',
-                'http://[::1]:8081/api/v1/event/emf-2026',
-                'http://127.0.0.1:8081/api/v1/event/emf-2026',
+                // base_url('backend/api/v1/event/emf-2026'),
                 'http://localhost:8081/api/v1/event/emf-2026',
-                base_url('backend/api/v1/event/emf-2026'),
+                'http://127.0.0.1:8081/api/v1/event/emf-2026',
+                'http://[::1]:8081/api/v1/event/emf-2026',
             ];
 
             $fetched = null;
@@ -58,7 +58,7 @@ class Home extends BaseController
                 try {
                     $client = \Config\Services::curlrequest([
                         'timeout' => 5.0,
-                        'verify'  => false,
+                        'verify' => false,
                     ]);
                     $response = $client->get($apiUrl, ['http_errors' => false]);
                     if ($response->getStatusCode() === 200) {
@@ -148,7 +148,7 @@ class Home extends BaseController
             // Cek status kuota tiket langsung dari database
             $db = \Config\Database::connect();
             $eventDb = $db->table('events')->where('slug', 'emf-2026')->get()->getRowArray();
-            $quota = (int)($eventDb['quota'] ?? 0);
+            $quota = (int) ($eventDb['quota'] ?? 0);
             $confirmedCount = 0;
             if (!empty($eventDb['id'])) {
                 $confirmedCount = $db->table('participants')
@@ -294,8 +294,8 @@ class Home extends BaseController
             } else {
                 $newsPortals = [
                     'investor-daily' => ['name' => 'investor.id', 'url' => 'https://investor.id', 'is_active' => true],
-                    'beritasatu'     => ['name' => 'beritasatu.com', 'url' => 'https://www.beritasatu.com', 'is_active' => true],
-                    'jakartaglobe'   => ['name' => 'jakartaglobe.id', 'url' => 'https://jakartaglobe.id', 'is_active' => true],
+                    'beritasatu' => ['name' => 'beritasatu.com', 'url' => 'https://www.beritasatu.com', 'is_active' => true],
+                    'jakartaglobe' => ['name' => 'jakartaglobe.id', 'url' => 'https://jakartaglobe.id', 'is_active' => true],
                 ];
             }
 
@@ -420,7 +420,8 @@ class Home extends BaseController
                                 cache()->save($prodScheduleCacheKey, $prodSchedule, 86400);
                             }
                         }
-                    } catch (\Throwable $e) {}
+                    } catch (\Throwable $e) {
+                    }
                 }
 
                 if (!empty($prodSchedule)) {
@@ -487,8 +488,10 @@ class Home extends BaseController
 
             if (!empty($site['logo_placements']) && is_array($site['logo_placements'])) {
                 foreach ($site['logo_placements'] as &$placement) {
-                    if (!empty($placement['color_url'])) $placement['color_url'] = $fixUrl($placement['color_url']);
-                    if (!empty($placement['white_url'])) $placement['white_url'] = $fixUrl($placement['white_url']);
+                    if (!empty($placement['color_url']))
+                        $placement['color_url'] = $fixUrl($placement['color_url']);
+                    if (!empty($placement['white_url']))
+                        $placement['white_url'] = $fixUrl($placement['white_url']);
                 }
                 unset($placement);
             }
@@ -691,63 +694,76 @@ class Home extends BaseController
     }
 
     /**
+     * Preview Template Gallery 3D Silinder Baru (Route: /preview-gallery-2)
+     * Tidak menyentuh atau mengganggu halaman / utama yang sedang aktif.
+     */
+    public function previewGallery2(): string
+    {
+        return $this->index(['galleryView' => 'preview2']);
+    }
+
+    /**
      * Fetch related news from external B-Universe article APIs per portal
      * Default limit is 4 items per portal.
      * Supports dynamic URL override from CMS with {limit} placeholder.
      */
     private function fetchNewsFromPortal(string $portal, int $limit = 4, ?string $cmsConfiguredUrl = null): ?array
     {
-        $cacheKey = 'ids_news_' . $portal . '_limit' . $limit . '_v3';
+        // Gunakan v_test_emf agar cache lama tidak mengganggu
+        $cacheKey = 'emf_news_test_' . $portal . '_limit' . $limit . '_v4';
         $noCache = $this->request->getGet('nocache') !== null || $this->request->getGet('refresh') !== null;
         $cached = $noCache ? null : cache($cacheKey);
         if ($cached !== null) {
             return !empty($cached) ? $cached : null;
         }
 
+        // Hardcode URL langsung ke tag EMF
         $portalUrls = [
-            'investor'     => "https://api.investor.id/article/type=latest&num={$limit}&tag=energi-mineral-festival-2025&page=1",
-            'beritasatu'   => "https://api.beritasatu.com/v4/article/type:bytag/tag:energi-mineral-festival/start:0/limit:{$limit}",
+            'investor' => "https://api.investor.id/article/type=latest&num={$limit}&tag=energi-mineral-festival-2025&page=1",
+            'beritasatu' => "https://api.beritasatu.com/v4/article/type:bytag/tag:energi-mineral-festival/start:0/limit:{$limit}",
             'jakartaglobe' => "https://api.jakartaglobe.id/apiweb-v2/search/keyword=energy-mineral-festival&num={$limit}&page=0",
-            'datasatu'     => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
-            'overview'     => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:100",
+            'datasatu' => "http://172.20.70.195:8607/article/type:bytag/tag:investor-daily-summit/start:0/limit:{$limit}",
+            'overview' => "http://172.20.70.195:8607/article/type:bytag/tag:overview/start:0/limit:100",
         ];
 
-        // Jika CMS menyediakan URL dinamis, gunakan dan replace placeholder {limit}
-        if (!empty($cmsConfiguredUrl)) {
-            $targetUrl = str_replace('{limit}', (string)$limit, $cmsConfiguredUrl);
-        } else {
-            $targetUrl = $portalUrls[$portal] ?? null;
-        }
-
+        $targetUrl = $portalUrls[$portal] ?? null;
         if (!$targetUrl) {
             return null;
         }
 
         $oldTimeout = ini_get('default_socket_timeout');
-        ini_set('default_socket_timeout', 3);
+        ini_set('default_socket_timeout', 10);
 
         $context = stream_context_create([
             'http' => [
-                'timeout' => 3,
+                'timeout' => 10,
                 'user_agent' => 'Mozilla/5.0 (compatible; IDSNewsCrawler/1.0)',
+                'ignore_errors' => true,
+            ],
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
             ]
         ]);
 
+        log_message('info', "[EMF Hardcode Test] Fetching {$portal} from {$targetUrl}");
         $response = @file_get_contents($targetUrl, false, $context);
         ini_set('default_socket_timeout', $oldTimeout);
 
         if (!$response) {
-            cache()->save($cacheKey, [], 180);
+            log_message('error', "[EMF Hardcode Test] FAILED fetching {$portal} from {$targetUrl}");
+            cache()->save($cacheKey, [], 60);
             return null;
         }
 
         $res = json_decode($response, true);
         if (empty($res)) {
-            cache()->save($cacheKey, [], 180);
+            log_message('error', "[EMF Hardcode Test] EMPTY/INVALID JSON from {$portal}");
+            cache()->save($cacheKey, [], 60);
             return null;
         }
 
-        // Support array of articles or wrapped object (data / articles / items / result.list / list)
+        // Support array of articles or wrapped object
         $articles = [];
         if (isset($res['result']['list']) && is_array($res['result']['list'])) {
             $articles = $res['result']['list'];
@@ -764,7 +780,8 @@ class Home extends BaseController
         }
 
         if (empty($articles)) {
-            cache()->save($cacheKey, [], 180);
+            log_message('warning', "[EMF Hardcode Test] No articles in response for {$portal}");
+            cache()->save($cacheKey, [], 60);
             return null;
         }
 
@@ -779,7 +796,6 @@ class Home extends BaseController
             $id = $item['articleID'] ?? $item['id'] ?? $item['article_id'] ?? ($idx + 1);
             $sefurl = $item['sefurl'] ?? '';
 
-            // Construct Portal-specific redirect URL and image
             if ($portal === 'investor') {
                 $url = !empty($sefurl) ? 'https://investor.id/' . ltrim($sefurl, '/') : ($item['url'] ?? 'https://investor.id');
                 $image = $item['media'][0]['imglarge'] ?? $item['media'][0]['imgsmall'] ?? ($item['image'] ?? 'image1.webp');
@@ -795,7 +811,6 @@ class Home extends BaseController
                 } else {
                     $url = $item['url'] ?? 'https://jakartaglobe.id';
                 }
-
                 $filename = $item['media'][0]['filename'] ?? '';
                 $image = !empty($filename) ? 'https://img2.beritasatu.com/cache/jakartaglobe/960x620-3/' . $filename : ($item['image'] ?? 'image1.webp');
             } elseif ($portal === 'datasatu' || $portal === 'overview') {
@@ -808,7 +823,6 @@ class Home extends BaseController
                 } else {
                     $url = $item['url'] ?? 'https://datasatu.com';
                 }
-
                 $mediaPath = $item['mediaPath'] ?? ($item['media'][0]['filename'] ?? '');
                 $image = !empty($mediaPath) ? 'https://img2.beritasatu.com/cache/datasatu/960x620-3/' . ltrim($mediaPath, '/') : ($item['image'] ?? 'image1.webp');
             } else { // beritasatu
@@ -826,11 +840,12 @@ class Home extends BaseController
         }
 
         if (!empty($normalized)) {
+            log_message('info', "[EMF Hardcode Test] SUCCESS normalized " . count($normalized) . " articles for {$portal}");
             cache()->save($cacheKey, $normalized, 300);
             return $normalized;
         }
 
-        cache()->save($cacheKey, [], 180);
+        cache()->save($cacheKey, [], 60);
         return null;
     }
 
@@ -880,14 +895,15 @@ class Home extends BaseController
                 $event = $db->table('events')->where('slug', 'emf-2026')->get()->getRowArray();
                 if ($event) {
                     $db->table('ticket_click_logs')->insert([
-                        'event_id'   => $event['id'],
+                        'event_id' => $event['id'],
                         'clicked_at' => date('Y-m-d H:i:s'),
-                        'user_agent' => substr((string)$this->request->getUserAgent(), 0, 500),
-                        'referrer'   => substr((string)$this->request->getServer('HTTP_REFERER') ?: base_url(), 0, 500),
+                        'user_agent' => substr((string) $this->request->getUserAgent(), 0, 500),
+                        'referrer' => substr((string) $this->request->getServer('HTTP_REFERER') ?: base_url(), 0, 500),
                     ]);
                     $success = true;
                 }
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
         }
 
         return $this->response->setJSON([
@@ -937,7 +953,7 @@ class Home extends BaseController
         // 1. Dapatkan tanggal Day 1 dari Jadwal (Schedule Day 1)
         // Prioritas a: Dari tanggal Day 1 pada jadwal ($schedule['day_1']['date'] atau live schedule day_1/days)
         if (!empty($schedule['day_1']['date'])) {
-            $cleanDateStr = preg_replace('/(\d+)(st|nd|rd|th)/', '$1', (string)$schedule['day_1']['date']);
+            $cleanDateStr = preg_replace('/(\d+)(st|nd|rd|th)/', '$1', (string) $schedule['day_1']['date']);
             $ts = strtotime($cleanDateStr);
             if ($ts !== false && $ts > 0) {
                 $targetDate = date('Y-m-d', $ts);
@@ -945,7 +961,7 @@ class Home extends BaseController
         }
 
         if (empty($targetDate) && !empty($live['schedule']['day_1']['date'])) {
-            $ts = strtotime((string)$live['schedule']['day_1']['date']);
+            $ts = strtotime((string) $live['schedule']['day_1']['date']);
             if ($ts !== false && $ts > 0) {
                 $targetDate = date('Y-m-d', $ts);
             }
@@ -988,7 +1004,7 @@ class Home extends BaseController
         if (!empty($firstSession)) {
             // Cek start_time terstruktur (format 'HH:MM' atau 'HH:MM:SS')
             if (!empty($firstSession['start_time'])) {
-                $st = trim((string)$firstSession['start_time']);
+                $st = trim((string) $firstSession['start_time']);
                 if (preg_match('/^\d{1,2}:\d{2}(:\d{2})?$/', $st)) {
                     $targetTime = (strlen($st) === 5) ? ($st . ':00') : $st;
                     if (strlen($targetTime) === 7) {
@@ -997,7 +1013,7 @@ class Home extends BaseController
                 }
             } elseif (!empty($firstSession['time'])) {
                 // Parse format string seperti '08:30 AM - 09:30 AM' atau '09:00 - 10:00'
-                $timeStr = trim((string)$firstSession['time']);
+                $timeStr = trim((string) $firstSession['time']);
                 $parts = preg_split('/[\-–]/', $timeStr);
                 if (!empty($parts[0])) {
                     $startPart = trim($parts[0]);

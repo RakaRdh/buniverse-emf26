@@ -87,8 +87,13 @@
       <?= $this->include('partials/highlights') ?>
     <?php endif; ?>
 
-    <?php /* 6. Gallery Section */ ?>
-    <?= $this->include('partials/gallery') ?>
+    <?php /* 6. Gallery Section (Dukung Template Baru via Route /preview-gallery-2) */ ?>
+    <?php
+      $galleryTemplate = (!empty($galleryView) && $galleryView === 'preview2')
+          ? 'partials/gallery_preview_2'
+          : 'partials/gallery';
+    ?>
+    <?= $this->include($galleryTemplate) ?>
 
     <?php /* 6.1 Overview (Summary Cards) Section (Bisa di-toggle via CMS / setting overviewNewsActive) */ ?>
     <?php if (!empty($overviewNewsActive)): ?>
