@@ -34,7 +34,7 @@ if (empty($items)) {
         $opacity   = (float)($item['opacity'] ?? 1.0);
         $zIndex    = (int)($item['z_index'] ?? 1);
         $tintColor = !empty($item['tint_color']) ? trim($item['tint_color']) : null;
-        $whiteMaskUrl = base_url('assets/img/decoration_white.png');
+        $whiteMaskUrl = emf_url('assets/img/decoration_white.png');
 
         $hasPerspective = !empty($item['perspective_enabled']);
         $perspVal = (int)($item['perspective_value'] ?? 800);

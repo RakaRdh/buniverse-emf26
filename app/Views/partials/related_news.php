@@ -82,7 +82,7 @@
                   $displayItems = array_slice($row['items'], 0, 4);
                   foreach ($displayItems as $news): 
                     $isExternalImage = preg_match('#^https?://#i', $news['image'] ?? '');
-                    $imgSrc = $isExternalImage ? $news['image'] : base_url('assets/img/' . $news['image']);
+                    $imgSrc = $isExternalImage ? $news['image'] : emf_url('assets/img/' . $news['image']);
                     $isExternalUrl = preg_match('#^https?://#i', $news['url'] ?? '');
                 ?>
                   <article class="news-card">

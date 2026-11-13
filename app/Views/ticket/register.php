@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrasi Pengunjung — <?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?></title>
   
-  <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
-  <link rel="icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
+  <link rel="shortcut icon" type="image/x-icon" href="<?= emf_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
+  <link rel="icon" type="image/x-icon" href="<?= emf_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
-  <link rel="stylesheet" href="<?= base_url('assets/css/tailwind.css') ?>">
+  <link rel="stylesheet" href="<?= emf_url('assets/css/style.css') ?>">
+  <link rel="stylesheet" href="<?= emf_url('assets/css/tailwind.css') ?>">
 
   <?php if (!empty($themeProperties)): ?>
     <style id="live-theme-properties">
@@ -27,9 +27,9 @@
 
   <style>
     html, body {
-      background-color: var(--yellow-6, #f4d849) !important;
+      background-color: var(--yellow-6, #f7ee39) !important;
       color: var(--green-10, #214415);
-      font-family: 'Manrope', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       margin: 0;
       padding: 0;
       min-height: 100%;
@@ -400,7 +400,7 @@
     
     <div class="reg-header">
       <a href="<?= base_url('/') ?>" class="reg-logo-link">
-        <img src="<?= base_url('assets/img/logo-green.webp') ?>" alt="<?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?>" class="reg-logo">
+        <img src="<?= emf_url('assets/img/logo-green.webp') ?>" alt="<?= esc($site['title'] ?? 'Energi & Mineral Festival 2026') ?>" class="reg-logo">
       </a>
       <div class="reg-header-content">
         <h1 class="reg-title">Formulir Registrasi</h1>

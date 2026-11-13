@@ -17,9 +17,9 @@
           $floatingLogo = !empty($floatingSlot['color_url']) ? $floatingSlot['color_url'] : $floatingSlot['white_url'];
       }
   } elseif ($floatingVariant === 'color') {
-      $floatingLogo = !empty($site['logo_a_color']) ? $site['logo_a_color'] : (!empty($site['logo_floating']) ? $site['logo_floating'] : base_url('assets/img/logo_green_emf26.webp'));
+      $floatingLogo = !empty($site['logo_a_color']) ? $site['logo_a_color'] : (!empty($site['logo_floating']) ? $site['logo_floating'] : emf_url('assets/img/logo_green_emf26.webp'));
   } else {
-      $floatingLogo = !empty($site['logo_floating']) ? $site['logo_floating'] : (!empty($site['logo_a_white']) ? $site['logo_a_white'] : base_url('assets/img/logo_green_emf26.webp'));
+      $floatingLogo = !empty($site['logo_floating']) ? $site['logo_floating'] : (!empty($site['logo_a_white']) ? $site['logo_a_white'] : emf_url('assets/img/logo_green_emf26.webp'));
   }
 ?>
 <div class="floating-bottom-bar" id="floatingBottomBar" role="region" aria-label="Quick registration bar">

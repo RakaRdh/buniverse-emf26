@@ -65,12 +65,12 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
                         $subModPhoto = 'placeholder.png';
                     }
                     if (!str_starts_with($subModPhoto, 'http')) {
-                        $subModPhoto = base_url('assets/img/' . ltrim($subModPhoto, '/'));
+                        $subModPhoto = emf_url('assets/img/' . ltrim($subModPhoto, '/'));
                     }
                   ?>
                     <div class="moderator-row">
                       <div class="moderator-photo">
-                        <img src="<?= esc($subModPhoto) ?>" alt="<?= esc($subSession['moderator']['name']) ?>" loading="lazy" onerror="this.onerror=null;this.src='<?= base_url('assets/img/placeholder.png') ?>';">
+                        <img src="<?= esc($subModPhoto) ?>" alt="<?= esc($subSession['moderator']['name']) ?>" loading="lazy" onerror="this.onerror=null;this.src='<?= emf_url('assets/img/placeholder.png') ?>';">
                       </div>
                       <div class="moderator-text">
                         <div class="moderator-label"><?= esc($subSession['moderator']['label']) ?></div>
@@ -157,14 +157,14 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
             $singleModPhoto = $item['moderator']['photo'] ?? 'placeholder.png';
             if (empty($singleModPhoto)) $singleModPhoto = 'placeholder.png';
             if (!str_starts_with($singleModPhoto, 'http')) {
-                $singleModPhoto = base_url('assets/img/' . ltrim($singleModPhoto, '/'));
+                $singleModPhoto = emf_url('assets/img/' . ltrim($singleModPhoto, '/'));
             }
           ?>
             <div class="schedule-group-section">
               <div class="schedule-group-label">Moderator:</div>
               <div class="moderator-row">
                 <div class="moderator-photo">
-                  <img src="<?= esc($singleModPhoto) ?>" alt="<?= esc($item['moderator']['name']) ?>" loading="lazy" onerror="this.onerror=null;this.src='<?= base_url('assets/img/placeholder.png') ?>';">
+                  <img src="<?= esc($singleModPhoto) ?>" alt="<?= esc($item['moderator']['name']) ?>" loading="lazy" onerror="this.onerror=null;this.src='<?= emf_url('assets/img/placeholder.png') ?>';">
                 </div>
                 <div class="moderator-text">
                   <div class="moderator-name-role"><?= esc($item['moderator']['name']) ?> (<?= esc($item['moderator']['role']) ?>)</div>
@@ -203,12 +203,12 @@ $activeClass = !empty($isDefaultOpen) ? 'active' : '';
               $singleModPhoto = 'placeholder.png';
           }
           if (!str_starts_with($singleModPhoto, 'http')) {
-              $singleModPhoto = base_url('assets/img/' . ltrim($singleModPhoto, '/'));
+              $singleModPhoto = emf_url('assets/img/' . ltrim($singleModPhoto, '/'));
           }
         ?>
           <div class="moderator-row">
             <div class="moderator-photo">
-              <img src="<?= esc($singleModPhoto) ?>" alt="<?= esc($item['moderator']['name']) ?>" loading="lazy" onerror="this.onerror=null;this.src='<?= base_url('assets/img/placeholder.png') ?>';">
+              <img src="<?= esc($singleModPhoto) ?>" alt="<?= esc($item['moderator']['name']) ?>" loading="lazy" onerror="this.onerror=null;this.src='<?= emf_url('assets/img/placeholder.png') ?>';">
             </div>
             <div class="moderator-text">
               <div class="moderator-label"><?= esc($item['moderator']['label']) ?></div>

@@ -6,17 +6,17 @@
   <title>Q&A Session — <?= esc($sessionTitle) ?> | <?= esc($site['title'] ?? 'Energy & Mineral Festival 2026') ?></title>
   
   <!-- Favicon -->
-  <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
-  <link rel="icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
+  <link rel="shortcut icon" type="image/x-icon" href="<?= emf_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
+  <link rel="icon" type="image/x-icon" href="<?= emf_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
   
-  <!-- Google Fonts: Manrope -->
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
   
   <!-- Core Vanilla CSS & Styling -->
-  <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
-  <link rel="stylesheet" href="<?= base_url('assets/css/tailwind.css') ?>">
+  <link rel="stylesheet" href="<?= emf_url('assets/css/style.css') ?>">
+  <link rel="stylesheet" href="<?= emf_url('assets/css/tailwind.css') ?>">
 
   <?php if (!empty($themeProperties)): ?>
     <style id="live-theme-properties">
@@ -30,12 +30,12 @@
 
   <style>
     /* ==========================================================================
-       EMF QNA FORM — PALET RESMI REGISTER (SOLID YELLOW #F4D849 & FOREST GREEN)
+       EMF QNA FORM — PALET RESMI REGISTER (SOLID YELLOW #F7EE39 & FOREST GREEN)
        ========================================================================== */
     html, body {
-      background-color: var(--yellow-6, #f4d849) !important;
+      background-color: var(--yellow-6, #f7ee39) !important;
       color: var(--green-10, #214415);
-      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       margin: 0;
       padding: 0;
       min-height: 100%;
@@ -375,10 +375,10 @@
     
     <?php /* 1. Ribbon Dekoratif Pojok Kiri Atas (Desktop) & Pojok Kanan Atas (Desktop + Mobile) */ ?>
     <div class="qna-ribbon-deco qna-ribbon-deco-left" aria-hidden="true">
-      <img src="<?= base_url('assets/img/ribbon.webp') ?>" alt="">
+      <img src="<?= emf_url('assets/img/ribbon.webp') ?>" alt="">
     </div>
     <div class="qna-ribbon-deco qna-ribbon-deco-right" aria-hidden="true">
-      <img src="<?= base_url('assets/img/ribbon.webp') ?>" alt="">
+      <img src="<?= emf_url('assets/img/ribbon.webp') ?>" alt="">
     </div>
 
     <?php /* 2. Main Centered Interactive QnA Container */ ?>
@@ -387,7 +387,7 @@
       <?php /* Brand Header: Pakai logo resmi EMF (logo_green_emf26.webp) */ ?>
       <div class="qna-brand-header">
         <a href="<?= base_url('/') ?>">
-          <img src="<?= base_url('assets/img/logo_green_emf26.webp') ?>" alt="<?= esc($site['title'] ?? 'Energy & Mineral Festival 2026') ?>" class="qna-logo-img">
+          <img src="<?= emf_url('assets/img/logo_green_emf26.webp') ?>" alt="<?= esc($site['title'] ?? 'Energy & Mineral Festival 2026') ?>" class="qna-logo-img">
         </a>
         
         <?php if (!empty($sessionNotFound)): ?>

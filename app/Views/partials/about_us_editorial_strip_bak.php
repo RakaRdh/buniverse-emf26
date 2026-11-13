@@ -23,9 +23,9 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
                     $aboutLogo = !empty($overviewSlot['color_url']) ? $overviewSlot['color_url'] : $overviewSlot['white_url'];
                 }
             } elseif ($overviewVariant === 'white') {
-                $aboutLogo = !empty($site['logo_a_white']) ? $site['logo_a_white'] : base_url('assets/img/logo_green_emf26.webp');
+                $aboutLogo = !empty($site['logo_a_white']) ? $site['logo_a_white'] : emf_url('assets/img/logo_green_emf26.webp');
             } else {
-                $aboutLogo = !empty($site['logo_overview']) ? $site['logo_overview'] : (!empty($site['logo_a_color']) ? $site['logo_a_color'] : (!empty($site['logo_a']) ? $site['logo_a'] : base_url('assets/img/logo_green_emf26.webp'))); 
+                $aboutLogo = !empty($site['logo_overview']) ? $site['logo_overview'] : (!empty($site['logo_a_color']) ? $site['logo_a_color'] : (!empty($site['logo_a']) ? $site['logo_a'] : emf_url('assets/img/logo_green_emf26.webp'))); 
             }
             $aboutLogoTarget = !empty($site['logo_overview_target_url']) ? $site['logo_overview_target_url'] : null;
           ?>
@@ -54,10 +54,10 @@ $paragraphs = $overviewData['paragraphs'] ?? [];
   <?php 
     /* Slanted Photo Collage (Dinamis dari CMS: collage_images img_1 - img_4 dengan fallback galeri) */
     $collageImgs = $overviewData['collage_images'] ?? [];
-    $img1 = !empty($collageImgs['img_1']) ? $collageImgs['img_1'] : base_url('assets/img/gallery1.webp');
-    $img2 = !empty($collageImgs['img_2']) ? $collageImgs['img_2'] : base_url('assets/img/gallery2.webp');
-    $img3 = !empty($collageImgs['img_3']) ? $collageImgs['img_3'] : base_url('assets/img/gallery3.webp');
-    $img4 = !empty($collageImgs['img_4']) ? $collageImgs['img_4'] : base_url('assets/img/gallery4.webp');
+    $img1 = !empty($collageImgs['img_1']) ? $collageImgs['img_1'] : emf_url('assets/img/gallery1.webp');
+    $img2 = !empty($collageImgs['img_2']) ? $collageImgs['img_2'] : emf_url('assets/img/gallery2.webp');
+    $img3 = !empty($collageImgs['img_3']) ? $collageImgs['img_3'] : emf_url('assets/img/gallery3.webp');
+    $img4 = !empty($collageImgs['img_4']) ? $collageImgs['img_4'] : emf_url('assets/img/gallery4.webp');
   ?>
   <div class="editorial-wave-mask-wrap" aria-hidden="true">
     <div class="editorial-strip editorial-strip-1">

@@ -12,10 +12,10 @@
 
           $logoAUrl = !empty($site['logo_a_target_url']) ? $site['logo_a_target_url'] : '#home';
           if ($slot1Variant === 'color') {
-              $logoA = !empty($site['logo_a_color']) ? $site['logo_a_color'] : (!empty($site['logo_a']) ? $site['logo_a'] : base_url('assets/img/logo_ids26_color.webp'));
+              $logoA = !empty($site['logo_a_color']) ? $site['logo_a_color'] : (!empty($site['logo_a']) ? $site['logo_a'] : emf_url('assets/img/logo_ids26_color.webp'));
           } else {
               // auto or white: header is dark background, use white variant
-              $logoA = !empty($site['logo_a_white']) ? $site['logo_a_white'] : (!empty($site['logo_a']) ? $site['logo_a'] : base_url('assets/img/logo_ids26_white.webp'));
+              $logoA = !empty($site['logo_a_white']) ? $site['logo_a_white'] : (!empty($site['logo_a']) ? $site['logo_a'] : emf_url('assets/img/logo_ids26_white.webp'));
           }
         ?>
         <?php if ($slot1Active): ?>
@@ -38,10 +38,10 @@
           $slot2Variant = $slot2['variant'] ?? 'auto';
           $logoBUrl = !empty($site['logo_b_target_url']) ? $site['logo_b_target_url'] : 'https://investor.id';
           if ($slot2Variant === 'color') {
-              $logoB = !empty($site['logo_b_color']) ? $site['logo_b_color'] : (!empty($site['logo_b']) ? $site['logo_b'] : base_url('assets/img/logo_id_color.webp'));
+              $logoB = !empty($site['logo_b_color']) ? $site['logo_b_color'] : (!empty($site['logo_b']) ? $site['logo_b'] : emf_url('assets/img/logo_id_color.webp'));
           } else {
               // auto or white: header is dark background, use white variant
-              $logoB = !empty($site['logo_b_white']) ? $site['logo_b_white'] : (!empty($site['logo_b']) ? $site['logo_b'] : base_url('assets/img/logo_id_white.webp'));
+              $logoB = !empty($site['logo_b_white']) ? $site['logo_b_white'] : (!empty($site['logo_b']) ? $site['logo_b'] : emf_url('assets/img/logo_id_white.webp'));
           }
         ?>
         <?php if ($slot2Active): ?>
@@ -98,7 +98,7 @@
         <?php endif; ?>
         
         <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
-          <img src="<?= base_url('assets/img/hamburger.svg') ?>" alt="Menu" class="nav-toggle-icon" width="26" height="18">
+          <img src="<?= emf_url('assets/img/hamburger.svg') ?>" alt="Menu" class="nav-toggle-icon" width="26" height="18">
         </button>
       </div>
 

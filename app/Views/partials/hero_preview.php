@@ -1,13 +1,13 @@
 <section class="hero-section hero-preview-section" id="home">
   <?php /* 1. Background Image Full 1 Section (hero-bg.webp) */ ?>
   <div class="hero-preview-bg" aria-hidden="true">
-    <img src="<?= base_url('assets/img/hero-bg.webp') ?>" alt="" class="hero-preview-bg-img">
+    <img src="<?= emf_url('assets/img/hero-bg.webp') ?>" alt="" class="hero-preview-bg-img">
     <div class="hero-preview-overlay"></div>
   </div>
 
   <?php /* 2. Logo ESDM White (Posisi Kiri Atas seperti existing) */ ?>
   <div class="hero-partner-badge">
-    <img src="<?= base_url('assets/img/esdm-white.webp') ?>" alt="Kementerian Energi dan Sumber Daya Mineral" class="hero-partner-img">
+    <img src="<?= emf_url('assets/img/esdm-white.webp') ?>" alt="Kementerian Energi dan Sumber Daya Mineral" class="hero-partner-img">
   </div>
 
   <?php /* 3. Kombo Tengah: Ribbon Berputar + Teks Tengah + Hero Bottom Text */ ?>
@@ -17,16 +17,16 @@
       <?php /* Emblem Kombo: Ribbon Berputar di belakang + emftxt-white.webp di depan */ ?>
       <div class="hero-emblem-combo" aria-label="Energi Mineral Festival 2026">
         <div class="hero-ribbon-spin-wrap" aria-hidden="true">
-          <img src="<?= base_url('assets/img/ribbon.webp') ?>" alt="" class="hero-ribbon-spin-img">
+          <img src="<?= emf_url('assets/img/ribbon.webp') ?>" alt="" class="hero-ribbon-spin-img">
         </div>
         <div class="hero-emftxt-wrap">
-          <img src="<?= base_url('assets/img/emftxt-white.webp') ?>" alt="Energi Mineral Festival 2026 - Connecting & Shaping the Future of Energy" class="hero-emftxt-img">
+          <img src="<?= emf_url('assets/img/emftxt-white.webp') ?>" alt="Energi Mineral Festival 2026 - Connecting & Shaping the Future of Energy" class="hero-emftxt-img">
         </div>
       </div>
 
       <?php /* Hero Bottom Graphic Text (hero-btm.webp) */ ?>
       <div class="hero-btm-wrap">
-        <img src="<?= base_url('assets/img/hero-btm.webp') ?>" alt="Energi Mineral Festival 2026 - Membangun Nilai, Menyalakan Masa Depan - JICC 10-11 November 2026" class="hero-btm-img">
+        <img src="<?= emf_url('assets/img/hero-btm.webp') ?>" alt="Energi Mineral Festival 2026 - Membangun Nilai, Menyalakan Masa Depan - JICC 10-11 November 2026" class="hero-btm-img">
       </div>
 
     </div>

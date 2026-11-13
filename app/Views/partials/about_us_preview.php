@@ -25,10 +25,10 @@ if (empty($carouselImages) && !empty($gallery)) {
 // Fallback jika DB kosong: placeholder foto galeri EMF
 if (empty($carouselImages)) {
     $carouselImages = [
-        base_url('assets/img/gallery1.webp'),
-        base_url('assets/img/gallery2.webp'),
-        base_url('assets/img/gallery3.webp'),
-        base_url('assets/img/gallery4.webp'),
+        emf_url('assets/img/gallery1.webp'),
+        emf_url('assets/img/gallery2.webp'),
+        emf_url('assets/img/gallery3.webp'),
+        emf_url('assets/img/gallery4.webp'),
     ];
 }
 ?>
@@ -36,6 +36,11 @@ if (empty($carouselImages)) {
 <section class="editorial-section about-preview-section" id="about-us">
   <?= view('partials/section_decorations', ['sectionKey' => 'about-us', 'decorations' => $sectionDecorations ?? []]) ?>
   <?= view('partials/custom_placements', ['sectionKey' => 'about-us', 'customPlacements' => $customPlacements ?? []]) ?>
+  
+  <?php /* Flipped Hero Bottom Graphic as Transition between Hero and Overview */ ?>
+  <div class="overview-transition-top" aria-hidden="true">
+    <img src="<?= emf_url('assets/img/hero-bottom.webp') ?>" alt="" class="overview-transition-top-img">
+  </div>
   
   <div class="container">
     <div class="editorial-grid about-preview-grid">
@@ -57,7 +62,7 @@ if (empty($carouselImages)) {
 
           <!-- Spinning Ribbon Star Frame (Layer Depan Membingkai Lingkaran) -->
           <div class="about-spinning-ribbon" aria-hidden="true">
-            <img src="<?= base_url('assets/img/ribbon.webp') ?>" alt="Ribbon Star Frame">
+            <img src="<?= emf_url('assets/img/ribbon.webp') ?>" alt="Ribbon Star Frame">
           </div>
 
         </div>

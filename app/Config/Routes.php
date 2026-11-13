@@ -50,6 +50,7 @@ $routes->match(['get', 'head'], 'uploads/(:any)', 'MediaController::serve/$1');
 // Public Visitor Registration Routes (Non-SPA)
 $routes->get('register', 'RegistrationController::index');
 $routes->post('register/submit', 'RegistrationController::submit');
+$routes->get('register/preview-email', 'RegistrationController::previewEmail');
 $routes->get('register/success/(:segment)', 'RegistrationController::success/$1');
 
 // Disguised Receptionist Desk Portal (with 6-Digit Passcode Session)

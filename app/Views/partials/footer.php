@@ -13,9 +13,9 @@
             $footerLogoUrl = !empty($site['logo_footer_target_url']) ? $site['logo_footer_target_url'] : (!empty($site['logo_b_target_url']) ? $site['logo_b_target_url'] : 'https://investor.id');
             
             if ($footerVariant === 'color') {
-                $footerLogo = !empty($site['logo_footer']) ? $site['logo_footer'] : (!empty($site['logo_b_color']) ? $site['logo_b_color'] : base_url('assets/img/logo_id_color.webp'));
+                $footerLogo = !empty($site['logo_footer']) ? $site['logo_footer'] : (!empty($site['logo_b_color']) ? $site['logo_b_color'] : emf_url('assets/img/logo_id_color.webp'));
             } else {
-                $footerLogo = !empty($site['logo_footer_white']) ? $site['logo_footer_white'] : (!empty($site['logo_footer']) ? $site['logo_footer'] : base_url('assets/img/logo_id_white.webp'));
+                $footerLogo = !empty($site['logo_footer_white']) ? $site['logo_footer_white'] : (!empty($site['logo_footer']) ? $site['logo_footer'] : emf_url('assets/img/logo_id_white.webp'));
             }
           ?>
           <?php if ($footerSlotActive): ?>

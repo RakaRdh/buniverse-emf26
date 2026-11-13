@@ -98,7 +98,7 @@ class Home extends BaseController
                 if (empty($url) || !is_string($url))
                     return $url;
                 if (preg_match('#^https?://[^/]+/(assets/.*|uploads/.*)$#', $url, $m)) {
-                    return base_url($m[1]);
+                    return emf_url($m[1]);
                 }
                 return $url;
             };
@@ -168,16 +168,16 @@ class Home extends BaseController
 
             // Define EMF Green & Yellow Palette Theme Properties
             $emfThemeTokens = [
-                '--yellow-1' => '#fefbed',
-                '--yellow-2' => '#fcf6d3',
-                '--yellow-3' => '#faeeb1',
-                '--yellow-4' => '#f8e68c',
-                '--yellow-5' => '#f6df6a',
-                '--yellow-6' => '#f4d849',
-                '--yellow-7' => '#cfb83e',
-                '--yellow-8' => '#ad9934',
-                '--yellow-9' => '#8b7b2a',
-                '--yellow-10' => '#6e6121',
+                '--yellow-1' => '#fefdeb',
+                '--yellow-2' => '#fdfbcf',
+                '--yellow-3' => '#fcf8aa',
+                '--yellow-4' => '#faf482',
+                '--yellow-5' => '#f8f15d',
+                '--yellow-6' => '#f7ee39',
+                '--yellow-7' => '#d2ca30',
+                '--yellow-8' => '#afa928',
+                '--yellow-9' => '#8d8820',
+                '--yellow-10' => '#6f6b1a',
                 '--green-1' => '#edf5ea',
                 '--green-2' => '#d3e6cd',
                 '--green-3' => '#b1d3a5',
@@ -188,10 +188,10 @@ class Home extends BaseController
                 '--green-8' => '#346c21',
                 '--green-9' => '#2a571a',
                 '--green-10' => '#214415',
-                // Semantic Tokens: BASE ADALAH KUNING (yellow-6: #f4d849)
-                '--bg-page' => '#f4d849',
-                '--bg-section-alt' => '#fefbed',
-                '--bg-card' => '#fcf6d3',
+                // Semantic Tokens: BASE ADALAH KUNING (yellow-6: #f7ee39)
+                '--bg-page' => '#f7ee39',
+                '--bg-section-alt' => '#fefdeb',
+                '--bg-card' => '#fdfbcf',
                 '--text-primary' => '#49982e',
                 '--text-secondary' => '#3e8127',
                 '--text-dark' => '#49982e',
@@ -203,7 +203,7 @@ class Home extends BaseController
                 '--navbar-cta-hover-bg' => '#3e8127',
                 '--navbar-cta-hover-text' => '#ffffff',
                 '--navbar-cta-hover-outline' => '#49982e',
-                '--footer-bg' => '#f4d849',
+                '--footer-bg' => '#f7ee39',
                 '--footer-social-bg' => '#49982e',
                 '--footer-social-color' => '#ffffff',
                 '--footer-text-color' => '#346c21',
@@ -542,7 +542,7 @@ class Home extends BaseController
                 }
                 // Jika dekorasi berada di section location, ganti aset cakram/disc lama menjadi ribbon.png
                 if (($dec['section_key'] ?? '') === 'location') {
-                    $dec['image_url'] = base_url('assets/img/ribbon.png');
+                    $dec['image_url'] = emf_url('assets/img/ribbon.png');
                     $dec['tint_color'] = null; // Tampilkan ribbon warna asli tanpa tint biru/hitam
                 }
             }
@@ -554,7 +554,7 @@ class Home extends BaseController
                 }
                 // Jika custom placement berada di section location, ganti aset cakram/disc lama menjadi ribbon.png
                 if (($cp['section_key'] ?? '') === 'location') {
-                    $cp['image_url'] = base_url('assets/img/ribbon.png');
+                    $cp['image_url'] = emf_url('assets/img/ribbon.png');
                     $cp['tint_color'] = null; // Tampilkan ribbon warna asli tanpa tint biru/hitam
                 }
             }

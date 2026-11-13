@@ -45,7 +45,7 @@ if (empty($items)) {
 
         <?php
         $tintColor = !empty($item['tint_color']) ? trim($item['tint_color']) : null;
-        $whiteMaskUrl = !empty($item['image_url']) ? $item['image_url'] : base_url('assets/img/decoration_white.png');
+        $whiteMaskUrl = !empty($item['image_url']) ? $item['image_url'] : emf_url('assets/img/decoration_white.png');
         ?>
 
         <?php if ($layout === 'manual'): ?>

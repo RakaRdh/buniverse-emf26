@@ -23,16 +23,16 @@
   --neutral-13: #000000;
 
   /* Primary 1 Palette (Yellow Token System) */
-  --yellow-1: #fefbed;
-  --yellow-2: #fcf6d3;
-  --yellow-3: #faeeb1;
-  --yellow-4: #f8e68c;
-  --yellow-5: #f6df6a;
-  --yellow-6: #f4d849;
-  --yellow-7: #cfb83e;
-  --yellow-8: #ad9934;
-  --yellow-9: #8b7b2a;
-  --yellow-10: #6e6121;
+  --yellow-1: #fefdeb;
+  --yellow-2: #fdfbcf;
+  --yellow-3: #fcf8aa;
+  --yellow-4: #faf482;
+  --yellow-5: #f8f15d;
+  --yellow-6: #f7ee39;
+  --yellow-7: #d2ca30;
+  --yellow-8: #afa928;
+  --yellow-9: #8d8820;
+  --yellow-10: #6f6b1a;
 
   --primary-1-1: var(--yellow-1);
   --primary-1-2: var(--yellow-2);
@@ -40,7 +40,7 @@
   --primary-1-4: var(--yellow-4);
   --primary-1-5: var(--yellow-5);
   --primary-1-6: var(--yellow-6);
-  /* Dominant Yellow #fff100 */
+  /* Dominant Yellow #f7ee39 */
   --primary-1-7: var(--yellow-7);
   --primary-1-8: var(--yellow-8);
   --primary-1-9: var(--yellow-9);
@@ -108,7 +108,7 @@
   --footer-social-color: #ffffff;
   --footer-border-color: rgba(73, 152, 46, 0.25);
 
-  --font-sans: 'Manrope', 'Montserrat', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-serif: 'Playfair Display', Georgia, Cambria, 'Times New Roman', Times, serif;
 
   --container-max-width: 1440px;
@@ -594,7 +594,7 @@ button {
   font-weight: 800;
   line-height: 44px;
   color: var(--green-10, #143320);
-  font-family: 'Manrope', -apple-system, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
   font-variant-numeric: tabular-nums;
   user-select: none;
   will-change: transform;
@@ -3664,11 +3664,20 @@ button {
 
   .site-nav .btn-ticket-mobile {
     display: inline-flex !important;
-    margin-top: 12px;
+    margin-top: 14px;
     text-align: center;
     justify-content: center;
     width: 100%;
     padding: 12px 20px;
+    background-color: #1b5319 !important;
+    color: #ffffff !important;
+    border-radius: 12px;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(27, 83, 25, 0.25) !important;
+    border: none !important;
+  }
+  .site-nav .btn-ticket-mobile:hover {
+    background-color: #143e13 !important;
   }
 
   .header-inner {
@@ -3712,7 +3721,7 @@ button {
     max-width: 82vw;
     height: 100vh;
     height: 100dvh;
-    background-color: rgba(21, 40, 15, 0.98);
+    background-color: var(--yellow-6, #f7ee39);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     flex-direction: column;
@@ -3722,18 +3731,25 @@ button {
     overflow-y: auto;
     visibility: hidden;
     gap: 16px;
-    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    border-left: 1px solid rgba(27, 83, 25, 0.16);
     border-bottom: none;
-    box-shadow: -16px 0 40px rgba(0, 0, 0, 0.6);
-    transform: translateX(100%);
+    box-shadow: none !important;
+    transform: translateX(calc(100% + 60px));
+    pointer-events: none;
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-      visibility 0.35s;
+      visibility 0.35s step-end,
+      box-shadow 0.25s ease;
     z-index: 1005;
   }
 
   .site-nav.open {
-    visibility: visible;
-    transform: translateX(0);
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translateX(0) !important;
+    box-shadow: -10px 0 35px rgba(0, 0, 0, 0.2) !important;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s,
+      box-shadow 0.25s ease;
   }
 
   .mobile-nav-header {
@@ -3742,7 +3758,7 @@ button {
     justify-content: flex-end;
     padding-bottom: 14px;
     margin-bottom: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(27, 83, 25, 0.14);
   }
 
   .mobile-nav-title {
@@ -3750,14 +3766,14 @@ button {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    color: var(--gold, #c5a880);
+    color: #0b1a0d;
   }
 
   .nav-close-btn {
     background: none;
     border: none;
-    color: #ffffff;
-    font-size: 28px;
+    color: #0b1a0d;
+    font-size: 30px;
     line-height: 1;
     cursor: pointer;
     padding: 2px 6px;
@@ -3765,14 +3781,33 @@ button {
     transition: color 0.2s ease, transform 0.2s ease;
   }
 
+  .nav-close-btn:hover {
+    color: #1b5319;
+  }
+
   .nav-close-btn:active {
     transform: scale(0.9);
   }
 
   .site-nav .nav-link {
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 16px;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-weight: 700;
+    color: #0b1a0d !important;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(27, 83, 25, 0.1);
+    opacity: 0.92;
+    text-decoration: none;
+    transition: color 0.2s ease, opacity 0.2s ease, padding-left 0.2s ease;
+  }
+
+  .site-nav .nav-link:hover,
+  .site-nav .nav-link.active {
+    color: #1b5319 !important;
+    font-weight: 800;
+    opacity: 1;
+    text-decoration: none;
+    padding-left: 4px;
   }
 
   /* --------------------------------------------------------------------------
@@ -5823,7 +5858,7 @@ button {
   height: 100%;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
 }
 
 @keyframes heroRibbonSpin {
@@ -5995,7 +6030,7 @@ button {
   min-height: 100vh;
   min-height: 100dvh;
   overflow: hidden;
-  background-color: #f6de52;
+  background-color: var(--yellow-6, #f7ee39);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6009,7 +6044,7 @@ button {
   inset: 0;
   width: 100%;
   height: 100%;
-  background: #f6de52;
+  background: var(--yellow-6, #f7ee39);
   z-index: 1;
   pointer-events: none;
 }
@@ -6018,7 +6053,8 @@ button {
 .hero-festival-section .hero-partner-badge {
   position: absolute;
   top: 92px;
-  height: 50px;
+  height: auto;
+  min-height: 52px;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -6045,21 +6081,19 @@ button {
 
 .hero-festival-section .hero-partner-img {
   width: auto;
-  height: 46px;
-  max-height: 46px;
   object-fit: contain;
   display: block;
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.12));
 }
 
 .hero-festival-section .hero-partner-img-esdm {
-  height: 46px;
-  max-height: 46px;
+  height: 64px;
+  max-height: 64px;
 }
 
 .hero-festival-section .hero-partner-img-id {
-  height: 46px;
-  max-height: 46px;
+  height: 42px;
+  max-height: 42px;
 }
 
 /* 3. Main Grid Container */
@@ -6118,7 +6152,7 @@ button {
   height: 100%;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.16));
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
 }
 
 .hero-festival-left .hero-emftxt-wrap {
@@ -6159,7 +6193,7 @@ button {
 .hero-festival-title {
   font-family: 'Anton', Impact, sans-serif;
   font-size: clamp(30px, 3.8vw, 58px);
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.12;
   letter-spacing: 0.6px;
   color: #0b1a0d;
@@ -6183,11 +6217,11 @@ button {
 }
 
 .hero-festival-venue {
-  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #173815;
   font-size: clamp(14px, 1.2vw, 18px);
   line-height: 1.45;
-  font-weight: 600;
+  font-weight: 500;
   text-align: center;
   margin-bottom: 24px;
 }
@@ -6197,9 +6231,27 @@ button {
 }
 
 .hero-festival-venue .hero-venue-date {
-  font-weight: 700;
+  font-weight: 500;
   color: #0b1a0d;
   margin-top: 4px;
+}
+
+/* 5.1 Media Network Logo Strip (Sesuai KV EMF 2026) */
+.hero-festival-media-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto 24px auto;
+}
+
+.hero-festival-media-img {
+  width: clamp(440px, 36vw, 560px);
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
 }
 
 /* 6. Countdown Area on Right */
@@ -6222,7 +6274,7 @@ button {
   padding: 14px 28px 16px 28px !important;
 }
 
-/* 7. Bottom Decorative Image Sticks to the Very Bottom (Full Width Stretched, Full Visible Unclipped) */
+/* 7. Bottom Decorative Image Sticks to the Very Bottom (Native Dimensions, Width 100%, Height Auto) */
 .hero-festival-bottom {
   position: absolute;
   bottom: 0;
@@ -6235,30 +6287,51 @@ button {
 
 .hero-festival-bottom-img {
   width: 100%;
-  height: 120px;
-  object-fit: fill;
+  height: auto;
+  object-fit: contain;
   object-position: bottom center;
   display: block;
+}
+
+/* 7.1 Flipped Transition Image at the Top of Overview / Editorial Section */
+.overview-transition-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 1;
+  line-height: 0;
+}
+
+.overview-transition-top-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: top center;
+  display: block;
+  transform: scaleY(-1);
+  transform-origin: top center;
 }
 
 /* 8. Responsiveness Hero Festival */
 @media (max-width: 991px) {
   .hero-festival-section {
-    padding: 110px 0 100px 0;
+    padding: 100px 0 90px 0;
   }
 
   .hero-festival-grid {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 28px;
   }
 
   .hero-festival-left .hero-emblem-combo {
-    width: clamp(280px, 60vw, 380px);
+    width: clamp(200px, 34vw, 300px);
   }
 
   .hero-festival-section .hero-partner-badge {
-    top: 80px;
-    height: 42px;
+    top: 76px;
+    height: auto;
   }
   .hero-festival-section .hero-partner-badge-left {
     left: 20px !important;
@@ -6269,73 +6342,214 @@ button {
     right: 20px !important;
   }
   .hero-festival-section .hero-partner-img-esdm {
-    height: 38px;
-    max-height: 38px;
+    height: 48px;
+    max-height: 48px;
   }
   .hero-festival-section .hero-partner-img-id {
-    height: 38px;
-    max-height: 38px;
+    height: 32px;
+    max-height: 32px;
   }
 
-  .hero-festival-bottom-img {
-    height: 75px;
+  .hero-festival-bottom-img,
+  .overview-transition-top-img {
+    width: 100%;
+    height: auto;
     max-height: none;
   }
 }
 
 @media (max-width: 640px) {
   .hero-festival-section {
-    padding: 135px 16px 90px 16px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: clamp(62px, 8.5vh, 76px);
+    padding-bottom: clamp(52px, 7.5vh, 70px);
+    padding-left: 14px;
+    padding-right: 14px;
+    box-sizing: border-box;
   }
 
   .hero-festival-container {
-    padding: 0 12px;
+    padding: 0 8px;
+    width: 100%;
   }
 
-  .hero-festival-title {
-    font-size: clamp(20px, 6.2vw, 28px);
-    line-height: 1.15;
+  .hero-festival-grid {
+    grid-template-columns: 1fr;
+    gap: clamp(10px, 1.8vh, 18px);
+    justify-items: center;
+    align-items: center;
+    width: 100%;
   }
 
-  .hero-festival-venue {
-    font-size: 13.5px;
-    margin-bottom: 20px;
+  /* 1. Emblem Combo: Enlarged & Prominent on Mobile */
+  .hero-festival-left .hero-emblem-combo {
+    width: clamp(210px, 29vh, 270px);
+    max-width: 70vw;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
   }
 
-  .hero-festival-countdown-card {
-    max-width: 100%;
-    padding: 12px 14px 14px 14px !important;
-  }
-
+  /* 2. Partner Badges on Mobile (Untouched) */
   .hero-festival-section .hero-partner-badge {
-    top: 76px;
-    height: 34px;
+    top: clamp(56px, 7.8vh, 68px);
+    height: auto;
   }
   .hero-festival-section .hero-partner-badge-left {
-    left: 16px !important;
+    left: clamp(12px, 3.5vw, 18px) !important;
     right: auto !important;
   }
   .hero-festival-section .hero-partner-badge-right {
     left: auto !important;
-    right: 16px !important;
+    right: clamp(12px, 3.5vw, 18px) !important;
   }
-
   .hero-festival-section .hero-partner-img {
-    height: 34px !important;
-    max-height: 34px !important;
+    height: auto !important;
+    max-height: none !important;
   }
   .hero-festival-section .hero-partner-img-esdm {
-    height: 46px !important;
-    max-height: 46px !important;
+    height: clamp(32px, 4.8vh, 38px) !important;
+    max-height: 38px !important;
   }
   .hero-festival-section .hero-partner-img-id {
-    height: 34px !important;
-    max-height: 34px !important;
+    height: clamp(21px, 3.2vh, 25px) !important;
+    max-height: 25px !important;
+  }
+
+  /* 3. Typography on Mobile (Enlarged) */
+  .hero-festival-typography {
+    width: 100%;
+  }
+
+  .hero-festival-title {
+    font-size: clamp(23px, 6.4vw, 30px);
+    line-height: 1.12;
+    letter-spacing: 0.5px;
+    margin: 0 0 clamp(6px, 1.2vh, 10px) 0;
+  }
+
+  .hero-festival-divider {
+    width: 52px;
+    height: 3.5px;
+    margin: 0 auto clamp(8px, 1.4vh, 12px) auto;
+  }
+
+  .hero-festival-venue {
+    font-size: clamp(14px, 4vw, 16px);
+    line-height: 1.4;
+    margin-bottom: clamp(10px, 1.8vh, 16px);
+  }
+
+  .hero-festival-venue p {
+    margin: 0 0 2px 0;
+  }
+
+  /* 3.1 Media Network Logo Strip on Mobile (Enlarged to match KV) */
+  .hero-festival-media-group {
+    margin: 0 auto clamp(10px, 1.8vh, 16px) auto;
+  }
+
+  .hero-festival-media-img {
+    width: clamp(290px, 86vw, 345px);
+    height: auto;
+  }
+
+  /* 4. Countdown Card: Compact, Sleek, Proportionate on Mobile */
+  .hero-festival-countdown-area {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .hero-festival-countdown-card {
+    max-width: min(340px, 94vw) !important;
+    padding: clamp(8px, 1.2vh, 10px) clamp(11px, 3.2vw, 16px) clamp(9px, 1.4vh, 12px) clamp(11px, 3.2vw, 16px) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 20px rgba(43, 122, 36, 0.1) !important;
+    margin: 0 auto !important;
+  }
+
+  .hero-festival-countdown-card .hero-countdown-timer {
+    gap: clamp(4px, 1.5vw, 8px) !important;
+  }
+
+  .hero-festival-countdown-card .hero-countdown-unit {
+    min-width: clamp(38px, 10.5vw, 46px) !important;
+  }
+
+  .hero-festival-countdown-card .hero-roller-box {
+    height: 31px !important;
+    gap: 1px !important;
+  }
+
+  .hero-festival-countdown-card .hero-roller-col {
+    width: 15px !important;
+    height: 31px !important;
+  }
+
+  .hero-festival-countdown-card .hero-roller-digit,
+  .hero-festival-countdown-card .hero-roller-track span {
+    font-size: 23px !important;
+    line-height: 31px !important;
+    height: 31px !important;
+  }
+
+  .hero-festival-countdown-card .hero-countdown-sub {
+    font-size: 9px !important;
+    letter-spacing: 0.6px !important;
+    margin-top: 3px !important;
+  }
+
+  .hero-festival-countdown-card .hero-countdown-sep {
+    font-size: 17px !important;
+    margin-top: -14px !important;
+  }
+
+  /* 5. Hero Bottom Ornament & Animated Vector Scroll to Bottom on Mobile */
+  .hero-festival-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 3;
+    pointer-events: none;
+    line-height: 0;
   }
 
   .hero-festival-bottom-img {
-    height: 55px;
-    max-height: none;
+    width: 100%;
+    height: auto;
+    max-height: clamp(55px, 8.5vh, 80px);
+    object-fit: cover;
+    object-position: bottom center;
+    display: block;
+  }
+
+  .overview-transition-top-img {
+    width: 100%;
+    height: auto;
+    max-height: clamp(55px, 8.5vh, 80px);
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    transform: scaleY(-1);
+    transform-origin: top center;
+  }
+
+  .hero-scroll-indicator {
+    bottom: clamp(10px, 1.8vh, 16px);
+    width: 36px;
+    height: 36px;
+    z-index: 6;
+  }
+
+  .hero-scroll-icon {
+    width: 34px;
+    height: 34px;
   }
 
   /* Responsive Mobile Editorial Section Persis FrontendIDS */

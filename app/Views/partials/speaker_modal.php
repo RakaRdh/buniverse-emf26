@@ -3,8 +3,8 @@
   <div class="speaker-modal-dialog">
 
     <!-- Decorative Corner Ribbons (Gambar 5: kiri atas & kanan bawah, 1/4 visible) -->
-    <img src="<?= base_url('assets/img/ribbon.png') ?>" alt="" class="modal-ribbon modal-ribbon-tl" aria-hidden="true">
-    <img src="<?= base_url('assets/img/ribbon.png') ?>" alt="" class="modal-ribbon modal-ribbon-br" aria-hidden="true">
+    <img src="<?= emf_url('assets/img/ribbon.png') ?>" alt="" class="modal-ribbon modal-ribbon-tl" aria-hidden="true">
+    <img src="<?= emf_url('assets/img/ribbon.png') ?>" alt="" class="modal-ribbon modal-ribbon-br" aria-hidden="true">
 
     <!-- Close Button -->
     <button class="speaker-modal-close" id="speakerModalClose" aria-label="Tutup popup">

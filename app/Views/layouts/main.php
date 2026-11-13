@@ -6,7 +6,7 @@
   <?php
     $metaTitle = !empty($seo['meta_title']) ? $seo['meta_title'] : $site['title'];
     $metaDesc  = !empty($seo['meta_description']) ? $seo['meta_description'] : ($site['title'] . '. ' . $site['dates'] . ' di ' . $site['venue'] . '. Forum investasi terbesar di Indonesia.');
-    $ogImage   = !empty($seo['og_image_url']) ? $seo['og_image_url'] : base_url('assets/img/image1.png');
+    $ogImage   = !empty($seo['og_image_url']) ? $seo['og_image_url'] : emf_url('assets/img/image1.png');
   ?>
   <title><?= esc($metaTitle) ?></title>
   <meta name="description" content="<?= esc($metaDesc) ?>">
@@ -24,18 +24,18 @@
   <meta name="twitter:image" content="<?= esc($ogImage) ?>">
   
   <?php /* Favicon */ ?>
-  <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
-  <link rel="icon" type="image/x-icon" href="<?= base_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
+  <link rel="shortcut icon" type="image/x-icon" href="<?= emf_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
+  <link rel="icon" type="image/x-icon" href="<?= emf_url('favicon.ico') ?>?v=<?= file_exists(FCPATH . 'favicon.ico') ? filemtime(FCPATH . 'favicon.ico') : time() ?>">
   
-  <?php /* Google Fonts: Anton, Manrope & Playfair Display */ ?>
+  <?php /* Google Fonts: Anton, Plus Jakarta Sans & Playfair Display */ ?>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
   
   <?php /* Core Vanilla CSS */ ?>
-  <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>?v=<?= file_exists(FCPATH . 'assets/css/style.css') ? filemtime(FCPATH . 'assets/css/style.css') : time() ?>">
+  <link rel="stylesheet" href="<?= emf_url('assets/css/style.css') ?>?v=<?= file_exists(FCPATH . 'assets/css/style.css') ? filemtime(FCPATH . 'assets/css/style.css') : time() ?>">
   <?php /* Tailwind Perintilan CSS */ ?>
-  <link rel="stylesheet" href="<?= base_url('assets/css/tailwind.css') ?>?v=<?= file_exists(FCPATH . 'assets/css/tailwind.css') ? filemtime(FCPATH . 'assets/css/tailwind.css') : time() ?>">
+  <link rel="stylesheet" href="<?= emf_url('assets/css/tailwind.css') ?>?v=<?= file_exists(FCPATH . 'assets/css/tailwind.css') ? filemtime(FCPATH . 'assets/css/tailwind.css') : time() ?>">
 
   <?php if (!empty($themeProperties)): ?>
     <?php /* Live Dynamic Theme CSS Custom Properties from BackendCMS */ ?>
@@ -131,6 +131,6 @@
   </button>
 
   <?php /* Interactive JavaScript */ ?>
-  <script src="<?= base_url('assets/js/main.js') ?>?v=<?= file_exists(FCPATH . 'assets/js/main.js') ? filemtime(FCPATH . 'assets/js/main.js') : time() ?>"></script>
+  <script src="<?= emf_url('assets/js/main.js') ?>?v=<?= file_exists(FCPATH . 'assets/js/main.js') ? filemtime(FCPATH . 'assets/js/main.js') : time() ?>"></script>
 </body>
 </html>

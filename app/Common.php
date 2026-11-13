@@ -12,7 +12,23 @@
  * that you'd like to use throughout your entire application
  *
  * @see: https://codeigniter.com/user_guide/extending/common.html
- */if (!function_exists('format_schedule_time')) {
+  */
+
+if (!function_exists('emf_url')) {
+    /**
+     * URL helper for FrontendEMF assets, public paths, and routes.
+     *
+     * @param string $relativePath
+     * @param string|null $scheme
+     * @return string
+     */
+    function emf_url(string $relativePath = '', ?string $scheme = null): string
+    {
+        return base_url($relativePath, $scheme);
+    }
+}
+
+if (!function_exists('format_schedule_time')) {
     /**
      * Format a schedule time string or range into standard 12-hour AM/PM WIB format.
      * Examples:

@@ -559,6 +559,181 @@ class RegistrationController extends BaseController
     }
 
     /**
+     * Build HTML email konfirmasi tiket (Branded EMF 2026, Dinamis & Responsif)
+     */
+    protected function buildRegistrationEmailHtml(array $participant, array $t, int $idx, int $ticketCount, array $scheduleDaysMap, array $commonData): string
+    {
+        $site = $commonData['site'] ?? [];
+        $live = $commonData['event'] ?? [];
+
+        // 1. Tanggal dinamis acara
+        $eventDatesStr = !empty($site['dates']) ? $site['dates'] : '01 - 02 Desember 2026';
+
+        // 2. Lokasi dinamis (gabungkan hotel_name dan hotel_address)
+        $locData = !empty($live['locations']) ? $live['locations'] : [];
+        if (empty($locData['hotel_name']) && empty($locData['hotel_address'])) {
+            try {
+                $db = \Config\Database::connect();
+                $eventDb = $db->table('events')->where('slug', $this->eventSlug)->get()->getRowArray();
+                $eventId = (int)($eventDb['id'] ?? 3);
+                $locDb = $db->table('event_locations')
+                    ->where('event_id', $eventId)
+                    ->where('is_active', 1)
+                    ->get()
+                    ->getRowArray();
+                if (!empty($locDb)) {
+                    $locData = $locDb;
+                }
+            } catch (\Throwable $e) {
+                log_message('error', 'Gagal load event_locations: ' . $e->getMessage());
+            }
+        }
+
+        $rawHotelName = trim($locData['hotel_name'] ?? 'The Tribrata Darmawangsa Jakarta');
+        // Bersihkan typo trailing bracket/parenthesis jika ada di DB
+        $cleanHotelName = rtrim($rawHotelName, " (\t\n\r\0\x0B");
+        $hotelAddress = trim($locData['hotel_address'] ?? ($locData['address'] ?? ''));
+
+        $tCode = $t['ticket_code'] ?? '';
+        $tName = $t['full_name'] ?? ($participant['full_name'] ?? '');
+        $vDay  = $t['visit_day'] ?? 'all_days';
+
+        $dayInfo = $scheduleDaysMap[$vDay] ?? null;
+        if ($dayInfo) {
+            $dayLabel = $dayInfo['dropdown_label'] ?? $dayInfo['full_label'];
+        } else {
+            $dayLabel = ($vDay === 'day_1') ? 'Hari 1' : (($vDay === 'day_2') ? 'Hari 2' : 'Semua Hari');
+        }
+
+        // QR Server API (Aktif, Bebas Rate Limit, Format PNG 180x180)
+        $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=1&data=' . urlencode($tCode);
+        $headerImgUrl = emf_url('assets/img/header-email.png');
+
+        $company = esc($participant['company_name'] ?: 'Umum');
+        $jobTitle = !empty($participant['job_title']) ? esc($participant['job_title']) : '';
+
+        return '<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Konfirmasi Tiket — Energi &amp; Mineral Festival 2026</title>
+  <style>
+    @import url(\'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap\');
+    body, table, td, p, a, div {
+      font-family: \'Plus Jakarta Sans\', -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif;
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 28px 12px; background-color: #f6f8fa; color: #1e293b; -webkit-font-smoothing: antialiased;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #ffffff; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin: 0 auto;">
+    
+    <!-- Header Banner Image (header-email.png) -->
+    <tr>
+      <td style="padding: 0; line-height: 0; background-color: #f7ee39; border-top-left-radius: 14px; border-top-right-radius: 14px; overflow: hidden; text-align: center;">
+        <img src="' . esc($headerImgUrl) . '" alt="Energi &amp; Mineral Festival 2026" width="580" style="width: 100%; max-width: 580px; height: auto; display: block; border: 0; outline: none; text-decoration: none;">
+      </td>
+    </tr>
+
+    <!-- Content Body -->
+    <tr>
+      <td style="padding: 30px 24px 26px 24px;">
+        <p style="font-size: 15px; line-height: 1.5; color: #0b1a0d; margin: 0 0 14px 0;">
+          Kepada Yth. <strong>' . esc($tName) . '</strong>,
+        </p>
+        <p style="font-size: 13.5px; line-height: 1.65; color: #334155; margin: 0 0 22px 0;">
+          Terima kasih atas pendaftaran Anda. Registrasi Anda untuk menghadiri <strong>Energi &amp; Mineral Festival 2026</strong> telah berhasil kami konfirmasi' . ($ticketCount > 1 ? ' (Tiket ' . ($idx + 1) . ' dari ' . $ticketCount . ')' : '') . '. Simpan e-badge tiket ini untuk verifikasi kehadiran di meja resepsionis gate saat acara berlangsung.
+        </p>
+
+        <!-- Box Barcode / QR Code Tiket (EMF Theme) -->
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1.5px solid #e2e8f0; border-top: 4px solid #1b5319; border-radius: 12px; margin: 20px 0 24px 0; box-shadow: 0 4px 16px rgba(27,83,25,0.07);">
+          <tr>
+            <td style="padding: 22px 18px; text-align: center;">
+              <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: #1b5319; margin-bottom: 8px;">
+                TIKET MASUK ELEKTRONIK ' . ($ticketCount > 1 ? '#' . ($idx + 1) : '') . '
+              </div>
+              <div style="display: inline-block; background-color: #f7ee39; border: 1px solid #d2ca30; color: #143320; font-size: 12px; font-weight: 800; border-radius: 20px; padding: 4px 14px; margin-bottom: 16px; letter-spacing: 0.2px;">
+                ' . esc($dayLabel) . '
+              </div>
+              
+              <!-- QR Code Frame -->
+              <div style="text-align: center; margin: 0 auto 14px auto;">
+                <div style="display: inline-block; padding: 10px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                  <img src="' . $qrUrl . '" alt="QR ' . esc($tCode) . '" width="170" height="170" style="display: block; margin: 0 auto; border: 0;">
+                </div>
+              </div>
+
+              <!-- Ticket Code -->
+              <div style="font-size: 22px; font-weight: 800; font-family: \'Courier New\', Courier, monospace; letter-spacing: 3.5px; color: #143320; margin-bottom: 4px;">
+                ' . esc($tCode) . '
+              </div>
+              <div style="font-size: 14px; font-weight: 700; color: #0b1a0d; margin-bottom: 6px;">
+                ' . esc($tName) . '
+              </div>
+              <div style="font-size: 12px; color: #64748b; line-height: 1.5; max-width: 380px; margin: 0 auto;">
+                Tunjukkan QR Code ini pada layar HP Anda ke resepsionis gate untuk dipindai saat kedatangan.
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Detail Kegiatan Box (EMF Theme: Yellow-1 Surface, Yellow-7 Border, Forest Green Header) -->
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #fefdeb; border: 1.5px solid #d2ca30; border-radius: 12px; margin: 22px 0;">
+          <tr>
+            <td style="padding: 18px 20px;">
+              <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #143320; border-bottom: 1px solid rgba(210, 202, 48, 0.45); padding-bottom: 8px; margin-bottom: 12px;">
+                INFORMASI KEGIATAN &amp; ACARA
+              </div>
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding: 5px 0; font-size: 13.5px; color: #475569; font-weight: 600; width: 120px; vertical-align: top;">Waktu Acara</td>
+                  <td style="padding: 5px 0; font-size: 13.5px; color: #0b1a0d; font-weight: 700; vertical-align: top;">: ' . esc($eventDatesStr) . '</td>
+                </tr>
+                <tr>
+                  <td style="padding: 5px 0; font-size: 13.5px; color: #475569; font-weight: 600; vertical-align: top;">Hari Tiket</td>
+                  <td style="padding: 5px 0; font-size: 13.5px; color: #1b5319; font-weight: 700; vertical-align: top;">: ' . esc($dayLabel) . '</td>
+                </tr>
+                <tr>
+                  <td style="padding: 5px 0; font-size: 13.5px; color: #475569; font-weight: 600; vertical-align: top;">Lokasi</td>
+                  <td style="padding: 5px 0; font-size: 13.5px; color: #0b1a0d; vertical-align: top;">
+                    : <strong>' . esc($cleanHotelName) . '</strong>' .
+                    (!empty($hotelAddress) ? '<br><span style="color: #64748b; font-size: 12.5px; font-weight: normal; line-height: 1.45; display: inline-block; margin-top: 3px; margin-left: 10px;">' . esc($hotelAddress) . '</span>' : '') . '
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 5px 0; font-size: 13.5px; color: #475569; font-weight: 600; vertical-align: top;">Instansi</td>
+                  <td style="padding: 5px 0; font-size: 13.5px; color: #0b1a0d; vertical-align: top;">: ' . $company . '</td>
+                </tr>' .
+                (!empty($jobTitle) ? '
+                <tr>
+                  <td style="padding: 5px 0; font-size: 13.5px; color: #475569; font-weight: 600; vertical-align: top;">Jabatan</td>
+                  <td style="padding: 5px 0; font-size: 13.5px; color: #0b1a0d; vertical-align: top;">: ' . $jobTitle . '</td>
+                </tr>' : '') . '
+              </table>
+            </td>
+          </tr>
+        </table>
+
+        <p style="font-size: 13px; line-height: 1.6; color: #64748b; margin: 20px 0 0 0;">
+          Sampai bertemu di lokasi acara. Apabila Anda memiliki pertanyaan atau kendala, silakan hubungi tim kami atau balas email ini.
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer (Dark Forest Green EMF) -->
+    <tr>
+      <td style="background-color: #143320; padding: 18px 24px; text-align: center; border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;">
+        <p style="margin: 0; font-size: 11.5px; color: rgba(255, 255, 255, 0.8);">
+          &copy; ' . date('Y') . ' Energi &amp; Mineral Festival &bull; B-Universe Media Network
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>';
+    }
+
+    /**
      * Kirim email konfirmasi tiket / kehadiran ke pemesan (1 Email per 1 Tiket Terpisah)
      */
     protected function sendRegistrationEmail(array $participant, array $tickets, string $orderId = ''): bool
@@ -575,116 +750,15 @@ class RegistrationController extends BaseController
 
         $scheduleInfo = $this->resolveScheduleDays();
         $scheduleDaysMap = $scheduleInfo['map'];
+        $commonData = $this->getCommonData();
 
         foreach ($tickets as $idx => $t) {
             $tCode = $t['ticket_code'] ?? '';
-            $tName = $t['full_name'] ?? $participant['full_name'];
-            $vDay  = $t['visit_day'] ?? 'all_days';
-            
-            $dayInfo = $scheduleDaysMap[$vDay] ?? null;
-            if ($dayInfo) {
-                $dayLabel = $dayInfo['dropdown_label'] ?? $dayInfo['full_label'];
-            } else {
-                $dayLabel = ($vDay === 'day_1') ? 'Hari 1' : (($vDay === 'day_2') ? 'Hari 2' : 'Semua Hari');
-            }
-
-            // QR Server API (Aktif, Bebas Rate Limit, Format PNG 180x180)
-            $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=1&data=' . urlencode($tCode);
-
             $subject = ($ticketCount > 1)
                 ? 'E-Badge Tiket #' . ($idx + 1) . ' (' . esc($tCode) . ') — Energi & Mineral Festival 2026'
                 : 'Konfirmasi Registrasi Pengunjung — Energi & Mineral Festival 2026';
 
-            $body = '
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            </head>
-            <body style="margin: 0; padding: 24px 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif; color: #1e293b;">
-              <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin: 0 auto;">
-                <!-- Header Kuning EMF -->
-                <tr>
-                  <td style="background-color: #f4d849; padding: 28px 24px; text-align: center;">
-                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #214415; margin-bottom: 6px;">
-                      10 &ndash; 11 NOVEMBER 2026 &bull; JAKARTA, INDONESIA
-                    </div>
-                    <h1 style="margin: 0; font-size: 22px; font-weight: 900; color: #143320; letter-spacing: -0.01em;">
-                      Energi & Mineral Festival 2026
-                    </h1>
-                  </td>
-                </tr>
-
-                <!-- Content Body -->
-                <tr>
-                  <td style="padding: 28px 24px;">
-                    <p style="font-size: 14.5px; line-height: 1.6; margin: 0 0 16px 0;">
-                      Kepada Yth. <strong>' . esc($tName) . '</strong>,
-                    </p>
-                    <p style="font-size: 14px; line-height: 1.6; color: #334155; margin: 0 0 20px 0;">
-                      Terima kasih atas pendaftaran Anda. Registrasi Anda untuk menghadiri <strong>Energi & Mineral Festival 2026</strong> telah berhasil kami konfirmasi ' . ($ticketCount > 1 ? '(Tiket ' . ($idx + 1) . ' dari ' . $ticketCount . ')' : '') . '. Simpan e-badge tiket ini untuk verifikasi kehadiran di meja resepsionis saat acara berlangsung.
-                    </p>
-
-                    <!-- Box Barcode / QR Code Tiket -->
-                    <div style="background-color: #ffffff; border: 2px solid #edf5ea; box-shadow: 0 4px 14px rgba(73,152,46,0.10); border-radius: 12px; padding: 22px 20px; text-align: center; margin: 20px 0;">
-                      <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #346c21; margin-bottom: 6px;">
-                        TIKET MASUK ELEKTRONIK ' . ($ticketCount > 1 ? '#' . ($idx + 1) : '') . '
-                      </div>
-                      <div style="display: inline-block; background-color: #f0fdf4; border: 1px solid #86efac; color: #166534; font-size: 11.5px; font-weight: 700; border-radius: 6px; padding: 3px 10px; margin-bottom: 14px;">
-                        ' . esc($dayLabel) . '
-                      </div>
-                      
-                      <!-- Barcode QR Code Image -->
-                      <div style="text-align: center; margin: 0 auto 12px auto;">
-                        <img src="' . $qrUrl . '" alt="QR ' . esc($tCode) . '" width="170" height="170" style="display: block; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; background: #ffffff;">
-                      </div>
-
-                      <div style="font-size: 21px; font-weight: 800; font-family: monospace; letter-spacing: 3px; color: #214415; margin-bottom: 4px;">
-                        ' . esc($tCode) . '
-                      </div>
-                      <div style="font-size: 13.5px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">
-                        ' . esc($tName) . '
-                      </div>
-                      <div style="font-size: 12px; color: #64748b; line-height: 1.4;">
-                        Tunjukkan QR Code ini pada layar HP Anda ke resepsionis gate untuk dipindai saat kedatangan.
-                      </div>
-                    </div>
-
-                    <!-- Detail Pameran Box (Mirip Contoh China Homelife) -->
-                    <table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #fdfbee; border: 1px solid #f8e68c; border-radius: 10px; padding: 18px 20px; margin: 22px 0;">
-                      <tr>
-                        <td>
-                          <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #8b7b2a; margin-bottom: 12px;">
-                            INFORMASI KEGIATAN & ACARA
-                          </div>
-                          <div style="font-size: 13.5px; line-height: 1.8; color: #334155;">
-                            <div><strong>Waktu:</strong> 10 &ndash; 11 November 2026</div>
-                            <div><strong>Lokasi:</strong> Jakarta, Indonesia</div>
-                            <div><strong>Instansi:</strong> ' . esc($participant['company_name'] ?: 'Umum') . '</div>
-                            ' . (!empty($participant['job_title']) ? '<div><strong>Jabatan:</strong> ' . esc($participant['job_title']) . '</div>' : '') . '
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
-
-                    <p style="font-size: 13px; line-height: 1.6; color: #64748b; margin: 20px 0 0 0;">
-                      Sampai bertemu di lokasi acara. Apabila Anda memiliki pertanyaan, silakan hubungi tim kami atau balas email ini.
-                    </p>
-                  </td>
-                </tr>
-
-                <!-- Footer -->
-                <tr>
-                  <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 16px 24px; text-align: center;">
-                    <p style="margin: 0; font-size: 11.5px; color: #94a3b8;">
-                      &copy; 2026 Energi & Mineral Festival &bull; B-Universe Media Holdings
-                    </p>
-                  </td>
-                </tr>
-              </table>
-            </body>
-            </html>';
+            $body = $this->buildRegistrationEmailHtml($participant, $t, $idx, $ticketCount, $scheduleDaysMap, $commonData);
 
             try {
                 $emailService->clear();
@@ -704,6 +778,31 @@ class RegistrationController extends BaseController
         }
 
         return $allSent;
+    }
+
+    /**
+     * Preview Email Konfirmasi Registrasi untuk Keperluan Debug / Testing
+     */
+    public function previewEmail()
+    {
+        $commonData = $this->getCommonData();
+        $scheduleInfo = $this->resolveScheduleDays();
+
+        $participant = [
+            'full_name'    => 'John Doe',
+            'email'        => 'johndow@example.com',
+            'phone'        => '081234567890',
+            'company_name' => 'Dev',
+            'job_title'    => 'Dev',
+        ];
+
+        $ticket = [
+            'ticket_code' => '0335545015204463',
+            'full_name'   => 'John Doe',
+            'visit_day'   => 'day_1',
+        ];
+
+        return $this->buildRegistrationEmailHtml($participant, $ticket, 0, 1, $scheduleInfo['map'], $commonData);
     }
 
     /**

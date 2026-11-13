@@ -8,7 +8,7 @@ if (empty($photoUrl)) {
     $photoUrl = 'placeholder.png';
 }
 if (!str_starts_with($photoUrl, 'http')) {
-    $photoUrl = base_url('assets/img/' . ltrim($photoUrl, '/'));
+    $photoUrl = emf_url('assets/img/' . ltrim($photoUrl, '/'));
 }
 ?>
 <div class="speaker-tile" 
@@ -21,7 +21,7 @@ if (!str_starts_with($photoUrl, 'http')) {
   
   <div class="speaker-tile-frame">
     <div class="speaker-tile-photo-wrap">
-      <img src="<?= esc($photoUrl) ?>" alt="<?= esc($speaker['name']) ?>" loading="lazy" onerror="this.onerror=null;this.src='<?= base_url('assets/img/placeholder.png') ?>';">
+      <img src="<?= esc($photoUrl) ?>" alt="<?= esc($speaker['name']) ?>" loading="lazy" onerror="this.onerror=null;this.src='<?= emf_url('assets/img/placeholder.png') ?>';">
     </div>
   </div>
 

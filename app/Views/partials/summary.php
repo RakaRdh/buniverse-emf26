@@ -39,7 +39,7 @@
                 <?php 
                   foreach ($pageItems as $news): 
                     $isExternalImage = preg_match('#^https?://#i', $news['image'] ?? '');
-                    $imgSrc = $isExternalImage ? $news['image'] : base_url('assets/img/' . $news['image']);
+                    $imgSrc = $isExternalImage ? $news['image'] : emf_url('assets/img/' . $news['image']);
                     $isExternalUrl = preg_match('#^https?://#i', $news['url'] ?? '');
                 ?>
                   <article class="news-card">
